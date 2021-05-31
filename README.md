@@ -2,6 +2,7 @@
 Foundry Achievments. The first module to add player achievements to FoundryVTT!
 
 <b>Create and reward players with achievements:</b>
+
 <b>Manifest: https://raw.githubusercontent.com/Handyfon/Farchievements/master/module.json</b> 
 <h1>Images and Gifs:</h1>
 <div>
