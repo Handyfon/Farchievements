@@ -28,7 +28,7 @@ Hooks.once('init', function() {
         hint: 'AchAmount',
         scope: 'world',
         config: false,
-        default: "1",
+        default: "3",
         type: String,
     });
 	game.settings.register('farchievements', 'standarticon', {
