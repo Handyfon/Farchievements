@@ -21,4 +21,7 @@ GM VIEW EXPLAINED
 </div>
 
 <style>
+ div{
+ background:red;
+  }
 </style>
