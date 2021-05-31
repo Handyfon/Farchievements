@@ -18,6 +18,6 @@ GM VIEW:
 <img src="https://i.imgur.com/ILS3qfQ.png" title="Foundry Achievements GM VIEW"></img></br>
 </div>
 <div>
-GM VIEW EXPLAINED
+GM VIEW Edit mode
 <img src="https://i.imgur.com/97odi5O.png" title="GM VIEW EXPLAINED"></img></br>
 </div>
