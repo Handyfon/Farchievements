@@ -5,8 +5,9 @@ Foundry Achievments. The first module to add player achievements to FoundryVTT!
 <h1>Images and Gifs:</h1>
 Foundry Achievements Button:
 <img src="https://i.imgur.com/bWEobgB.png" title="Foundry Achievements Button"></img></br>
-                                                                            
-</br>Foundry Achievements Player View:
+
+
+Foundry Achievements Player View:
 <img src="https://i.imgur.com/gDg6gNv.gif" title="Foundry Achievements Player View"></img></br>
 
 Foundry Achievements GM VIEW:                                      
