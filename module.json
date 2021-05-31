@@ -3,7 +3,7 @@
 	"title": "Foundry Achievements",
 	"description": "Achievements for FoundryVTT",
 	"version": "1.0",
-	"author": "Handyfon#8390",
+	"author": "Handyfon",
 	"esmodules": ["AchievementsScreen.js"],
 	"styles": ["AchievementsScreen.css"],
 	"packs": [],
