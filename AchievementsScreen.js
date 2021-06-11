@@ -1,4 +1,20 @@
 Hooks.once('init', function() {
+	game.settings.register('farchievements', 'EnableChatBarButton', {
+        name: 'Enable Chatbar Button',
+        hint: 'Allowes to access Farchivements from the chat bar',
+        scope: 'world',
+        config: true,
+        default: false,
+        type: Boolean,
+    });
+	game.settings.register('farchievements', 'EnableContextButton', {
+        name: 'Enable the button for the player-list context menu',
+        hint: 'Enable the button for the player-list context menu. disabling this might increase performance by a tiny amount',
+        scope: 'world',
+        config: true,
+        default: true,
+        type: Boolean,
+    });
 	game.settings.register('farchievements', 'AchievementWindowTitle', {
         name: 'Title',
         hint: 'Title of Achievement Window',
@@ -83,7 +99,7 @@ Hooks.once('init', function() {
         name: 'AchievementData (DONTTOUCH)',
         hint: 'The data for the achievements is saved here !!DONT TOUCH!!',
         scope: 'world',
-        config: false,
+        config: true,
         default: "1:::Welcome to FoundryVTT////icons/vtt-512.png////You are using the best VTT software available!;;;2:::Ruler of the Night////icons/magic/control/silhouette-aura-energy.webp////Sucessfully make a stealth check with a DC of 25 or higher;;;3:::Powerful////icons/magic/control/buff-strength-muscle-damage-orange.webp////Sucessfully make a Strength check with a DC of 25 or higher;;;",
         type: String,
     });
@@ -91,13 +107,21 @@ Hooks.once('init', function() {
         name: 'ClientDataList (DONTTOUCH)',
         hint: 'will be synced between clients !!DONT TOUCH!!',
         scope: 'world',
-        config: false,
+        config: true,
         default: "",
         type: String,
     });
 	game.settings.register('farchievements', 'clientdata', {
         name: 'ClientData (DONTTOUCH)',
         hint: 'your clients achievements !!DONT TOUCH!!',
+        scope: 'client',
+        config: true,
+        default: "",
+        type: String,
+    });
+	game.settings.register('farchievements', 'loadSettingsForPlayer', {
+        name: 'loadSettingsForPlayer (DONTTOUCH)',
+        hint: 'loadSettingsForPlayer !!DONT TOUCH!!',
         scope: 'client',
         config: false,
         default: "",
@@ -107,6 +131,8 @@ Hooks.once('init', function() {
 });
 class Achievements {
     static addChatControl() {
+		if(!game.settings.get('farchievements', 'EnableChatBarButton'))
+			return;
         const chatControlLeft = document.getElementsByClassName("chat-control-icon")[0];
         let tableNode = document.getElementById("achievements-button");
 
@@ -118,13 +144,13 @@ class Achievements {
             tableNode.onclick = Achievements.initializeAchievements;
             chatControlLeft.insertBefore(tableNode, chatControlLeftNode);
         }
-    }
+	}
     static initializeAchievements() {
         if (this.AchievementsScreen === undefined) {
             this.AchievementsScreen = new AchievementsScreen();
         }
         this.AchievementsScreen.openDialog();
-    }
+    } 
 }
 class AchievementsScreen extends Application {
 	activateListeners(html) {
@@ -274,7 +300,35 @@ Hooks.on('renderSceneNavigation', function() {
 		let bannerstyle = 'top: -200px;background: url('+game.settings.get("farchievements", "bannerBackground")+')!important;background-size: cover !important;background-position: center !important;box-shadow: 0px -4px 6px black !important;display: flex;';
 		var el = '<div id="Achievementbar" style="display: none;" class="Achievementbar"><div id="FoundryAchievements" class="FoundryAchievementsBanner" style="'+bannerstyle+'"><img id="AchievementIMG" class="AchievementIMG" src="modules/farchievements/standardIcon.PNG"></img><p class="AchievementText"><label class="AchievementTextLabel">New Achievement:</label> (Achievement) </p><i class="Shiny"></i></div></div>';
 		document.getElementById("notifications").innerHTML = el;
-		
+	
+});
+
+Hooks.on('renderSceneDirectory', function() {
+	//ADD BUTTON TO SETTINGS
+	if(document.getElementById("SettingsAchievementsButton") == null){
+		$('#settings-game').append('<button id="SettingsAchievementsButton" data-action="Achievements"><i class="fas fa-medal achievements-button"></i>Achievements</button>');
+		let AchievementsButton = document.getElementById("SettingsAchievementsButton");
+		AchievementsButton.onclick = Achievements.initializeAchievements;
+	}
+	function refreshData(){
+		let x = 0.1;  // 5 Seconds
+		// Do your thing here
+		//ui.notifications.notify("Test");
+		if(document.getElementsByClassName("context-items")[0] != null){
+			if(document.getElementById("contextAchievement") == null){
+				let id = document.getElementsByClassName("context-items")[0].closest('.player').getAttribute("data-user-id");
+				if(id != game.user.id && game.user.isGM){//You can't open your own achievements
+					document.getElementsByClassName("context-items")[0].innerHTML+='<li class="context-item" id="contextAchievement"><i class="fas fa-medal"></i> View Achievements</li>'
+					let AchievmentContextButton = document.getElementById("contextAchievement");
+					game.settings.set('farchievements', 'loadSettingsForPlayer', id);
+					AchievmentContextButton.onclick = Achievements.initializeAchievements;
+				}
+			}
+		}
+	
+		setTimeout(refreshData, x*1000);
+	}
+	refreshData();
 });
 Hooks.on('createChatMessage', function() {
 	AchievementSync.SyncAchievements();

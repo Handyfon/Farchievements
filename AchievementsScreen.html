@@ -4,6 +4,34 @@
 <head onload="onLoad()">
 <script id="AchievementScript" onclick="loadAchievements()">//ONLOAD SCRIPT
 	function loadAchievements(){
+		let playerIDToLoadFrom = "";
+		if(game.settings.get('farchievements', 'loadSettingsForPlayer') != ""){
+			playerIDToLoadFrom = game.settings.get('farchievements', 'loadSettingsForPlayer');
+			//ui.notifications.notify("loading achievements for player with ID: " + playerIDToLoadFrom);
+			game.settings.set('farchievements', 'loadSettingsForPlayer', "")
+			let mySYNCSettings = "";
+			for(let i = 0; i < game.settings.get('farchievements', 'clientdataSYNC').split("||").length; i++)//FOR EVERY ENTRY IN CLIENTDATASYNC
+			{
+				if(game.settings.get('farchievements', 'clientdataSYNC').split("||")[i].includes(playerIDToLoadFrom)){//FIND THE SETTINGS FOR THE CURRENT USER BY USERID
+					mySYNCSettings = game.settings.get('farchievements', 'clientdataSYNC').split("||")[i]; // MYSYNC = SETTINGS FOR MY USERID
+				}
+			}
+			let clientDataToSync = game.user.id + ":";
+				let achievementnumber = 0;
+				let amountGained = 0;
+				let achievementsGainedList = "";
+				for(let i = 0; i < mySYNCSettings.split(':')[1].split(',').length; i++){
+					achievementnumber = mySYNCSettings.split(':')[1].split(',')[i];
+					if(mySYNCSettings.split(':')[1].split(',')[i] != ""){
+						clientDataToSync += achievementnumber + ","; //ADD THE ACHIEVEMENT TO THE SYNC REGARDLESS
+					}
+				}
+			game.settings.set('farchievements', 'clientdata', clientDataToSync);
+			document.querySelector('.achievementsscreen-window .window-title').innerText = game.users.find(user => user.id == playerIDToLoadFrom).name + "'s Achievements";
+			document.querySelector('.achievementsscreen-window .window-header').style['background'] = game.users.find(user => user.id == playerIDToLoadFrom).color;
+			//ui.notifications.notify(game.settings.get('farchievements', 'clientdata'));
+		}
+			//game.users.find(user => user.id == "T41gRCS1vIdM00bD")
 		if(!game.user.isGM)document.getElementById("hiddenforuser").style = "display:none";
 		//console.log("Loading Achievements");
 		//APPLY STYLING
@@ -15,12 +43,12 @@
 		let icon = game.settings.get('farchievements', 'standarticon');
 		let description ="";
 		let greyscale = "";
-		for(let i = 1; i <= game.settings.get('farchievements', 'achamount'); i++){
+		for(let i = 1; i <= game.settings.get('farchievements', 'achievementdata').split(";;;").length-2; i++){
 			if(data[i-1].split("////") == "") continue; //GUARD FROM EMPTY ARRAY ELEMENTS
 			name = data[i-1].split("////")[0].split(":::")[1];
 			if(data[i-1].split("////")[1] != "icon"){icon = icon = data[i-1].split("////")[1]}else{icon = game.settings.get('farchievements', 'standarticon')} //IF STANDARD ICON USE ICON DEFINED IN GAMESETTINGS
 			description = data[i-1].split("////")[2].split(";;;")[0];
-			if(!game.user.isGM){
+			if(!game.user.isGM || playerIDToLoadFrom != ""){
 				if(game.settings.get('farchievements', 'clientdata').toString().split(":")[1].includes(i)){
 					//ui.notifications.notify("User has acces to " + i);
 					greyscale = "";
@@ -36,7 +64,7 @@
 			}
 			document.getElementById('AchievementList').innerHTML += '<div id="Achievement-'+i+'" class="grid-item" style="'+greyscale+'"><p class="AchName">'+name+'</p><img class="AchIcon" src="'+icon+'"></img><p class="AchDescription">'+description+'</p></div>';
 		}
-		document.getElementById("AchievementList").style = "grid-template-rows: repeat("+Math.round(game.settings.get('farchievements', 'achamount') / 6)+", 1fr);"
+		document.getElementById("AchievementList").style = "grid-template-rows: repeat("+Math.round((game.settings.get('farchievements', 'achievementdata').split(";;;").length-2)/6)+", 1fr);"
 	}
 	loadAchievements();
 	function loadAchievementsEditMode(){
@@ -49,13 +77,13 @@
 		let description ="";
 		let labels = '';
 		let cleanedPlayer;
-		for(let i = 1; i <= game.settings.get('farchievements', 'achamount'); i++){//I = ACHIEVEMENT_ID 
+		for(let i = 1; i <= game.settings.get('farchievements', 'achievementdata').split(";;;").length - 2; i++){//I = ACHIEVEMENT_ID 
 			labels = "";//RESET LABELS FOR EVERY ACHIEVEMENT
 			for(let j = 1; j < game.users.entries.length; j++){//J = PLAYER_ID GENERATE CLICKABLE PLAYER LABELS
 			    cleanedPlayer = j-1;
 				if(dataArray[cleanedPlayer].split(":")[1] == null)
 				labels += '<label class="AchEnableLabel" id="AchEnableXX'+i+'/'+j+'" onclick="setAchievement('+i+','+j+')">'+game.users.entries[j].name+'</label>';
-				else if(dataArray[cleanedPlayer].split(":")[1].includes(i))
+				else if(dataArray[cleanedPlayer].split(":")[1].includes(',' + i + ',') || dataArray[cleanedPlayer].split(":")[1].split(",")[0] == i ||dataArray[cleanedPlayer].split(":")[1].split(",")[dataArray[cleanedPlayer].split(":")[1].split(",")[0].length +1] == i)
 				labels += '<label class="AchEnableLabel playerHas" id="AchEnableXX'+i+'/'+j+'" onclick="setAchievement('+i+','+j+')">'+game.users.entries[j].name+'</label>';
 				else
 				labels += '<label class="AchEnableLabel" id="AchEnableXX'+i+'/'+j+'" onclick="setAchievement('+i+','+j+')">'+game.users.entries[j].name+'</label>';
@@ -69,7 +97,12 @@
 			document.getElementById('AchievementList').innerHTML += '<div id="Achievement-'+i+'" class="grid-item"><div class="achievementtools"><button class="deleteAchievement" type="button" onclick="deleteAchievement('+i+')"><i class="fas fa-trash-alt"></i></button></div><div><input class="AchInputName" maxlength="40" type="text" id="achievementname'+i+'" onchange="updateAchievement(1, '+i+')" value="'+name+'"></div><div style="flex;display: inline-flex;"><img class="EditModeIcon" src="'+icon+'"></img><div style="width: 50%;overflow-y: scroll;height: 76px;">'+labels+'</div></div><div><input class="AchInputImg" type="text" id="achievementimg'+i+'" onchange="updateAchievement(2, '+i+')" value="'+icon+'"></div><div><textarea input class="AchInputDes" type="text" id="achievementdes'+i+'" cols="40" rows="5" onchange="updateAchievement(3, '+i+')">'+description+'</textarea></div></div>';
 			document.getElementById('AchievementList').style.setProperty("transform", "scale(1) !important;");
 		}
-		document.getElementById("AchievementList").style = "grid-template-rows: repeat("+Math.round(game.settings.get('farchievements', 'achamount') / 6)+", 1fr);"
+		document.getElementById("AchievementList").style = "grid-template-rows: repeat("+Math.round((game.settings.get('farchievements', 'achievementdata').split(";;;").length-2)/6)+", 1fr);"
+		//console.log("DATA ___________");
+		//console.log(dataArray[0]);
+		//console.log(dataArray[1]);
+		//console.log(dataArray[2]);
+		//console.log(dataArray[3]);
 	}
 	function enterEditMode(){
 		if(document.getElementsByClassName('editmodebar')[0].style.cssText === "text-align: -webkit-right; display: block;"){
@@ -91,22 +124,38 @@
 		let toSYNC;
 		
 		//ADD DATA TO SYNC VARIABLE
-		if(dataArray[cleanPlayerID].split(":")[1].includes(achievementID)){ //DETECT EXISTING ACHIEVEMENT, REMOVE IT
-			let toReplace = achievementID+",";
+		if(dataArray[cleanPlayerID].split(":")[1].includes(',' + achievementID + ',')){ //DETECT EXISTING ACHIEVEMENT, REMOVE IT
+			let toReplace = achievementID+",";//REPLACE FROM WITHIN DATA
 			dataArrayPlayer = dataArray[cleanPlayerID].split(":")[0] + ":" + dataArray[cleanPlayerID].split(":")[1].replace(toReplace, "");
 			dataArray[cleanPlayerID] = dataArrayPlayer;
 			toSYNC = dataArray.join("||");
-			////console.log(toSYNC);
+			//console.log(toSYNC);
+		}
+		else if(dataArray[cleanPlayerID].split(":")[1].split(",")[0] == achievementID){ //FIRST ACHIEVEMENT IN DATA?
+			let toReplace = achievementID+",";//REPLACE FIRST ENTRY IN DATA
+			var firstDataArray = dataArray[cleanPlayerID].split(":")[1].split(",");
+			firstDataArray.shift();
+			dataArray[cleanPlayerID] = dataArray[cleanPlayerID].split(":")[0] + ":" + firstDataArray;
+			toSYNC = dataArray.join("||");
+			//console.log(toSYNC);
+		}
+		else if(dataArray[cleanPlayerID].split(":")[1].split(",")[dataArray[cleanPlayerID].split(":")[1].split(",")[0].length +1] == achievementID){ //LAST ACHIEVEMENT IN DATA?
+			let toReplace = achievementID+",";//REPLACE FIRST ENTRY IN DATA
+			var firstDataArray = dataArray[cleanPlayerID].split(":")[1].split(",");
+			firstDataArray.pop();
+			dataArray[cleanPlayerID] = dataArray[cleanPlayerID].split(":")[0] + ":" + firstDataArray;
+			toSYNC = dataArray.join("||");
+			console.log(toSYNC);
 		}
 		else{//ELSE ADD IT
 			dataArrayPlayer = dataArray[cleanPlayerID].split(":")[0] + ":" + dataArray[cleanPlayerID].split(":")[1] + achievementID + ",";
 			dataArray[cleanPlayerID] = dataArrayPlayer;
 			toSYNC = dataArray.join("||");
-			////console.log(toSYNC);
+			console.log(toSYNC);
 		}
 		await game.settings.set('farchievements', 'clientdataSYNC', toSYNC);
 			
-		//console.log("Setting Achievement: " + achievementname + "(ID:"+ achievementID + ")" + " for user: " + playerName); //TODO ACTUALLY ADD THE ACHIEVEMENT
+		console.log("Setting Achievement: " + achievementname + "(ID:"+ achievementID + ")" + " for user: " + playerName); //TODO ACTUALLY ADD THE ACHIEVEMENT
 		//console.log("Achievementdata: " + game.settings.get('farchievements', 'achievementdata'));
 		loadAchievementsEditMode();
 	}
