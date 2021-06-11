@@ -7,12 +7,13 @@
 		let playerIDToLoadFrom = "";
 		if(game.settings.get('farchievements', 'loadSettingsForPlayer') != ""){
 			playerIDToLoadFrom = game.settings.get('farchievements', 'loadSettingsForPlayer');
-			//ui.notifications.notify("loading achievements for player with ID: " + playerIDToLoadFrom);
+			ui.notifications.notify("loading achievements for player with ID: " + playerIDToLoadFrom);
+			console.log("loading achievements for player with ID: " + playerIDToLoadFrom);
 			game.settings.set('farchievements', 'loadSettingsForPlayer', "")
 			let mySYNCSettings = "";
 			for(let i = 0; i < game.settings.get('farchievements', 'clientdataSYNC').split("||").length; i++)//FOR EVERY ENTRY IN CLIENTDATASYNC
 			{
-				if(game.settings.get('farchievements', 'clientdataSYNC').split("||")[i].includes(playerIDToLoadFrom)){//FIND THE SETTINGS FOR THE CURRENT USER BY USERID
+				if(game.settings.get('farchievements', 'clientdataSYNC').split("||")[i].includes(playerIDToLoadFrom) && mySYNCSettings == ""){//FIND THE SETTINGS FOR THE CURRENT USER BY USERID
 					mySYNCSettings = game.settings.get('farchievements', 'clientdataSYNC').split("||")[i]; // MYSYNC = SETTINGS FOR MY USERID
 				}
 			}
@@ -49,7 +50,7 @@
 			if(data[i-1].split("////")[1] != "icon"){icon = icon = data[i-1].split("////")[1]}else{icon = game.settings.get('farchievements', 'standarticon')} //IF STANDARD ICON USE ICON DEFINED IN GAMESETTINGS
 			description = data[i-1].split("////")[2].split(";;;")[0];
 			if(!game.user.isGM || playerIDToLoadFrom != ""){
-				if(game.settings.get('farchievements', 'clientdata').toString().split(":")[1].includes(i)){
+				if(game.settings.get('farchievements', 'clientdata').toString().split(":")[1].includes("," + i + ",") || game.settings.get('farchievements', 'clientdata').toString().split(":")[1].split(",")[0] == i || game.settings.get('farchievements', 'clientdata').toString().split(":")[1].split(",")[game.settings.get('farchievements', 'clientdata').toString().split(":")[1].split(",").length-2] == i ){
 					//ui.notifications.notify("User has acces to " + i);
 					greyscale = "";
 				}
