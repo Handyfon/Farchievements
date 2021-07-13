@@ -1,3 +1,21 @@
+
+p.AchDescription {
+    text-align: center;
+    border: 1px groove #000000;
+    margin: 0;
+    padding: 0;
+    margin-top: -5px;
+    max-height: 60px;
+    contain: content;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background: #655f00;
+    line-break: auto;
+    height: fit-content;
+    color: white;
+    padding: 5px;
+}
+
 img.EditModeIcon:hover {
     border: 1px solid #ff6400;
     transition: 0.02s;

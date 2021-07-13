@@ -44,6 +44,11 @@
 		//APPLY STYLING
 		document.getElementById('CustomAchievmentStyling').innerHTML ="";
 		document.getElementById('CustomAchievmentStyling').innerHTML ="<style>.grid-item:hover {transform: scale(1.2);margin-top: 12px;margin-bottom: -12px;transition: 0.2s;filter: drop-shadow(0px 5px 6px black)}.achievementsscreen-window .window-content {background: #262626;}.achievementsscreen-window {background: black;}</style>";
+		
+		// DESCRIPTION
+		if(game.settings.get('farchievements', 'DescriptionOnHover'))
+		document.getElementById('CustomAchievmentStyling').innerHTML +="<style>.grid-item:hover .AchDescription, .grid-item.hover .AchDescription {margin-top: -5px !important;transition: 0.3s !important; opacity:1;}p.AchDescription {margin-top: -25px;transition: 0.1s !important;opacity: 0;}</style>";
+
 		const data = game.settings.get('farchievements', 'achievementdata').split(';;;');
 		document.getElementById('AchievementList').innerHTML = "";
 		let name ="";
@@ -132,6 +137,7 @@
 			document.getElementsByClassName('editmodebar')[0].style.cssText = "text-align: -webkit-right; display: block;"
 		}
 	}
+
 	async function setAchievement(achievementID, PID){
 		let achievementname = document.getElementById("achievementname"+achievementID).value;
 		let cleanPlayerID = PID - 1;

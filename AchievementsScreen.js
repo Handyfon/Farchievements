@@ -50,6 +50,14 @@ Hooks.once('init', function() {
         default: "",
         type: String,
     });
+	game.settings.register('farchievements', 'DescriptionOnHover', {
+        name: 'Description on Hover',
+        hint: 'Display the discription only when the achievment is hovered.',
+        scope: 'world',
+        config: true,
+        default: "true",
+        type: Boolean,
+    });
 	game.settings.register('farchievements', 'achamount', {
         name: 'Achievement Amount',
         hint: 'AchAmount',
@@ -367,6 +375,53 @@ Hooks.on('renderSceneDirectory', function() {
 	refreshData();
 
 });
-Hooks.on('createChatMessage', function() {
+Hooks.on("createChatMessage", async function (message){
+	if(message.data.content.includes("Achievements Synced"))
 	AchievementSync.SyncAchievements();
+if(message.data.content.includes("Farchievements-SyncRequest")){
+	if(!game.user.isGM)return;
+	
+	let NAME = message.data.content.split("|")[1];
+	let ACHIEVMENTNAME = message.data.content.split("|")[2];
+	//==========================================
+	let achData = game.settings.get('farchievements', 'achievementdata').split(';;;');
+	let dataArray = game.settings.get('farchievements', 'clientdataSYNC').split("||");
+	let Player, achievementID, dataArrayPlayer, toSYNC, PID;
+	if(NAME != "")
+	Player = game.users.getName(NAME);
+	else{
+	Player = game.user;
+	}
+	if(Player == null){
+		ui.notifications.error("This user doesn't exist");
+		return;
+	}
+	PID = dataArray.indexOf(dataArray.filter(entry => entry.includes(Player.id))[0]);
+	achievementID = achData.filter(entry => entry.split("////")[0].includes(ACHIEVMENTNAME))[0][0];
+	if(dataArray[PID] == "" || dataArray[PID] == null){ // IF NO DATA YET
+				dataArrayPlayer = game.users._source[PID]._id + ":" + achievementID + ",";
+				dataArray[PID] = dataArrayPlayer;
+				toSYNC = dataArray.join("||");
+				console.log(toSYNC);
+				//await game.settings.set('farchievements', 'clientdataSYNC', toSYNC);
+						
+				console.log("Setting Achievement: " + achievementname + "(ID:"+ achievementID + ")" + " for user: " + playerName); //TODO ACTUALLY ADD THE ACHIEVEMENT
+				return;
+	}
+	else{
+		dataArrayPlayer = dataArray[PID].split(":")[0] + ":" + dataArray[PID].split(":")[1] + achievementID + ",";
+		dataArray[PID] = dataArrayPlayer;
+		toSYNC = dataArray.join("||");
+		console.log(toSYNC);
+	}
+	await game.settings.set('farchievements', 'clientdataSYNC', toSYNC);
+
+	ChatMessage.create({
+		user : game.user._id,
+		content: "Achievements Synced",
+		blind: false,
+		whisper : game.users.entities.filter(u => u.isGM).map(u => u._id)
+	});
+	AchievementSync.SyncAchievements();
+}
 });
