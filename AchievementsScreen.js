@@ -1,4 +1,5 @@
 Hooks.once('init', function() {
+	const debouncedReload = debounce(() => window.location.reload(), 100);
 	game.settings.register('farchievements', 'EnableChatBarButton', {
         name: 'Enable Chatbar Button',
         hint: 'Allowes to access Farchivements from the chat bar',
@@ -6,14 +7,24 @@ Hooks.once('init', function() {
         config: true,
         default: false,
         type: Boolean,
+		onChange: debouncedReload,
     });
 	game.settings.register('farchievements', 'EnableContextButton', {
         name: 'Enable the button for the player-list context menu',
-        hint: 'Enable the button for the player-list context menu. disabling this might increase performance by a tiny amount',
+        hint: 'Enable the button for the player-list context menu.',
         scope: 'world',
         config: true,
         default: true,
         type: Boolean,
+    });
+	game.settings.register('farchievements', 'GameSettingsButton', {
+        name: 'Game Settings-Button',
+        hint: 'Enable the button within the Game Settings tab',
+        scope: 'world',
+        config: true,
+        default: true,
+        type: Boolean,
+		onChange: debouncedReload,
     });
 	game.settings.register('farchievements', 'AchievementWindowTitle', {
         name: 'Title',
@@ -57,7 +68,7 @@ Hooks.once('init', function() {
     });
 	game.settings.register('farchievements', 'bannerBackground', {
         name: 'Banner background',
-        hint: 'Background for the achievement banner',
+        hint: 'Background for the achievement banner (2000 x 180 px)',
         scope: 'world',
         config: true,
         default: "modules/farchievements/achievementbanner.jpg",
@@ -99,15 +110,15 @@ Hooks.once('init', function() {
         name: 'AchievementData (DONTTOUCH)',
         hint: 'The data for the achievements is saved here !!DONT TOUCH!!',
         scope: 'world',
-        config: true,
-        default: "1:::Welcome to FoundryVTT////icons/vtt-512.png////You are using the best VTT software available!;;;2:::Ruler of the Night////icons/magic/control/silhouette-aura-energy.webp////Sucessfully make a stealth check with a DC of 25 or higher;;;3:::Powerful////icons/magic/control/buff-strength-muscle-damage-orange.webp////Sucessfully make a Strength check with a DC of 25 or higher;;;",
+        config: false,
+        default: "1:::Mounted////systems/dnd5e/icons/items/inventory/horseshoe.jpg////Acquire a mount.;;;2:::Translator////systems/dnd5e/icons/items/inventory/note-scroll.jpg////Act as the party translator.;;;3:::Argumenter////systems/dnd5e/icons/items/inventory/monster-beak.jpg////Argue with the DM over a dice roll.;;;4:::Bitte, Bitte Papa////systems/dnd5e/icons/items/inventory/runestone-dwarven.jpg////Ask a deity for a favor.;;;5:::Oblivious////icons/skills/wounds/injury-eyes-blood-red-pink.webp////Be deaf and blind simultaneously.;;;6:::You have no power here////systems/dnd5e/icons/skills/blood_12.jpg////Be ignored by the DM when citing rules.;;;7:::Special////systems/dnd5e/icons/skills/green_27.jpg////Be the only person to roll 20 at a session;;;8:::Actor////systems/dnd5e/icons/skills/emerald_07.jpg////Beat a performance check while in disguise;;;9:::Deiety////systems/dnd5e/icons/skills/yellow_13.jpg////Become deified.;;;10:::Brute////icons/magic/earth/barrier-stone-brown-green.webp////Burst through a wall.;;;11:::Ouch////https://assets.forge-vtt.com/5fa2d7054f8a4cf1b34c8a38/Icons/spellbook_page1/SpellBook08_13.png////Reach 0 HP twice in 1 encounter.;;;12:::Amazing Roleplayer////icons/skills/social/diplomacy-peace-alliance.webp////Roleplay your character exceptionally.;;;13:::(Un)advantage////icons/magic/control/voodoo-doll-pain-damage-purple.webp////Roll 2 1’s on an advantaged roll.;;;14:::Lucky////icons/magic/light/projectile-flare-blue.webp////Roll 2 20’s in a row.;;;15:::Never tell me the odds////icons/magic/control/buff-luck-fortune-clover-green.webp////Roll 2 20’s on a disadvantaged roll.;;;16:::Strongest in the Land////icons/skills/melee/unarmed-punch-fist.webp////Have a strength score over 20.;;;17:::Fastest in the Land////icons/magic/lightning/bolt-strike-cloud-gray.webp////Have a dexterity score over 20.;;;18:::Toughest in the Land////icons/magic/earth/strike-fist-stone-light.webp////Have a constitution score over 20.;;;19:::Smartest in the Land////icons/magic/control/silhouette-hold-beam-blue.webp////Have a intelligence score over 20.;;;20:::Wisest in the Land////icons/magic/nature/tree-elm-roots-brown.webp////Have a wisdom score over 20.;;;21:::The most Charming in the Land////icons/magic/unholy/strike-body-explode-disintegrate.webp////Have a charisma score over 20.;;;22:::I've nothing left to lose...////icons/magic/death/undead-skeleton-deformed-red.webp////...so the only path to choose is twisted                                Be the sole survivor of a TPK;;;23:::Necromancer////icons/commodities/bones/bones-dragon-grey.webp////Raise the dead.;;;",
         type: String,
     });
 	game.settings.register('farchievements', 'clientdataSYNC', {
         name: 'ClientDataList (DONTTOUCH)',
         hint: 'will be synced between clients !!DONT TOUCH!!',
         scope: 'world',
-        config: true,
+        config: false,
         default: "",
         type: String,
     });
@@ -115,7 +126,7 @@ Hooks.once('init', function() {
         name: 'ClientData (DONTTOUCH)',
         hint: 'your clients achievements !!DONT TOUCH!!',
         scope: 'client',
-        config: true,
+        config: false,
         default: "",
         type: String,
     });
@@ -165,16 +176,16 @@ class AchievementsScreen extends Application {
         let $dialog = $('.achievementsscreen-window');
         if ($dialog.length > 0) {
             $dialog.remove();
-            return;
+            //return;
         }
         const templateData = {
             data: []
         };
         templateData.data = super.getData();
         templateData.title = "Farchievements";
-        //LOAD QUESTTABLE
 		
         const templatePath = "modules/farchievements/AchievementsScreen.html";
+		if(document.getElementsByClassName("achievementsscreen-window").length > 0){}
         AchievementsScreen.renderMenu(templatePath, templateData);
 
     }
@@ -317,7 +328,7 @@ Hooks.on('renderSceneNavigation', function() {
 
 Hooks.on('renderSceneDirectory', function() {
 	//ADD BUTTON TO SETTINGS
-	if(document.getElementById("SettingsAchievementsButton") == null){
+	if(document.getElementById("SettingsAchievementsButton") == null && game.settings.get('farchievements', 'GameSettingsButton')){
 		$('#settings-game').append('<button id="SettingsAchievementsButton" data-action="Achievements"><i class="fas fa-medal achievements-button"></i>Achievements</button>');
 		let AchievementsButton = document.getElementById("SettingsAchievementsButton");
 		if(AchievementsButton != null)

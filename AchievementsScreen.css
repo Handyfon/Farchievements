@@ -6,6 +6,7 @@ img.EditModeIcon:hover {
 img.EditModeIcon:active {
     filter: brightness(0.5);
 }
+
 .grid-container {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
@@ -24,7 +25,9 @@ img.EditModeIcon:active {
     width: 150px;
     /* background: #00000021; */
 }
-
+.grid-item:hover {
+    z-index: 1;
+}
 img.AchIcon {
     background: #0000004f;
     min-width: 100%;
@@ -44,6 +47,10 @@ color:white;
 .achievementsettings:active {
 background:white;
 color:black;
+}
+i.fas.fa-file-export.achievementImportExport:active {
+    background: white;
+    color: black;
 }
 .Achievementssettings {
     position: absolute;
@@ -139,6 +146,23 @@ img.EditModeIcon {
 }
 div#AchievementList {
     overflow: overlay;
+	padding: 20px;
+}
+.overWrite{
+	position: absolute;
+    width: 25px;
+    height: 25px;
+    right: 9px;
+    background: #383838;
+    color: white;
+}
+i.fas.fa-file-export.achievementImportExport {
+    padding: 5px;
+    border: 1px solid;
+    border-radius: 2px;
+    background: #000000d9;
+    color: white;
+    margin-right: 35px;
 }
 .AchEnableLabel:active {
     background: #5dbce8;

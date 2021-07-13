@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html id="AchievementsScreen">
-<div class="Achievementssettings" id="hiddenforuser" style="text-align: -webkit-right;"><i class="fas fa-cogs achievementsettings" onclick="enterEditMode()"></i></div>
+<div class="Achievementssettings" id="hiddenforuser" style="text-align: -webkit-right; z-index:1;"><i class="fas fa-cogs achievementsettings" onclick="enterEditMode()"></i></div>
+<div class="Achievementssettings" id="hiddenforuser2" style="text-align: -webkit-right;"><i class="fas fa-file-export achievementImportExport" onclick="openImportExport()"></i></div>
 <head onload="onLoad()">
 <script id="AchievementScript" onclick="loadAchievements()">//ONLOAD SCRIPT
 	function loadAchievements(){
@@ -38,6 +39,7 @@
 		}
 			//game.users.find(user => user.id == "T41gRCS1vIdM00bD")
 		if(!game.user.isGM)document.getElementById("hiddenforuser").style = "display:none";
+		if(!game.user.isGM)document.getElementById("hiddenforuser2").style = "display:none";
 		//console.log("Loading Achievements");
 		//APPLY STYLING
 		document.getElementById('CustomAchievmentStyling').innerHTML ="";
@@ -67,7 +69,12 @@
 					description = game.settings.get('farchievements', 'UnknownDes');
 				}
 			}
-			document.getElementById('AchievementList').innerHTML += '<div id="Achievement-'+i+'" class="grid-item" style="'+greyscale+'"><p class="AchName">'+name+'</p><img class="AchIcon" src="'+icon+'"></img><p class="AchDescription">'+description+'</p></div>';
+			let AchName ="";
+			if(name != "")
+			AchName = '<p class="AchName">'+name+'</p>';
+			else
+			AchName = '<p class="AchName" style="inline-size: fit-content;">'+name+'</p>';
+			document.getElementById('AchievementList').innerHTML += '<div id="Achievement-'+i+'" class="grid-item" style="'+greyscale+'">'+AchName+'<img class="AchIcon" src="'+icon+'"></img><p class="AchDescription">'+description+'</p></div>';
 		}
 		document.getElementById("AchievementList").style = "grid-template-rows: repeat("+Math.round((game.settings.get('farchievements', 'achievementdata').split(";;;").length-2)/6)+", 1fr);"
 	}
@@ -208,9 +215,67 @@
 			callback: imagePath => {input.value = imagePath;updateAchievement(2, id);}
 		}).browse(icon);
 	}
+	async function openImportExport(){
+	let $dialog = $('.ImportExportWindow');
+        if ($dialog.length > 0) {
+            $dialog.remove();
+            //return;
+       }
+	let data = game.settings.get('farchievements', 'achievementdata');
+    const dialogOptions = {
+      classes: ['dialog ImportExportWindow']
+    };
+	
+	new Dialog({
+		title: "Farchievements Import/Export",
+		content: '<p>This is a small tool to import and export your Achievements. <b>Make sure to backup everything before you even think about overriding!!</b></p><input type="text" id="ImportExportInput" value="'+data+'"></input>',
+		buttons: {
+			AchOverride: {
+				label: '<a style="color:red;" >Overwrite from Clipboard</a>',
+				icon: '<i class="fas fa-exclamation-triangle" style="color:red"></i>',
+				callback: () => {
+					let inputElement = document.getElementById("ImportExportInput");
+					document.body.appendChild(inputElement);
+					inputElement.select();
+					document.execCommand('paste');
+					if(inputElement.value == ""){
+						ui.notifications.warn("Farchievements | You shouldn't overwrite the data with nothing");
+						return;
+					}
+					if(inputElement.value.split("////").length <= 1){
+						ui.notifications.error("Farchievements | This data seems to be invalid, make sure to copy the correct data");
+						return;
+					}
+					if(inputElement.value == data){
+						ui.notifications.notify("Farchievements | The data did not change.");
+						return;
+					}
+					
+					game.settings.set('farchievements', 'achievementdata', inputElement.value);
+					ui.notifications.notify("Farchievements | This World's Achievements have been overridden");
+					let $dialog = $('.achievementsscreen-window');
+					$dialog.remove();
+				}
+			},
+			AchCopy: {
+				label: '<a style="color:green;" >Copy to Clipboard</a>',
+				icon: '<i class="fas fa-copy" style="color:green;"></i>',
+				callback: () => {
+					let inputElement = document.getElementById("ImportExportInput");
+					inputElement.value = game.settings.get('farchievements', 'achievementdata');
+					document.body.appendChild(inputElement);
+					inputElement.select();
+					document.execCommand('copy');
+					ui.notifications.notify("Farchievements | Achievements copied to clipboard");
+				}
+			},
+	  },
+	},dialogOptions).render(true);
+	}
+	
 	async function deleteAchievement(ID){
-		//console.log("Deleted Achievement" + ID);
-		ui.notifications.notify("Deleted " + ID);
+		console.log("Deleted Achievement: " + ID);
+		//ui.notifications.notify("Deleted " + ID);
 		const data = game.settings.get('farchievements', 'achievementdata').split(';;;');
 		data.splice(ID-1, 1);
 		for(let i = 1; i < data.length -1;i++){
