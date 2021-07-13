@@ -213,7 +213,7 @@ class AchievementSync{
 			name = data.split(":::")[1].split("////")[0];
 			icon = data.split(":::")[1].split("////")[1];
 			if(icon == "icon"){icon = game.settings.get('farchievements', 'standarticon')} //IF STANDARD ICON USE ICON DEFINED IN GAMESETTINGS
-			AudioHelper.play({src: game.settings.get('farchievements', 'achievementStinger'), volume: 0.2, autoplay: true, loop: false}, false);
+			await AudioHelper.play({src: game.settings.get('farchievements', 'achievementStinger'), volume: 0.2, autoplay: true, loop: false}, false);
 			await AchievementSync.sleep(1800);
 			document.getElementsByClassName("AchievementText")[0].innerHTML = '<label class="AchievementTextLabel">'+game.settings.get("farchievements", "achpretext")+'</label>' + name;
 			document.getElementById("AchievementIMG").src = icon;
@@ -235,25 +235,35 @@ class AchievementSync{
 	}
 	static SyncAchievements(){
 		if(game.user.isGM){
+			if(!game.ready) return; //IF GAME IS READY, ELSE CHANGES WOULDN'T BE SAVED
 			//CHECK FOR NEW USERS
 			let clientDataSYNC = game.settings.get('farchievements', 'clientdataSYNC');
-			for(let i = 1; i < game.users.entries.length; i++){
-				if(!clientDataSYNC.includes(game.users.entries[i].id)){ //IF A NEW USER IS DETECTED ADD HIM TO THE SYNC SETTING
-					clientDataSYNC += game.users.entries[i].id + ":||"
-					ui.notifications.notify("Foundry Achievements | Added "+game.users.entries[i].name+" with ID: " + game.users.entries[i].id);
+			if(clientDataSYNC == ""){ //IF THERE ARE NO USERS YET ALL ALL OF THEM
+				for(let i = 1; i < game.users._source.length; i++){
+					clientDataSYNC += game.users._source[i]._id + ":||"
+					console.log("Foundry Achievements | Added "+game.users._source[i].name+" with ID: " + game.users._source[i]._id);
 				}
 			}
-			//CHECK FOR REDUNDANT USERS AND REMOVE THEM
-			let userID;
-			let ToSYNC = clientDataSYNC.split('||');
-			for(let i = 1; clientDataSYNC.split('||').length > game.users.entries.length; i++){
-				userID = clientDataSYNC.split('||')[i].split(":")[0];
-				if(game.users.find(user => user.id == userID) == null){ //IF A NEW USER IS DETECTED ADD HIM TO THE SYNC SETTING
-					ToSYNC.pop(i);
-					clientDataSYNC = ToSYNC.join("||") + "||";
-					//console.log(clientDataSYNC);
-					if(userID != "")
-					ui.notifications.notify("Foundry Achievements | Purged Player with ID: " + userID);
+			else{
+				for(let i = 1; i < game.users._source.length; i++){
+					if(!clientDataSYNC.includes(game.users._source[i]._id)){ //IF A NEW USER IS DETECTED ADD HIM TO THE SYNC SETTING
+						clientDataSYNC += game.users._source[i]._id + ":||"
+						//ui.notifications.notify("Foundry Achievements | Added "+game.users._source[i].name+" with ID: " + game.users._source[i]._id);
+						console.log("Foundry Achievements | Added "+game.users._source[i].name+" with ID: " + game.users._source[i]._id);
+					}
+				}
+				//CHECK FOR REDUNDANT USERS AND REMOVE THEM
+				let userID;
+				let ToSYNC = clientDataSYNC.split('||');
+				for(let i = 1; clientDataSYNC.split('||').length > game.users._source.length; i++){
+					userID = clientDataSYNC.split('||')[i].split(":")[0];
+					if(game.users.find(user => user.id == userID) == null){ //IF A NEW USER IS DETECTED ADD HIM TO THE SYNC SETTING
+						ToSYNC.pop(i);
+						clientDataSYNC = ToSYNC.join("||") + "||";
+						//console.log(clientDataSYNC);
+						if(userID != "")
+						ui.notifications.notify("Foundry Achievements | Player ID's Changed, purged Player with ID: " + userID);
+					}
 				}
 			}
 			game.settings.set('farchievements', 'clientdataSYNC', clientDataSYNC);
@@ -274,6 +284,7 @@ class AchievementSync{
 				let achievementnumber = 0;
 				let amountGained = 0;
 				let achievementsGainedList = "";
+				if(mySYNCSettings == "") return;
 				for(let i = 0; i < mySYNCSettings.split(':')[1].split(',').length; i++){
 					achievementnumber = mySYNCSettings.split(':')[1].split(',')[i];
 					if(mySYNCSettings.split(':')[1].split(',')[i] != ""){
@@ -303,15 +314,17 @@ Hooks.on('renderSceneNavigation', function() {
 	
 });
 
+
 Hooks.on('renderSceneDirectory', function() {
 	//ADD BUTTON TO SETTINGS
 	if(document.getElementById("SettingsAchievementsButton") == null){
 		$('#settings-game').append('<button id="SettingsAchievementsButton" data-action="Achievements"><i class="fas fa-medal achievements-button"></i>Achievements</button>');
 		let AchievementsButton = document.getElementById("SettingsAchievementsButton");
+		if(AchievementsButton != null)
 		AchievementsButton.onclick = Achievements.initializeAchievements;
 	}
 	function refreshData(){
-		let x = 0.1;  // 5 Seconds
+		let x = 0.1;  // 0.1 seconds
 		// Do your thing here
 		//ui.notifications.notify("Test");
 		if(document.getElementsByClassName("context-items")[0] != null){
@@ -328,7 +341,20 @@ Hooks.on('renderSceneDirectory', function() {
 	
 		setTimeout(refreshData, x*1000);
 	}
+	if(game.user.isGM){
+		function WaitForReady(){
+			let x = 0.1;  // 0.1 seconds
+			// Do your thing here
+			if(game.ready == true){
+				AchievementSync.SyncAchievements();
+			}
+			else
+			setTimeout(WaitForReady, x*1000);
+		}
+		WaitForReady();
+	}
 	refreshData();
+
 });
 Hooks.on('createChatMessage', function() {
 	AchievementSync.SyncAchievements();
