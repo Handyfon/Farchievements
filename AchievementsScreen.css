@@ -1,4 +1,37 @@
-
+div#AchPlayerNav {
+    display: flex;
+    overflow-y: hidden;
+}
+.PlayerNavButton {
+    max-width: fit-content;
+    border-radius: 8px;
+    padding: 5px;
+    background: #ffeb00;
+    margin-right: 5px;
+    border: 1px solid #ffeb00;
+    height: 27px;
+}
+.PlayerNavButton:hover {
+    background: #4c4c00;
+    border: 1px solid yellow;
+    color: yellow;
+}
+.hidden{
+	display:none;
+}
+i#SyncAchUnsaved {
+    border-radius: 5px;
+    background: #0a4000d4;
+    border: 2px dashed lime;
+    transition: 0.2s;
+    transform: scale(1.2);
+}
+i#SyncAchUnsaved:hover {
+    border-radius: 5px;
+    background: #28ff0085;
+    border: 2px dashed #004200;
+    color: #002500;
+}
 p.AchDescription {
     text-align: center;
     border: 1px groove #000000;
@@ -94,6 +127,7 @@ i.fas.fa-sync.achievementsettings {
     bottom: 0px;
     position: absolute;
     height: 100;
+    z-index: 20;
     width: 60px;
     text-align-last: center;
 }
@@ -118,6 +152,7 @@ p.AchName {
     text-align-last: center;
     background: #655f00;
     color: #f7ff9e;
+    border: 1px solid;
     padding: 0;
     margin: 0;
     text-align: center;
@@ -211,6 +246,8 @@ i.fas.fa-file-export.achievementImportExport {
 }
 .playerHas {
     background: #568255;
+    border-radius: 0;
+    border-color: white;
 }
 i.fas.fa-trash-alt {
     margin-top: 3px;

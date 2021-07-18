@@ -34,6 +34,14 @@ Hooks.once('init', function() {
         default: "Your Achievements",
         type: String,
     });
+	game.settings.register('farchievements', 'PlayerBackColor', {
+        name: 'Player Background Color',
+        hint: 'Uses player color as background colorsheme for the Achievmentscreen',
+        scope: 'world',
+        config: true,
+        default: true,
+        type: Boolean,
+    });
 	game.settings.register('farchievements', 'HideUnknown', {
         name: 'Hide Unknown Achievements',
         hint: 'Completely hide Unknown Achievements from your players',
@@ -50,6 +58,14 @@ Hooks.once('init', function() {
         default: "Unknown Achievement",
         type: String,
     });
+	game.settings.register('farchievements', 'AlwaysShowName', {
+        name: 'Always show name',
+        hint: 'Always displays the name of the achievement',
+        scope: 'world',
+        config: true,
+        default: false,
+        type: Boolean,
+    });
 	game.settings.register('farchievements', 'UnknownDes', {
         name: 'Unknown Description',
         hint: 'Standard description of unknown Achievement (leave empty to disable)',
@@ -57,6 +73,14 @@ Hooks.once('init', function() {
         config: true,
         default: "",
         type: String,
+    });
+	game.settings.register('farchievements', 'AlwaysShowDes', {
+        name: 'Always show description',
+        hint: 'Always displays the description of the achievement',
+        scope: 'world',
+        config: true,
+        default: false,
+        type: Boolean,
     });
 	game.settings.register('farchievements', 'DescriptionOnHover', {
         name: 'Description on Hover',
@@ -266,28 +290,28 @@ class AchievementSync{
 			if(!game.ready) return; //IF GAME IS READY, ELSE CHANGES WOULDN'T BE SAVED
 			//CHECK FOR NEW USERS
 			let clientDataSYNC = game.settings.get('farchievements', 'clientdataSYNC');
-			if(clientDataSYNC == ""){ //IF THERE ARE NO USERS YET ALL ALL OF THEM
-				for(let i = 1; i < game.users._source.length; i++){
-					clientDataSYNC += game.users._source[i]._id + ":||"
-					console.log("Foundry Achievements | Added "+game.users._source[i].name+" with ID: " + game.users._source[i]._id);
+			if(clientDataSYNC == ""){ //IF THERE ARE NO USERS YET ADD ALL OF THEM
+				for(let i = 0; i < game.users.players.length; i++){
+					clientDataSYNC += game.users.players[i].id + ":||"
+					console.log("Foundry Achievements | Added "+game.users.players[i].name+" with ID: " + game.users.players[i].id);
 				}
 			}
 			else{
-				for(let i = 0; i < game.users._source.length; i++){
-					if(!clientDataSYNC.includes(game.users._source[i]._id)){ //IF A NEW USER IS DETECTED ADD HIM TO THE SYNC SETTING
-						clientDataSYNC += game.users._source[i]._id + ":||"
-						//ui.notifications.notify("Foundry Achievements | Added "+game.users._source[i].name+" with ID: " + game.users._source[i]._id);
-						console.log("Foundry Achievements | Added "+game.users._source[i].name+" with ID: " + game.users._source[i]._id);
+				for(let i = 0; i < game.users.players.length; i++){
+					if(!clientDataSYNC.includes(game.users.players[i].id)){ //IF A NEW USER IS DETECTED ADD HIM TO THE SYNC SETTING
+						clientDataSYNC += game.users.players[i].id + ":||"
+						//ui.notifications.notify("Foundry Achievements | Added "+game.users.players[i].name+" with ID: " + game.users.players[i].id);
+						console.log("Foundry Achievements | Added "+game.users.players[i].name+" with ID: " + game.users.players[i].id);
 					}
 				}
 				//CHECK FOR REDUNDANT USERS AND REMOVE THEM
 				let userID;
 				let ToSYNC = clientDataSYNC.split('||');
-				if(game.users._source.length == 1){
+				if(game.users.players.length == 1){
 					//ui.notifications.notify("Farchievements | you need to create some players in order to use this module");
 					return;
 				}
-				for(let i = 0; i < clientDataSYNC.split('||').length; i++){//SKIP GM
+				for(let i = 0; i < clientDataSYNC.split('||').length; i++){
 					userID = clientDataSYNC.split('||')[i].split(":")[0];
 					if(game.users.get(userID) == null){ //IF A NEW USER IS DETECTED ADD HIM TO THE SYNC SETTING
 						//ToSYNC.pop(i);
@@ -305,6 +329,7 @@ class AchievementSync{
 			let myID = game.user.id;
 			let SYNCSETTINGS = game.settings.get('farchievements', 'clientdataSYNC');
 			let mysettings = game.settings.get('farchievements', 'clientdata');
+			if(mysettings == "") mysettings = ":"; //hotfix by XLilCasper#9701
 			let mySYNCSettings = "";
 			for(let i = 0; i < game.settings.get('farchievements', 'clientdataSYNC').split("||").length; i++)//FOR EVERY ENTRY IN CLIENTDATASYNC
 			{
@@ -365,7 +390,7 @@ Hooks.on('renderSettings', function() {
 			if(document.getElementById("contextAchievement") == null){
 				let id = document.getElementsByClassName("context-items")[0].closest('.player').getAttribute("data-user-id");
 				if(id != game.user.id && game.user.isGM){//You can't open your own achievements
-					document.getElementsByClassName("context-items")[0].innerHTML+='<li class="context-item" id="contextAchievement"><i class="fas fa-medal"></i> View Achievements</li>'
+					$(".context-items").append('<li class="context-item" id="contextAchievement"><i class="fas fa-medal"></i> View Achievements</li>');
 					let AchievmentContextButton = document.getElementById("contextAchievement");
 					game.settings.set('farchievements', 'loadSettingsForPlayer', id);
 					AchievmentContextButton.onclick = Achievements.initializeAchievements;
@@ -396,7 +421,6 @@ Hooks.on("createChatMessage", async function (message){
 	AchievementSync.SyncAchievements();
 if(message.data.content.includes("Farchievements-SyncRequest")){
 	if(!game.user.isGM)return;
-	
 	let NAME = message.data.content.split("|")[1];
 	let ACHIEVMENTNAME = message.data.content.split("|")[2];
 	//==========================================
@@ -415,7 +439,7 @@ if(message.data.content.includes("Farchievements-SyncRequest")){
 	PID = dataArray.indexOf(dataArray.filter(entry => entry.includes(Player.id))[0]);
 	achievementID = achData.filter(entry => entry.split("////")[0].includes(ACHIEVMENTNAME))[0][0];
 	if(dataArray[PID] == "" || dataArray[PID] == null){ // IF NO DATA YET
-				dataArrayPlayer = game.users._source[PID]._id + ":" + achievementID + ",";
+				dataArrayPlayer = game.users._source[PID].id + ":" + achievementID + ",";
 				dataArray[PID] = dataArrayPlayer;
 				toSYNC = dataArray.join("||");
 				console.log(toSYNC);
@@ -433,10 +457,10 @@ if(message.data.content.includes("Farchievements-SyncRequest")){
 	await game.settings.set('farchievements', 'clientdataSYNC', toSYNC);
 
 	ChatMessage.create({
-		user : game.user._id,
+		user : game.user.id,
 		content: "Achievements Synced",
 		blind: false,
-		whisper : game.users.entities.filter(u => u.isGM).map(u => u._id)
+		whisper : game.users.entities.filter(u => u.isGM).map(u => u.id)
 	});
 	AchievementSync.SyncAchievements();
 }
