@@ -16,8 +16,8 @@ div#AchPlayerNav {
     border: 1px solid yellow;
     color: yellow;
 }
-.hidden{
-	display:none;
+div#AchPlayerNav.hidden {
+    display: none;
 }
 i#SyncAchUnsaved {
     border-radius: 5px;
@@ -128,6 +128,7 @@ i.fas.fa-sync.achievementsettings {
     position: absolute;
     height: 100;
     z-index: 20;
+    transition: 0.2s;
     width: 60px;
     text-align-last: center;
 }

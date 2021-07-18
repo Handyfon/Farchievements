@@ -49,7 +49,7 @@
 		if(game.settings.get('farchievements', 'loadSettingsForPlayer') != ""){
 			playerIDToLoadFrom = game.settings.get('farchievements', 'loadSettingsForPlayer');
 			//ui.notifications.notify("loading achievements for player with ID: " + playerIDToLoadFrom);
-			console.log("loading achievements for player with ID: " + playerIDToLoadFrom);
+			//console.log("loading achievements for player with ID: " + playerIDToLoadFrom);
 			game.settings.set('farchievements', 'loadSettingsForPlayer', "")
 			let mySYNCSettings = "";
 			for(let i = 0; i < game.settings.get('farchievements', 'clientdataSYNC').split("||").length; i++)//FOR EVERY ENTRY IN CLIENTDATASYNC
@@ -86,7 +86,7 @@
 				if(r <= 150) r = 150;
 				if(g <= 150) g = 150;
 				if(b <= 150) b = 150;
-				console.log(""+r+b+g);
+				//console.log(""+r+b+g);
 				var luma = 0.2126 * r + 0.7152 * g + 0.0722 * b; // per ITU-R BT.709
 				let newHexColor = c;
 				//console.log(luma);
@@ -163,6 +163,7 @@
 	loadAchievements();
 	async function loadAchievementsEditMode(){
 	console.log("Edit Mode");
+		document.getElementById('CustomAchievmentBackgroundStyling').innerHTML = "";
 		document.getElementById('AchievementList').innerHTML = "";
 		document.getElementById('CustomAchievmentStyling').innerHTML ="";
 		let dataArray = game.settings.get('farchievements', 'clientdataSYNC').split("||"); //DATA TO ARRAY
@@ -225,10 +226,6 @@
 		let dataArray = clientdataSYNC.split("||"); //DATA TO ARRAY
 		let dataArrayPlayer; //DATA TO ARRAY
 		let toSYNC;
-		if(document.getElementById('SyncAch') != null){
-			document.getElementById('SyncAch').value = toSYNC;
-			document.getElementById('SyncAch').id = "SyncAchUnsaved";
-		}
 		
 		if(dataArray[cleanPlayerID] == "" || dataArray[cleanPlayerID] == null){ // IF NO DATA YET
 			dataArrayPlayer = game.users._source[cleanPlayerID]._id + ":" + achievementID + ",";
@@ -274,13 +271,17 @@
 			toSYNC = dataArray.join("||");
 			console.log(toSYNC);
 		}
-					
 		if(document.getElementById('SyncAchUnsaved') != null){
 			if(document.getElementById('SyncAchUnsaved').value == toSYNC){
 				document.getElementById('SyncAchUnsaved').id = "SyncAch";
 				document.getElementById('SyncAch').value = "";
 			}
 		}
+		if(document.getElementById('SyncAch') != null){
+			document.getElementById('SyncAch').value = toSYNC;
+			document.getElementById('SyncAch').id = "SyncAchUnsaved";
+		}
+
 		await game.settings.set('farchievements', 'clientdataSYNC', toSYNC);
 		
 		console.log("Setting Achievement: " + achievementname + "(ID:"+ achievementID + ")" + " for user: " + playerName); //TODO ACTUALLY ADD THE ACHIEVEMENT

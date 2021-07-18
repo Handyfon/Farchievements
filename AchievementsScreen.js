@@ -289,6 +289,9 @@ class AchievementSync{
 		if(game.user.isGM){
 			if(!game.ready) return; //IF GAME IS READY, ELSE CHANGES WOULDN'T BE SAVED
 			//CHECK FOR NEW USERS
+			if(document.getElementById('SyncAchUnsaved') != null){
+				document.getElementById('SyncAchUnsaved').id = "SyncAch";
+			}
 			let clientDataSYNC = game.settings.get('farchievements', 'clientdataSYNC');
 			if(clientDataSYNC == ""){ //IF THERE ARE NO USERS YET ADD ALL OF THEM
 				for(let i = 0; i < game.users.players.length; i++){
