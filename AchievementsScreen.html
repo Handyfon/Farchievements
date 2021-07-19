@@ -379,7 +379,7 @@
 		console.log("Deleted Achievement: " + ID);
 		//ui.notifications.notify("Deleted " + ID);
 		const data = game.settings.get('farchievements', 'achievementdata').split(';;;');
-		data.splice(ID-1, 1);
+		data.splice(ID, 1);
 		for(let i = 1; i < data.length -1;i++){
 			const stringarray = data[i].split(':::');
 			stringarray[0] = i+1;
