@@ -425,29 +425,29 @@
 		//console.log("Updating " + ID);
 		const data = game.settings.get('farchievements', 'achievementdata').split(';;;');
 		if(updateArt === 1){//NAME
-				let stringarray = data[ID-1].split(':::');
+				let stringarray = data[ID].split(':::');
 				stringarray[1].split('////')[0] = document.getElementById('achievementname'+ID).value;
 				let arrayvalue = stringarray[1].split('////');
 				arrayvalue[0] = document.getElementById('achievementname'+ID).value;
 				stringarray[1] = arrayvalue.join('////');
-				data[ID-1] = stringarray.join(':::');
+				data[ID] = stringarray.join(':::');
 		}
 		if(updateArt === 2){//ICON
-				const stringarray = data[ID-1].split(':::');
+				const stringarray = data[ID].split(':::');
 				let arrayvalue = stringarray[1].split('////');
 				arrayvalue[1] = document.getElementById('achievementimg'+ID).value;
 				stringarray[1].split('////')[1] = document.getElementById('achievementimg'+ID).value;
 				stringarray[1] = arrayvalue.join('////');
-				data[ID-1] = stringarray.join(':::');
+				data[ID] = stringarray.join(':::');
 				document.getElementById("EditIcon"+ID).src = document.getElementById('achievementimg'+ID).value;
 		}
 		if(updateArt === 3){//Description
-				let stringarray = data[ID-1].split(':::');
+				let stringarray = data[ID].split(':::');
 				stringarray[1].split('////')[0] = document.getElementById('achievementdes'+ID).value;
 				let arrayvalue = stringarray[1].split('////');
 				arrayvalue[2] = document.getElementById('achievementdes'+ID).value;
 				stringarray[1] = arrayvalue.join('////');
-				data[ID-1] = stringarray.join(':::');
+				data[ID] = stringarray.join(':::');
 		}
 		await game.settings.set('farchievements', 'achievementdata', data.join(';;;'));
 		if(updateArt === 2){
