@@ -176,7 +176,7 @@
 			labels = "";//RESET LABELS FOR EVERY ACHIEVEMENT
 			let playerList = game.users.contents.filter(user => !user.isGM);
 			
-			for(let j = 0; j < playerList.length-1; j++){//J = PLAYER_ID GENERATE CLICKABLE PLAYER LABELS
+			for(let j = 0; j < playerList.length; j++){//J = PLAYER_ID GENERATE CLICKABLE PLAYER LABELS
 				let id = "'"+playerList[j].id+"'";
 				if(dataArray[j] == null){
 					labels += '<label class="AchEnableLabel" id="AchEnableXX'+i+'/'+j+'" onclick="setAchievement('+i+','+id+')">'+playerList[j].name+'</label>';
