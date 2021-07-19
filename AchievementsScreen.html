@@ -126,7 +126,7 @@
 		console.log("Farchievements | There is no achievement yet")
 		return;
 		}
-		for(let i = 1; i <= game.settings.get('farchievements', 'achievementdata').split(";;;").length-1; i++){ //length-1 because array
+		for(let i = 0; i <= game.settings.get('farchievements', 'achievementdata').split(";;;").length-1; i++){ //length-1 because array
 			greyscale = "";//RESET THE GRAYSCALE
 			displayOptions = "" // RESET THE DISPLAYOPTIONS
 			if(data[i].split("////") == "") continue; //GUARD FROM EMPTY ARRAY ELEMENTS
@@ -172,7 +172,7 @@
 		let icon = game.settings.get('farchievements', 'standarticon');
 		let description ="";
 		let labels = '';
-		for(let i = 1; i <= game.settings.get('farchievements', 'achievementdata').split(";;;").length -1; i++){//I = ACHIEVEMENT_ID  // length - 1 because array // starts at 0 because achievement id's start at 1
+		for(let i = 0; i <= game.settings.get('farchievements', 'achievementdata').split(";;;").length -1; i++){//I = ACHIEVEMENT_ID  // length - 1 because array // starts at 0 because achievement id's start at 1
 			labels = "";//RESET LABELS FOR EVERY ACHIEVEMENT
 			let playerList = game.users.contents.filter(user => !user.isGM);
 			
@@ -185,7 +185,7 @@
 				
 				if(dataArray[j].split(":")[1] == null)
 				labels += '<label class="AchEnableLabel" id="AchEnableXX'+i+'/'+j+'" onclick="setAchievement('+i+','+id+')">'+playerList[j].name+'</label>';
-				else if(dataArray[j].split(":")[1].includes(',' + i + ',') || dataArray[j].split(":")[1].split(",")[0] == i ||dataArray[j].split(":")[1].split(",")[dataArray[j].split(":")[1].split(",")[0].length +1] == i)
+				else if(dataArray[j].split(":")[1].includes(',' + i + ',') || dataArray[j].split(":")[1].split(",")[0] == ""+i ||dataArray[j].split(":")[1].split(",")[dataArray[j].split(":")[1].split(",")[0].length +1] == ""+i)
 				labels += '<label class="AchEnableLabel playerHas" id="AchEnableXX'+i+'/'+j+'" onclick="setAchievement('+i+','+id+')">'+playerList[j].name+'</label>';
 				else
 				labels += '<label class="AchEnableLabel" id="AchEnableXX'+i+'/'+j+'" onclick="setAchievement('+i+','+id+')">'+playerList[j].name+'</label>';
@@ -247,14 +247,14 @@
 		}
 		
 		//ADD DATA TO SYNC VARIABLE
-		if(dataArray[cleanPlayerID].split(":")[1].includes(',' + achievementID + ',')){ //DETECT EXISTING ACHIEVEMENT, REMOVE IT
+		if(dataArray[cleanPlayerID].split(":")[1].includes(',' + ""+achievementID + ',')){ //DETECT EXISTING ACHIEVEMENT, REMOVE IT
 			let toReplace = achievementID+",";//REPLACE FROM WITHIN DATA
 			dataArrayPlayer = dataArray[cleanPlayerID].split(":")[0] + ":" + dataArray[cleanPlayerID].split(":")[1].replace(toReplace, "");
 			dataArray[cleanPlayerID] = dataArrayPlayer;
 			toSYNC = dataArray.join("||");
 			//console.log(toSYNC);
 		}
-		else if(dataArray[cleanPlayerID].split(":")[1].split(",")[0] == achievementID){ //FIRST ACHIEVEMENT IN DATA?
+		else if(dataArray[cleanPlayerID].split(":")[1].split(",")[0] == ""+achievementID){ //FIRST ACHIEVEMENT IN DATA?
 			let toReplace = achievementID+",";//REPLACE FIRST ENTRY IN DATA
 			var firstDataArray = dataArray[cleanPlayerID].split(":")[1].split(",");
 			firstDataArray.shift();
@@ -262,7 +262,7 @@
 			toSYNC = dataArray.join("||");
 			//console.log(toSYNC);
 		}
-		else if(dataArray[cleanPlayerID].split(":")[1].split(",")[dataArray[cleanPlayerID].split(":")[1].split(",")[0].length +1] == achievementID){ //LAST ACHIEVEMENT IN DATA?
+		else if(dataArray[cleanPlayerID].split(":")[1].split(",")[dataArray[cleanPlayerID].split(":")[1].split(",")[0].length +1] == ""+achievementID){ //LAST ACHIEVEMENT IN DATA?
 			let toReplace = achievementID+",";//REPLACE FIRST ENTRY IN DATA
 			var firstDataArray = dataArray[cleanPlayerID].split(":")[1].split(",");
 			firstDataArray.pop();
