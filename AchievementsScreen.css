@@ -1,3 +1,7 @@
+#chat-controls .chat-control-icon {/*FIX CHAT CONTROL BAR*/
+    flex: 0;
+    flex-basis: auto;
+}
 div#AchPlayerNav {
     display: flex;
     overflow-y: hidden;
@@ -49,7 +53,6 @@ p.AchDescription {
     padding: 5px;
 }
 label.AchievmentButtonLabel {
-    position: absolute;
     margin-top: -25px;
 }/*
 .grid-item.draggable:hover {

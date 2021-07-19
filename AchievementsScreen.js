@@ -294,23 +294,25 @@ class AchievementSync{
 			}
 			let clientDataSYNC = game.settings.get('farchievements', 'clientdataSYNC');
 			if(clientDataSYNC == ""){ //IF THERE ARE NO USERS YET ADD ALL OF THEM
-				for(let i = 0; i < game.users.players.length; i++){
-					clientDataSYNC += game.users.players[i].id + ":||"
-					console.log("Foundry Achievements | Added "+game.users.players[i].name+" with ID: " + game.users.players[i].id);
+				for(let i = 0; i < game.users.contents.length; i++){
+					if(game.users.contents[i].isGM) continue;
+					clientDataSYNC += game.users.contents[i].id + ":||"
+					console.log("Foundry Achievements | Added "+game.users.contents[i].name+" with ID: " + game.users.contents[i].id);
 				}
 			}
 			else{
-				for(let i = 0; i < game.users.players.length; i++){
-					if(!clientDataSYNC.includes(game.users.players[i].id)){ //IF A NEW USER IS DETECTED ADD HIM TO THE SYNC SETTING
-						clientDataSYNC += game.users.players[i].id + ":||"
-						//ui.notifications.notify("Foundry Achievements | Added "+game.users.players[i].name+" with ID: " + game.users.players[i].id);
-						console.log("Foundry Achievements | Added "+game.users.players[i].name+" with ID: " + game.users.players[i].id);
+				for(let i = 0; i < game.users.contents.length; i++){
+					if(game.users.contents[i].isGM) continue;
+					if(!clientDataSYNC.includes(game.users.contents[i].id)){ //IF A NEW USER IS DETECTED ADD HIM TO THE SYNC SETTING
+						clientDataSYNC += game.users.contents[i].id + ":||"
+						//ui.notifications.notify("Foundry Achievements | Added "+game.users.contents[i].name+" with ID: " + game.users.contents[i].id);
+						console.log("Foundry Achievements | Added "+game.users.contents[i].name+" with ID: " + game.users.contents[i].id);
 					}
 				}
 				//CHECK FOR REDUNDANT USERS AND REMOVE THEM
 				let userID;
 				let ToSYNC = clientDataSYNC.split('||');
-				if(game.users.players.length == 1){
+				if(game.users.contents.length == 1){
 					//ui.notifications.notify("Farchievements | you need to create some players in order to use this module");
 					return;
 				}

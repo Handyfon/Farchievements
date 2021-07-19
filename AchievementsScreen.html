@@ -11,6 +11,7 @@
 	}
 	function loadAchievements(){
 		//let playerIDToLoadFrom = "";
+		console.log("Test");
 		document.getElementById('CustomAchievmentBackgroundStyling').innerHTML = '<style>.achievementsscreen-window .window-content{background: #232323;}</style>';
 		if(game.user.isGM){//LOAD NAVIGATION BUTTONS
 		document.getElementById("AchPlayerNav").innerHTML = "";
@@ -125,15 +126,15 @@
 		console.log("Farchievements | There is no achievement yet")
 		return;
 		}
-		for(let i = 1; i <= game.settings.get('farchievements', 'achievementdata').split(";;;").length-1; i++){
+		for(let i = 1; i <= game.settings.get('farchievements', 'achievementdata').split(";;;").length-1; i++){ //length-1 because array
 			greyscale = "";//RESET THE GRAYSCALE
 			displayOptions = "" // RESET THE DISPLAYOPTIONS
-			if(data[i-1].split("////") == "") continue; //GUARD FROM EMPTY ARRAY ELEMENTS
-			name = data[i-1].split("////")[0].split(":::")[1];
-			if(data[i-1].split("////")[1] != "icon"){icon = icon = data[i-1].split("////")[1]}else{icon = game.settings.get('farchievements', 'standarticon')} //IF STANDARD ICON USE ICON DEFINED IN GAMESETTINGS
-			description = data[i-1].split("////")[2].split(";;;")[0];
+			if(data[i].split("////") == "") continue; //GUARD FROM EMPTY ARRAY ELEMENTS
+			name = data[i].split("////")[0].split(":::")[1];
+			if(data[i].split("////")[1] != "icon"){icon = icon = data[i].split("////")[1]}else{icon = game.settings.get('farchievements', 'standarticon')} //IF STANDARD ICON USE ICON DEFINED IN GAMESETTINGS
+			description = data[i].split("////")[2].split(";;;")[0];
 			if(!game.user.isGM || playerIDToLoadFrom != ""){
-				if(game.settings.get('farchievements', 'clientdata').toString().split(":")[1].includes("," + i + ",") || game.settings.get('farchievements', 'clientdata').toString().split(":")[1].split(",")[0] == i || game.settings.get('farchievements', 'clientdata').toString().split(":")[1].split(",")[game.settings.get('farchievements', 'clientdata').toString().split(":")[1].split(",").length-2] == i ){ //added game.settings.get('farchievements', 'clientdata').toString().length > 0 && as suggested by XLilCasper#9701
+				if(game.settings.get('farchievements', 'clientdata').toString().split(":")[1].includes("," + i + ",") || game.settings.get('farchievements', 'clientdata').toString().split(":")[1].split(",")[0] == ""+i || game.settings.get('farchievements', 'clientdata').toString().split(":")[1].split(",")[game.settings.get('farchievements', 'clientdata').toString().split(":")[1].split(",").length-2] == i ){ //added game.settings.get('farchievements', 'clientdata').toString().length > 0 && as suggested by XLilCasper#9701
 					//ui.notifications.notify("User has access to " + i);
 				}
 				else{//user doesn't have access to		
@@ -171,29 +172,30 @@
 		let icon = game.settings.get('farchievements', 'standarticon');
 		let description ="";
 		let labels = '';
-		let cleanedPlayer;
-		for(let i = 1; i <= game.settings.get('farchievements', 'achievementdata').split(";;;").length - 1; i++){//I = ACHIEVEMENT_ID  // length - 1 because array
+		for(let i = 1; i <= game.settings.get('farchievements', 'achievementdata').split(";;;").length -1; i++){//I = ACHIEVEMENT_ID  // length - 1 because array // starts at 0 because achievement id's start at 1
 			labels = "";//RESET LABELS FOR EVERY ACHIEVEMENT
-			for(let j = 1; j < game.users._source.length; j++){//J = PLAYER_ID GENERATE CLICKABLE PLAYER LABELS
-			    cleanedPlayer = j-1;
-				if(dataArray[cleanedPlayer] == null){
-					labels += '<label class="AchEnableLabel" id="AchEnableXX'+i+'/'+j+'" onclick="setAchievement('+i+','+j+')">'+game.users._source[j].name+'</label>';
+			let playerList = game.users.contents.filter(user => !user.isGM);
+			
+			for(let j = 0; j < playerList.length-1; j++){//J = PLAYER_ID GENERATE CLICKABLE PLAYER LABELS
+				let id = "'"+playerList[j].id+"'";
+				if(dataArray[j] == null){
+					labels += '<label class="AchEnableLabel" id="AchEnableXX'+i+'/'+j+'" onclick="setAchievement('+i+','+id+')">'+playerList[j].name+'</label>';
 					continue;
 				}
 				
-				if(dataArray[cleanedPlayer].split(":")[1] == null)
-				labels += '<label class="AchEnableLabel" id="AchEnableXX'+i+'/'+j+'" onclick="setAchievement('+i+','+j+')">'+game.users._source[j].name+'</label>';
-				else if(dataArray[cleanedPlayer].split(":")[1].includes(',' + i + ',') || dataArray[cleanedPlayer].split(":")[1].split(",")[0] == i ||dataArray[cleanedPlayer].split(":")[1].split(",")[dataArray[cleanedPlayer].split(":")[1].split(",")[0].length +1] == i)
-				labels += '<label class="AchEnableLabel playerHas" id="AchEnableXX'+i+'/'+j+'" onclick="setAchievement('+i+','+j+')">'+game.users._source[j].name+'</label>';
+				if(dataArray[j].split(":")[1] == null)
+				labels += '<label class="AchEnableLabel" id="AchEnableXX'+i+'/'+j+'" onclick="setAchievement('+i+','+id+')">'+playerList[j].name+'</label>';
+				else if(dataArray[j].split(":")[1].includes(',' + i + ',') || dataArray[j].split(":")[1].split(",")[0] == i ||dataArray[j].split(":")[1].split(",")[dataArray[j].split(":")[1].split(",")[0].length +1] == i)
+				labels += '<label class="AchEnableLabel playerHas" id="AchEnableXX'+i+'/'+j+'" onclick="setAchievement('+i+','+id+')">'+playerList[j].name+'</label>';
 				else
-				labels += '<label class="AchEnableLabel" id="AchEnableXX'+i+'/'+j+'" onclick="setAchievement('+i+','+j+')">'+game.users._source[j].name+'</label>';
+				labels += '<label class="AchEnableLabel" id="AchEnableXX'+i+'/'+j+'" onclick="setAchievement('+i+','+id+')">'+playerList[j].name+'</label>';
 			}
 			const data = game.settings.get('farchievements', 'achievementdata').split(';;;');
-			if(data[i-1].split("////") == "") continue; //GUARD FROM EMPTY ARRAY ELEMENTS
-			let ID = data[i-1].split(':::')[0];
-			name = data[i-1].split("////")[0].split(":::")[1];
-			if(data[i-1].split("////")[1] != "icon"){icon = icon = data[i-1].split("////")[1]}else{icon = game.settings.get('farchievements', 'standarticon')} //IF STANDARD ICON USE ICON DEFINED IN GAMESETTINGS
-			description = data[i-1].split("////")[2].split(";")[0];
+			if(data[i].split("////") == "") continue; //GUARD FROM EMPTY ARRAY ELEMENTS
+			let ID = data[i].split(':::')[0];
+			name = data[i].split("////")[0].split(":::")[1];
+			if(data[i].split("////")[1] != "icon"){icon = icon = data[i].split("////")[1]}else{icon = game.settings.get('farchievements', 'standarticon')} //IF STANDARD ICON USE ICON DEFINED IN GAMESETTINGS
+			description = data[i].split("////")[2].split(";")[0];
 			let AchievementIconHTML = '<img class="EditModeIcon" id="EditIcon'+i+'" src="'+icon+'" onclick="setAchievementImg('+i+')"></img>';
 			document.getElementById('AchievementList').innerHTML += '<div id="Achievement-'+i+'" class="grid-item"><div class="achievementtools"><button class="deleteAchievement" type="button" onclick="deleteAchievement('+i+')"><i class="fas fa-trash-alt"></i></button></div><div><input class="AchInputName" maxlength="40" type="text" id="achievementname'+i+'" onchange="updateAchievement(1, '+i+')" value="'+name+'"></div><div style="flex;display: inline-flex;">'+AchievementIconHTML+'<div style="width: 50%;overflow-y: scroll;height: 76px;">'+labels+'</div></div><div><input class="AchInputImg" type="text" id="achievementimg'+i+'" onchange="updateAchievement(2, '+i+')" value="'+icon+'"></div><div><textarea input class="AchInputDes" type="text" id="achievementdes'+i+'" cols="40" rows="5" onchange="updateAchievement(3, '+i+')">'+description+'</textarea></div></div>';
 			document.getElementById('AchievementList').style.setProperty("transform", "scale(1) !important;");
@@ -220,15 +222,18 @@
 
 	async function setAchievement(achievementID, PID){
 		let achievementname = document.getElementById("achievementname"+achievementID).value;
-		let cleanPlayerID = PID - 1;
-		let playerName = game.users._source[PID].name;
+		let cleanPlayerID = game.users.contents.indexOf(game.users.get(PID))-1;
+		let player = game.users.get(PID);
+		console.log("Player id: "+ PID);
+		console.log(player.name);
+		let playerName = player.name;
 		let clientdataSYNC = game.settings.get('farchievements', 'clientdataSYNC'); //GET DATA
 		let dataArray = clientdataSYNC.split("||"); //DATA TO ARRAY
 		let dataArrayPlayer; //DATA TO ARRAY
 		let toSYNC;
 		
 		if(dataArray[cleanPlayerID] == "" || dataArray[cleanPlayerID] == null){ // IF NO DATA YET
-			dataArrayPlayer = game.users._source[cleanPlayerID]._id + ":" + achievementID + ",";
+			dataArrayPlayer = game.users.contents[cleanPlayerID]._id + ":" + achievementID + ",";
 			dataArray[cleanPlayerID] = dataArrayPlayer;
 			toSYNC = dataArray.join("||");
 			console.log(toSYNC);
