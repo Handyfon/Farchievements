@@ -2,6 +2,19 @@
     flex: 0;
     flex-basis: auto;
 }
+label.AchSwitch {
+    display: flex;
+    align-items: center;
+    position: absolute;
+    top: 2px;
+    right: 133px;
+    color: white;
+    border: 1px solid;
+    padding-left: 5px;
+    border-radius: 3px;
+    height: 26px;
+    background: black;
+}
 div#AchPlayerNav {
     display: flex;
     overflow-y: hidden;
@@ -35,6 +48,25 @@ i#SyncAchUnsaved:hover {
     background: #28ff0085;
     border: 2px dashed #004200;
     color: #002500;
+}
+i#SyncAch2 {
+    border-radius: 5px;
+    background: #0a4000d4;
+    border: 2px dashed lime;
+    transition: 0.2s;
+    transform: scale(1.2);
+	position: absolute;
+    bottom: 20px;
+    left: 20px;
+}
+i#SyncAch2:hover {
+    border-radius: 5px;
+    background: #28ff0085;
+    border: 2px dashed #004200;
+    color: #002500;
+	position: absolute;
+    bottom: 20px;
+    left: 20px;
 }
 p.AchDescription {
     text-align: center;

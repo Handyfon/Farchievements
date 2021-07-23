@@ -17,6 +17,14 @@ Hooks.once('init', function() {
         default: true,
         type: Boolean,
     });
+	game.settings.register('farchievements', 'OmniView', {
+        name: 'OmniView',
+        hint: 'OmniView',
+        scope: 'world',
+        config: true,
+        default: false,
+        type: Boolean,
+    });
 	game.settings.register('farchievements', 'GameSettingsButton', {
         name: 'Game Settings-Button',
         hint: 'Enable the button within the Game Settings tab',
@@ -253,6 +261,7 @@ class AchievementSync{
 	  return new Promise(resolve => setTimeout(resolve, ms));
 	}
 	static async PlayAnimation(achievementsGainedList, amount){
+	
 		let achievementsToGain = achievementsGainedList.split(",");
 		let data;
 		let name,icon;
@@ -261,7 +270,7 @@ class AchievementSync{
 			await AchievementSync.sleep(100);
 			toGain = achievementsToGain[i];
 			if(toGain == "") return;
-			data = game.settings.get('farchievements', 'achievementdata').split(';;;')[toGain-1];
+			data = game.settings.get('farchievements', 'achievementdata').split(';;;')[toGain];
 			name = data.split(":::")[1].split("////")[0];
 			icon = data.split(":::")[1].split("////")[1];
 			if(icon == "icon"){icon = game.settings.get('farchievements', 'standarticon')} //IF STANDARD ICON USE ICON DEFINED IN GAMESETTINGS

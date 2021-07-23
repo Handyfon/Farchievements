@@ -1,17 +1,35 @@
 <!DOCTYPE html>
 <html id="AchievementsScreen">
+<div class="OmniView" id="hiddenforuser3">
+	<label class="AchSwitch" style="display: flex;align-items: center;" onclick="toggleOmniView()">
+		See Everything<input id="AchSwitchInput" type="checkbox"style="align-items: center;">
+	</label>
+</div>
 <div class="Achievementssettings" id="hiddenforuser" style="text-align: -webkit-right; z-index:1;"><i class="fas fa-cogs achievementsettings" onclick="enterEditMode()"></i></div>
 <div class="Achievementssettings" id="hiddenforuser2" style="text-align: -webkit-right;"><i class="fas fa-file-export achievementImportExport" onclick="openImportExport()"></i></div>
 <head onload="onLoad()">
 <script id="AchievementScript" onclick="loadAchievements()">//ONLOAD SCRIPT
 	document.getElementById('CustomAchievmentBackgroundStyling').innerHTML = '<style>.achievementsscreen-window .window-content{background: #262626;}</style>';
+	//CHECK FOR OMNIVIEW
+	if(game.settings.get('farchievements', 'OmniView')) document.getElementById('AchSwitchInput').checked = true;
+	else document.getElementById('AchSwitchInput').checked = false;
+	
 	function shadeHexColor(color, percent) {
 		var f=parseInt(color.slice(1),16),t=percent<0?0:255,p=percent<0?percent*-1:percent,R=f>>16,G=f>>8&0x00FF,B=f&0x0000FF;
 		return "#"+(0x1000000+(Math.round((t-R)*p)+R)*0x10000+(Math.round((t-G)*p)+G)*0x100+(Math.round((t-B)*p)+B)).toString(16).slice(1);
 	}
+	function toggleOmniView(){
+			if(game.settings.get('farchievements', 'OmniView')) game.settings.set('farchievements', 'OmniView', false);
+			else game.settings.set('farchievements', 'OmniView', true);
+			console.log(game.settings.get('farchievements', 'OmniView'));
+			if(document.getElementById('AchPlayerNav').className == "AchPlayerNav") //CHECK FOR EDITING WITHIN NORMAL WINDOW
+			loadAchievements();
+			else
+			loadAchievementsEditMode();
+	}
 	function loadAchievements(){
-		//let playerIDToLoadFrom = "";
-		console.log("Test");
+		let loadingFromPlayer = false;
+		let playerIDToLoadFrom = ""; //RESET PLAYER ID
 		document.getElementById('CustomAchievmentBackgroundStyling').innerHTML = '<style>.achievementsscreen-window .window-content{background: #232323;}</style>';
 		if(game.user.isGM){//LOAD NAVIGATION BUTTONS
 		document.getElementById("AchPlayerNav").innerHTML = "";
@@ -46,7 +64,6 @@
 			});
 			//'<label id="PlayerNav#" class="PlayerNavButton">Player 2</label>'
 		}
-		let playerIDToLoadFrom = ""; //RESET PLAYER ID
 		if(game.settings.get('farchievements', 'loadSettingsForPlayer') != ""){
 			playerIDToLoadFrom = game.settings.get('farchievements', 'loadSettingsForPlayer');
 			//ui.notifications.notify("loading achievements for player with ID: " + playerIDToLoadFrom);
@@ -75,7 +92,7 @@
 				}
 			game.settings.set('farchievements', 'clientdata', clientDataToSync);
 		}
-		//CHANGE WINDOW TITLE
+		//CHANGE WINDOW TITLE AND COLOR
 		if(playerIDToLoadFrom != "" && game.settings.get('farchievements', 'PlayerBackColor')|| !game.user.isGM && game.settings.get('farchievements', 'PlayerBackColor')){
 				if(!game.user.isGM) playerIDToLoadFrom = game.user.id;
 				document.querySelector('.achievementsscreen-window .window-title').innerText = game.users.find(user => user.id == playerIDToLoadFrom).name + "'s Achievements";
@@ -106,6 +123,7 @@
 			//game.users.find(user => user.id == "T41gRCS1vIdM00bD")
 		if(!game.user.isGM)document.getElementById("hiddenforuser").style = "display:none";
 		if(!game.user.isGM)document.getElementById("hiddenforuser2").style = "display:none";
+		if(!game.user.isGM)document.getElementById("hiddenforuser3").style = "display:none";
 		//console.log("Loading Achievements");
 		//APPLY STYLING
 		document.getElementById('CustomAchievmentStyling').innerHTML ="";
@@ -123,10 +141,10 @@
 		let greyscale = "";
 		let displayOptions = "";
 		if(game.settings.get('farchievements', 'achievementdata').split(";;;").length <= 0){
-		console.log("Farchievements | There is no achievement yet")
+		//console.log("Farchievements | There is no achievement yet")
 		return;
 		}
-		for(let i = 0; i <= game.settings.get('farchievements', 'achievementdata').split(";;;").length-1; i++){ //length-1 because array
+		for(let i = 0; i <= game.settings.get('farchievements', 'achievementdata').split(";;;").length-1; i++){ //length-1 because array //RENDER ACHIEVMENTS
 			greyscale = "";//RESET THE GRAYSCALE
 			displayOptions = "" // RESET THE DISPLAYOPTIONS
 			if(data[i].split("////") == "") continue; //GUARD FROM EMPTY ARRAY ELEMENTS
@@ -139,17 +157,18 @@
 				}
 				else{//user doesn't have access to		
 					//ui.notifications.notify("user doesn't have access to " + i);
-					if(game.settings.get('farchievements', 'HideUnknown'))//IF OPTION IS ENABLED DON'T RENDER ACHIEVEMENT AT ALL FOR THE PLAYER
-					displayOptions = "display:none;"
-					if(!game.settings.get('farchievements', 'AlwaysShowName'))
-						name = game.settings.get('farchievements', 'UnknownName');
+					if(!game.settings.get('farchievements', 'OmniView')){
+						if(game.settings.get('farchievements', 'HideUnknown'))//IF OPTION IS ENABLED DON'T RENDER ACHIEVEMENT AT ALL FOR THE PLAYER
+						displayOptions = "display:none;"
+						if(!game.settings.get('farchievements', 'AlwaysShowName'))
+							name = game.settings.get('farchievements', 'UnknownName');						
+						if(!game.settings.get('farchievements', 'AlwaysShowDes'))
+							description = game.settings.get('farchievements', 'UnknownDes');
+						}
 					if(!game.settings.get('farchievements', 'greyscale'))
 					icon = game.settings.get('farchievements', 'mystery');
 					else
 					greyscale = "filter: grayscale(1) brightness(0.7);"
-				
-					if(!game.settings.get('farchievements', 'AlwaysShowDes'))
-						description = game.settings.get('farchievements', 'UnknownDes');
 				}
 			}
 			let AchName ="";
@@ -157,13 +176,15 @@
 			AchName = '<p class="AchName">'+name+'</p>';
 			else
 			AchName = '<p class="AchName" style="inline-size: fit-content;">'+name+'</p>';
-			document.getElementById('AchievementList').innerHTML += '<div id="Achievement-'+i+'" class="grid-item" style="'+greyscale+displayOptions+'">'+AchName+'<img class="AchIcon" src="'+icon+'"></img><p class="AchDescription">'+description+'</p></div>';
+			let onClickFunction = '';
+			if(playerIDToLoadFrom != "") onClickFunction = 'oncontextmenu="setAchievement('+i+','+'\''+playerIDToLoadFrom+'\')"';
+			document.getElementById('AchievementList').innerHTML += '<div '+onClickFunction+' id="Achievement-'+i+'" class="grid-item" style="'+greyscale+displayOptions+'">'+AchName+'<img class="AchIcon" src="'+icon+'"></img><p class="AchDescription">'+description+'</p></div>';
 		}
 		document.getElementById("AchievementList").style = "grid-template-rows: repeat("+Math.round((game.settings.get('farchievements', 'achievementdata').split(";;;").length-2)/6)+", 1fr);"
 	}
 	loadAchievements();
 	async function loadAchievementsEditMode(){
-	console.log("Edit Mode");
+	//console.log("Edit Mode");
 		document.getElementById('CustomAchievmentBackgroundStyling').innerHTML = "";
 		document.getElementById('AchievementList').innerHTML = "";
 		document.getElementById('CustomAchievmentStyling').innerHTML ="";
@@ -221,11 +242,11 @@
 	}
 
 	async function setAchievement(achievementID, PID){
-		let achievementname = document.getElementById("achievementname"+achievementID).value;
+		//let achievementname = document.getElementById("achievementname"+achievementID).value;
 		let cleanPlayerID = game.users.contents.indexOf(game.users.get(PID))-1;
 		let player = game.users.get(PID);
-		console.log("Player id: "+ PID);
-		console.log(player.name);
+		//console.log("Player id: "+ PID);
+		//console.log(player.name);
 		let playerName = player.name;
 		let clientdataSYNC = game.settings.get('farchievements', 'clientdataSYNC'); //GET DATA
 		let dataArray = clientdataSYNC.split("||"); //DATA TO ARRAY
@@ -236,13 +257,19 @@
 			dataArrayPlayer = game.users.contents[cleanPlayerID]._id + ":" + achievementID + ",";
 			dataArray[cleanPlayerID] = dataArrayPlayer;
 			toSYNC = dataArray.join("||");
-			console.log(toSYNC);
+			//console.log(toSYNC);
 			await game.settings.set('farchievements', 'clientdataSYNC', toSYNC);
 					
-			console.log("Setting Achievement: " + achievementname + "(ID:"+ achievementID + ")" + " for user: " + playerName); //TODO ACTUALLY ADD THE ACHIEVEMENT
+			//console.log("Setting Achievement: " + achievementname + "(ID:"+ achievementID + ")" + " for user: " + playerName); //TODO ACTUALLY ADD THE ACHIEVEMENT
 			//console.log("Achievementdata: " + game.settings.get('farchievements', 'achievementdata'));
+			if(document.getElementById('AchPlayerNav').className == "AchPlayerNav") //CHECK FOR EDITING WITHIN NORMAL WINDOW
+			{
+				await game.settings.set('farchievements', 'loadSettingsForPlayer', PID);
+				$('#achsyncnormalmode').append('<i id="SyncAch2" onclick="SendSyncMessage()" class="fas fa-sync achievementsettings" title="Click to push changes right now"></i>');
+				loadAchievements();
+			}
+			else
 			loadAchievementsEditMode();
-			
 			return;
 		}
 		
@@ -268,13 +295,13 @@
 			firstDataArray.pop();
 			dataArray[cleanPlayerID] = dataArray[cleanPlayerID].split(":")[0] + ":" + firstDataArray;
 			toSYNC = dataArray.join("||");
-			console.log(toSYNC);
+			//console.log(toSYNC);
 		}
 		else{//ELSE ADD IT
 			dataArrayPlayer = dataArray[cleanPlayerID].split(":")[0] + ":" + dataArray[cleanPlayerID].split(":")[1] + achievementID + ",";
 			dataArray[cleanPlayerID] = dataArrayPlayer;
 			toSYNC = dataArray.join("||");
-			console.log(toSYNC);
+			//console.log(toSYNC);
 		}
 		if(document.getElementById('SyncAchUnsaved') != null){
 			if(document.getElementById('SyncAchUnsaved').value == toSYNC){
@@ -289,9 +316,16 @@
 
 		await game.settings.set('farchievements', 'clientdataSYNC', toSYNC);
 		
-		console.log("Setting Achievement: " + achievementname + "(ID:"+ achievementID + ")" + " for user: " + playerName); //TODO ACTUALLY ADD THE ACHIEVEMENT
+		//console.log("Setting Achievement: " + achievementname + "(ID:"+ achievementID + ")" + " for user: " + playerName); //TODO ACTUALLY ADD THE ACHIEVEMENT
 		//console.log("Achievementdata: " + game.settings.get('farchievements', 'achievementdata'));
-		loadAchievementsEditMode();
+			if(document.getElementById('AchPlayerNav').className == "AchPlayerNav") //CHECK FOR EDITING WITHIN NORMAL WINDOW
+			{
+				await game.settings.set('farchievements', 'loadSettingsForPlayer', PID);
+				$('#achsyncnormalmode').append('<i id="SyncAch2" onclick="SendSyncMessage()" class="fas fa-sync achievementsettings" title="Click to push changes right now"></i>');
+				loadAchievements();
+			}
+			else
+			loadAchievementsEditMode();
 	}
 	async function addAchievement(){
 		await game.settings.set('farchievements', 'achamount', parseInt(game.settings.get('farchievements', 'achamount')) +1);
@@ -303,8 +337,8 @@
 		loadAchievementsEditMode();
 	}
 	async function setAchievementImg(id){
-		console.log(id);
-		console.log(document.getElementById("EditIcon"+id));
+		//console.log(id);
+		//console.log(document.getElementById("EditIcon"+id));
 		let icon = document.getElementById("achievementimg"+id).value;
 		let input = document.getElementById("achievementimg"+id);
 		
@@ -376,7 +410,7 @@
 	}
 	
 	async function deleteAchievement(ID){
-		console.log("Deleted Achievement: " + ID);
+		//console.log("Deleted Achievement: " + ID);
 		//ui.notifications.notify("Deleted " + ID);
 		const data = game.settings.get('farchievements', 'achievementdata').split(';;;');
 		data.splice(ID, 1);
@@ -419,6 +453,7 @@
             blind: false,
             whisper : game.users.entities.filter(u => u.isGM).map(u => u._id)
         });
+		if(document.getElementById('achsyncnormalmode').innerHTML != "") document.getElementById('achsyncnormalmode').innerHTML = "";
 	}
 	
 	async function updateAchievement(updateArt, ID){
@@ -464,6 +499,7 @@
 <div id="AchievementList" onSync="loadAchievements()" class="grid-container" style="grid-template-rows: repeat(7, 1fr);" >
 </div>
 <div style="display:none;" class="editmodebar" style="text-align: -webkit-right;"><i class="fas fa-plus-square achievementsettings" onclick="addAchievement()"></i><i id="SyncAch" onclick="SendSyncMessage()" class="fas fa-sync achievementsettings" title="Click to push changes right now"></i></div><!-- <i class="fas fa-minus-square achievementsettings" onclick="removeAchievement()"></i> -->
+<div id="achsyncnormalmode"></div>
 </form>
 <div class="window-resizable-handle"><i class="fas fa-arrows-alt-h"></i></div>
 </html>
