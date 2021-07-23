@@ -157,7 +157,7 @@
 				}
 				else{//user doesn't have access to		
 					//ui.notifications.notify("user doesn't have access to " + i);
-					if(!game.settings.get('farchievements', 'OmniView')){
+					if(!game.settings.get('farchievements', 'OmniView')|| !game.user.isGM){
 						if(game.settings.get('farchievements', 'HideUnknown'))//IF OPTION IS ENABLED DON'T RENDER ACHIEVEMENT AT ALL FOR THE PLAYER
 						displayOptions = "display:none;"
 						if(!game.settings.get('farchievements', 'AlwaysShowName'))
