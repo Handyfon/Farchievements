@@ -2,7 +2,7 @@
 	"name": "farchievements",
 	"title": "Foundry Achievements",
 	"description": "Achievements for FoundryVTT",
-	"version": "1.5.1",
+	"version": "1.6.0",
 	"author": "Handyfon",
 	"esmodules": ["AchievementsScreen.js"],
 	"styles": ["AchievementsScreen.css"],
@@ -11,6 +11,6 @@
     "url": "https://github.com/Handyfon/Farchievements/tree/master",
     "manifest": "https://raw.githubusercontent.com/Handyfon/Farchievements/master/module.json",
     "download": "https://raw.githubusercontent.com/Handyfon/Farchievements/master/farchievements.zip",
-	"minimumCoreVersion": "0.6.0",
-	"compatibleCoreVersion": "0.8.8"
+	"minimumCoreVersion": "0.8.9",
+	"compatibleCoreVersion": "9"
 }
