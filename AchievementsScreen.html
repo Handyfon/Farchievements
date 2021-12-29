@@ -2,7 +2,7 @@
 <html id="AchievementsScreen">
 <div class="OmniView" id="hiddenforuser3">
 	<label class="AchSwitch" style="display: flex;align-items: center;" onclick="toggleOmniView()">
-		See Everything<input id="AchSwitchInput" type="checkbox" style="align-items: center;">
+		{{localize 'Farchievements.Html.SeeEverything'}}<input id="AchSwitchInput" type="checkbox" style="align-items: center;">
 	</label>
 </div>
 <div class="Achievementssettings" id="hiddenforuser" style="text-align: -webkit-right; z-index:1;"><i class="fas fa-cogs achievementsettings" onclick="enterEditMode()"></i></div>
@@ -58,9 +58,9 @@
 			if (game.user.isGM) {//LOAD NAVIGATION BUTTONS
 				document.getElementById("AchPlayerNav").innerHTML = "";
 
-				$(".AchPlayerNav").append('<label id="PlayerNavScoreBoard" value="Scoreboard" class="PlayerNavButton"' + "Scoreboard" + '>Scoreboard</label>');
+				$(".AchPlayerNav").append('<label id="PlayerNavScoreBoard" value="Scoreboard" class="PlayerNavButton"' + "Scoreboard" + `>${game.i18n.localize('Farchievements.Html.Scoreboard')}</label>`);
 				$('#PlayerNavScoreBoard').click(function () {
-					document.querySelector('.achievementsscreen-window .window-title').innerText = "Scoreboard";
+					document.querySelector('.achievementsscreen-window .window-title').innerText = game.i18n.localize('Farchievements.Html.Scoreboard');
 					loadScoreboard();
 					return;
 				});
@@ -71,9 +71,9 @@
 					if (user.isGM) {
 						if ("" == game.settings.get('farchievements', 'loadSettingsForPlayer'))
 							active = 'style="background: #4c4c00;border: 1px solid yellow;color: yellow;"';
-						$(".AchPlayerNav").append('<label id="PlayerNavGMVIEW" value="GMVIEW" class="PlayerNavButton"' + active + '>GM-View</label>');
+						$(".AchPlayerNav").append('<label id="PlayerNavGMVIEW" value="GMVIEW" class="PlayerNavButton"' + active + `>${game.i18n.localize('Farchievements.Html.GMView')}</label>`);
 						$('#PlayerNavGMVIEW').click(function () {
-							document.querySelector('.achievementsscreen-window .window-title').innerText = "Your Achievements";
+							document.querySelector('.achievementsscreen-window .window-title').innerText = game.i18n.localize('Farchievements.Html.YourAchievements');
 							document.querySelector('.achievementsscreen-window .window-header').style['background'] = "black";
 							document.querySelector('.achievementsscreen-window .window-header').style['color'] = "white";
 							loadAchievements();
@@ -99,10 +99,10 @@
 				active = 'style="background: #4c4c00;border: 1px solid yellow;color: yellow;"';
 				document.getElementById("AchPlayerNav").innerHTML = "";
 				if (game.settings.get('farchievements', 'EnableScoreboard')) { // ONLY EXECUTE WHEN SETTING IS TRUE
-					$(".AchPlayerNav").append('<label id="PlayerNavScoreBoard" value="Scoreboard" class="PlayerNavButton"' + "Scoreboard" + '>Scoreboard</label>');
-					$(".AchPlayerNav").append('<label id="PlayerNav' + 0 + '" value="' + game.user.id + '" class="PlayerNavButton"' + active + '>' + "My Achievements" + '</label>');
+					$(".AchPlayerNav").append('<label id="PlayerNavScoreBoard" value="Scoreboard" class="PlayerNavButton"' + "Scoreboard" + `>${game.i18n.localize('Farchievements.Html.Scoreboard')}</label>`);
+					$(".AchPlayerNav").append('<label id="PlayerNav' + 0 + '" value="' + game.user.id + '" class="PlayerNavButton"' + active + `>${game.i18n.localize('Farchievements.Html.MyAchievements')}</label>`);
 					$('#PlayerNavScoreBoard').click(function () {
-						document.querySelector('.achievementsscreen-window .window-title').innerText = "Scoreboard";
+						document.querySelector('.achievementsscreen-window .window-title').innerText = game.i18n.localize('Farchievements.Html.Scoreboard');
 						loadScoreboard();
 						return;
 					});
@@ -126,7 +126,7 @@
 				let amountGained = 0;
 				let achievementsGainedList = "";
 				if (mySYNCSettings == "") {
-					ui.notifications.warn("This user doesn't have any Achievements");
+					ui.notifications.warn(game.i18n.localize('Notification.NoAchievements'));
 					return;
 				}
 				for (let i = 0; i < mySYNCSettings.split(':')[1].split(',').length; i++) {
@@ -140,7 +140,7 @@
 			//CHANGE WINDOW TITLE AND COLOR
 			if (playerIDToLoadFrom != "" && game.settings.get('farchievements', 'PlayerBackColor') || !game.user.isGM && game.settings.get('farchievements', 'PlayerBackColor')) {
 				if (!game.user.isGM) playerIDToLoadFrom = game.user.id;
-				document.querySelector('.achievementsscreen-window .window-title').innerText = game.users.find(user => user.id == playerIDToLoadFrom).name + "'s Achievements";
+				document.querySelector('.achievementsscreen-window .window-title').innerText = game.users.find(user => user.id == playerIDToLoadFrom).name + game.i18n.localize('Farchievements.Html.PlayersAchievements');
 				var c = game.users.find(user => user.id == playerIDToLoadFrom).data.color.substring(1);
 				var rgb = parseInt(c, 16);   // convert rrggbb to decimal
 				var r = (rgb >> 16) & 0xff;  // extract red
@@ -230,12 +230,12 @@
 		function loadScoreboard() {
 			let loadingFromPlayer = false;
 			let playerIDToLoadFrom = ""; //RESET PLAYER ID
-			document.querySelector('.achievementsscreen-window .window-title').innerText = "Scoreboard";
+			document.querySelector('.achievementsscreen-window .window-title').innerText = game.i18n.localize('Farchievements.Html.Scoreboard');
 			if (game.user.isGM) {//LOAD NAVIGATION BUTTONS
 				document.getElementById("AchPlayerNav").innerHTML = "";
-				$(".AchPlayerNav").append('<label id="PlayerNavScoreBoard" value="Scoreboard" style="background: #4c4c00;border: 1px solid yellow;color: yellow;" class="PlayerNavButton"' + "Scoreboard" + '>Scoreboard</label>');
+				$(".AchPlayerNav").append('<label id="PlayerNavScoreBoard" value="Scoreboard" style="background: #4c4c00;border: 1px solid yellow;color: yellow;" class="PlayerNavButton"' + "Scoreboard" + `>${game.i18n.localize('Farchievements.Html.Scoreboard')}</label>`);
 				$('#PlayerNavScoreBoard').click(function () {
-					document.querySelector('.achievementsscreen-window .window-title').innerText = "Scoreboard";
+					document.querySelector('.achievementsscreen-window .window-title').innerText = game.i18n.localize('Farchievements.Html.Scoreboard');
 					loadScoreboard();
 					return;
 				});
@@ -246,9 +246,9 @@
 					if (user.isGM) {
 						if ("" == game.settings.get('farchievements', 'loadSettingsForPlayer'))
 							active = 'style="background: #4c4c00;border: 1px solid yellow;color: yellow;"';
-						$(".AchPlayerNav").append('<label id="PlayerNavGMVIEW" value="GMVIEW" class="PlayerNavButton"' + '>GM-View</label>');
+						$(".AchPlayerNav").append('<label id="PlayerNavGMVIEW" value="GMVIEW" class="PlayerNavButton"' + `>${game.i18n.localize('Farchievements.Html.GMView')}</label>`);
 						$('#PlayerNavGMVIEW').click(function () {
-							document.querySelector('.achievementsscreen-window .window-title').innerText = "Your Achievements";
+							document.querySelector('.achievementsscreen-window .window-title').innerText = game.i18n.localize('Farchievements.Html.YourAchievements');
 							document.querySelector('.achievementsscreen-window .window-header').style['background'] = "black";
 							document.querySelector('.achievementsscreen-window .window-header').style['color'] = "white";
 							loadAchievements();
@@ -274,9 +274,9 @@
 				active = 'style="background: #4c4c00;border: 1px solid yellow;color: yellow;"';
 				document.getElementById("AchPlayerNav").innerHTML = "";
 				$(".AchPlayerNav").append('<label id="PlayerNavScoreBoard" style="background: #4c4c00;border: 1px solid yellow;color: yellow;" value="Scoreboard" class="PlayerNavButton"' + "Scoreboard" + active + '>Scoreboard</label>');
-				$(".AchPlayerNav").append('<label id="PlayerNavBase' + '" value="' + game.user.id + '" class="PlayerNavButton">' + "My Achievements" + '</label>');
+				$(".AchPlayerNav").append('<label id="PlayerNavBase' + '" value="' + game.user.id + `" class="PlayerNavButton">${game.i18n.localize('Farchievements.Html.MyAchievements')}</label>`);
 				$('#PlayerNavScoreBoard').click(function () {
-					document.querySelector('.achievementsscreen-window .window-title').innerText = "Scoreboard";
+					document.querySelector('.achievementsscreen-window .window-title').innerText = game.i18n.localize('Farchievements.Html.Scoreboard');
 					loadScoreboard();
 					return;
 				});
@@ -303,7 +303,7 @@
 				let amountGained = 0;
 				let achievementsGainedList = "";
 				if (mySYNCSettings == "") {
-					ui.notifications.warn("This user doesn't have any Achievements");
+					ui.notifications.warn(game.i18n.localize('Notification.NoAchievements'));
 					return;
 				}
 				for (let i = 0; i < mySYNCSettings.split(':')[1].split(',').length; i++) {
@@ -317,7 +317,7 @@
 			//CHANGE WINDOW TITLE AND COLOR
 			if (playerIDToLoadFrom != "" && game.settings.get('farchievements', 'PlayerBackColor') || !game.user.isGM && game.settings.get('farchievements', 'PlayerBackColor')) {
 				if (!game.user.isGM) playerIDToLoadFrom = game.user.id;
-				document.querySelector('.achievementsscreen-window .window-title').innerText = game.users.find(user => user.id == playerIDToLoadFrom).name + "'s Achievements";
+				document.querySelector('.achievementsscreen-window .window-title').innerText = game.users.find(user => user.id == playerIDToLoadFrom).name + game.i18n.localize('Farchievements.Html.PlayersAchievements');
 				var c = game.users.find(user => user.id == playerIDToLoadFrom).data.color.substring(1);
 				var rgb = parseInt(c, 16);   // convert rrggbb to decimal
 				var r = (rgb >> 16) & 0xff;  // extract red
@@ -368,7 +368,7 @@
 			}
 			// RENDER USERS AND ACHIEVEMENTCOUNT
 			let userData = game.settings.get('farchievements', 'clientdataSYNC').split("||");
-			document.getElementById('AchievementList').innerHTML += '<div class="ScoreboardTitle" style="color: #ffbb00;font-size: 30px;text-align: -webkit-center;background: #2e2600;solid #863c00;font-weight: bold; border-bottom:3px solid;"> Scoreboard </div>';
+			document.getElementById('AchievementList').innerHTML += `<div class="ScoreboardTitle" style="color: #ffbb00;font-size: 30px;text-align: -webkit-center;background: #2e2600;solid #863c00;font-weight: bold; border-bottom:3px solid;"> ${game.i18n.localize('Farchievements.Html.Scoreboard')} </div>`;
 			for (let i = 0; i < userData.length - 1; i++) {
 				count = userData[i].split(":")[1].split(",").length - 1;
 				let user = game.users.get(userData[i].split(":")[0])
@@ -377,7 +377,7 @@
 					color = getColorChange(color); //DONT CHANCE COLOR FOR CURRENT USER
 				//console.log("user " + user.name + " : " + count)
 
-				document.getElementById('AchievementList').innerHTML += '<div value="' + count + '" class="FarchScoreboardUser" style="background-color:' + color + '; padding:10px;font-size:20px; border-radius: 5px; color:white;">' + user.name + " - " + count + '</div>';
+				document.getElementById('AchievementList').innerHTML += `<div value="${count}" class="FarchScoreboardUser" style="background-color: ${color}; padding:10px;font-size:20px; border-radius: 5px; color:white;"> ${user.name} - ${count}</div>`;
 
 			}
 			//SORT LIST
@@ -492,7 +492,7 @@
 				if (document.getElementById('AchPlayerNav').className == "AchPlayerNav") //CHECK FOR EDITING WITHIN NORMAL WINDOW
 				{
 					await game.settings.set('farchievements', 'loadSettingsForPlayer', PID);
-					$('#achsyncnormalmode').append('<i id="SyncAch2" onclick="SendSyncMessage()" class="fas fa-sync achievementsettings" title="Click to push changes right now"></i>');
+					$('#achsyncnormalmode').append(`<i id="SyncAch2" onclick="SendSyncMessage()" class="fas fa-sync achievementsettings" title="${game.i18n.localize('Farchievements.Html.PushChangesNow')}"></i>`);
 					loadAchievements();
 				}
 				else
@@ -548,7 +548,7 @@
 			if (document.getElementById('AchPlayerNav').className == "AchPlayerNav") //CHECK FOR EDITING WITHIN NORMAL WINDOW
 			{
 				await game.settings.set('farchievements', 'loadSettingsForPlayer', PID);
-				$('#achsyncnormalmode').append('<i id="SyncAch2" onclick="SendSyncMessage()" class="fas fa-sync achievementsettings" title="Click to push changes right now"></i>');
+				$('#achsyncnormalmode').append(`<i id="SyncAch2" onclick="SendSyncMessage()" class="fas fa-sync achievementsettings" title="${game.i18n.localize('Farchievements.Html.PushChangesNow')}"></i>`);
 				loadAchievements();
 			}
 			else
@@ -588,13 +588,13 @@
 			const dialogOptions = {
 				classes: ['dialog ImportExportWindow']
 			};
-
+			let notificationPrefix = game.i18n.localize('Farchievements.Notification.Prefix');
 			new Dialog({
-				title: "Farchievements Import/Export",
-				content: '<p>This is a small tool to import and export your Achievements. <b>Make sure to backup everything before you even think about overriding!!</b></p><input type="text" id="ImportExportInput" value="' + data + '"></input>',
+				title: game.i18n.localize('Farchievements.Html.ImportExport.Title'),
+				content: `<p>${game.i18n.localize('Farchievements.Html.ImportExport.Body')}</p><input type="text" id="ImportExportInput" value="${data}"></input>`,
 				buttons: {
 					AchOverride: {
-						label: '<a style="color:red;" >Overwrite from Clipboard</a>',
+						label: `<a style="color:red;" >${game.i18n.localize('Farchievements.Html.ImportExport.ClipboardOverwrite')}</a>`,
 						icon: '<i class="fas fa-exclamation-triangle" style="color:red"></i>',
 						callback: () => {
 							let inputElement = document.getElementById("ImportExportInput");
@@ -602,26 +602,26 @@
 							inputElement.select();
 							document.execCommand('paste');
 							if (inputElement.value == "") {
-								ui.notifications.warn("Farchievements | You shouldn't overwrite the data with nothing");
+								ui.notifications.warn(notificationPrefix + game.i18n.localize('Farchievements.Notification.OverwriteWithNothing'));
 								return;
 							}
 							if (inputElement.value.split("////").length <= 1) {
-								ui.notifications.error("Farchievements | This data seems to be invalid, make sure to copy the correct data");
+								ui.notifications.error(notificationPrefix + game.i18n.localize('Farchievements.Notification.InvalidData'));
 								return;
 							}
 							if (inputElement.value == data) {
-								ui.notifications.notify("Farchievements | The data did not change.");
+								ui.notifications.notify(notificationPrefix + game.i18n.localize('Farchievements.Notification.NoChange'));
 								return;
 							}
 
 							game.settings.set('farchievements', 'achievementdata', inputElement.value);
-							ui.notifications.notify("Farchievements | This World's Achievements have been overridden");
+							ui.notifications.notify(notificationPrefix + game.i18n.localize('Farchievements.Notification.Overwritten'));
 							let $dialog = $('.achievementsscreen-window');
 							$dialog.remove();
 						}
 					},
 					AchCopy: {
-						label: '<a style="color:green;" >Copy to Clipboard</a>',
+						label: `<a style="color:green;" >${game.i18n.localize('Farchievements.Html.ImportExport.CopyToClipboard')}</a>`,
 						icon: '<i class="fas fa-copy" style="color:green;"></i>',
 						callback: () => {
 							let inputElement = document.getElementById("ImportExportInput");
@@ -629,7 +629,7 @@
 							document.body.appendChild(inputElement);
 							inputElement.select();
 							document.execCommand('copy');
-							ui.notifications.notify("Farchievements | Achievements copied to clipboard");
+							ui.notifications.notify(notificationPrefix + game.i18n.localize('Farchievements.Notification.CopiedToClipboard'));
 						}
 					},
 				},
@@ -675,7 +675,7 @@
 		async function SendSyncMessage() {
 			ChatMessage.create({
 				user: game.user._id,
-				content: "Achievements Synced",
+				content: 'Achievements Synced',
 				blind: false,
                 whisper: game.users.filter(u => u.isGM).map(u => u.id)
 			});
@@ -721,7 +721,7 @@
 	<div id="CustomAchievmentBackgroundStyling"></div>
 	<div id="AchPlayerNav" class="AchPlayerNav"></div>
 	<div id="AchievementList" onSync="loadAchievements()" class="grid-container" style="grid-template-rows: repeat(7, 1fr);"></div>
-	<div style="display:none;" class="editmodebar" style="text-align: -webkit-right;"><i class="fas fa-plus-square achievementsettings" onclick="addAchievement()"></i><i id="SyncAch" onclick="SendSyncMessage()" class="fas fa-sync achievementsettings" title="Click to push changes right now"></i></div>
+	<div style="display:none;" class="editmodebar" style="text-align: -webkit-right;"><i class="fas fa-plus-square achievementsettings" onclick="addAchievement()"></i><i id="SyncAch" onclick="SendSyncMessage()" class="fas fa-sync achievementsettings" title="{{localize 'Farchievements.Html.PushChangesNow'}}"></i></div>
 	<!-- <i class="fas fa-minus-square achievementsettings" onclick="removeAchievement()"></i> -->
 	<div id="achsyncnormalmode"></div>
 </form>
