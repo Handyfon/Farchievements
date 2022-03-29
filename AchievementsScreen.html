@@ -458,7 +458,6 @@
 		}
 
 		async function setAchievement(achievementID, PID) {
-			//let achievementname = document.getElementById("achievementname"+achievementID).value;
 			let cleanPlayerID = game.users.contents.indexOf(game.users.get(PID)) - 1;
 			let dataPlayerID = cleanPlayerID; //++xathick
 			let player = game.users.get(PID);
@@ -479,15 +478,14 @@
 			}
 			//xathick changes
 
-			if (dataArray[cleanPlayerID] == "" || dataArray[cleanPlayerID] == 'NULL') { // IF NO DATA YET
-				dataArrayPlayer = game.users.contents[cleanPlayerID]._id + ":" + achievementID + ",";
+			if (dataArray[dataPlayerID] == "" || dataArray[dataPlayerID] == 'NULL') { // IF NO DATA YET
+				dataArrayPlayer = game.users.contents[dataPlayerID]._id + ":" + achievementID + ",";
 				//dataArray[dataPlayerID] = dataArrayPlayer; old
 				dataArray[dataPlayerID] = dataArrayPlayer; //++xathick
 				toSYNC = dataArray.join("||");
 				//console.log(toSYNC);
 				await game.settings.set('farchievements', 'clientdataSYNC', toSYNC);
 
-				//console.log("Setting Achievement: " + achievementname + "(ID:"+ achievementID + ")" + " for user: " + playerName); //TODO ACTUALLY ADD THE ACHIEVEMENT
 				//console.log("Achievementdata: " + game.settings.get('farchievements', 'achievementdata'));
 				if (document.getElementById('AchPlayerNav').className == "AchPlayerNav") //CHECK FOR EDITING WITHIN NORMAL WINDOW
 				{
@@ -501,14 +499,14 @@
 			}
 
 			//ADD DATA TO SYNC VARIABLE
-			if (dataArray[cleanPlayerID].split(":")[1].includes(',' + "" + achievementID + ',')) { //DETECT EXISTING ACHIEVEMENT, REMOVE IT
+			if (dataArray[dataPlayerID].split(":")[1].includes(',' + "" + achievementID + ',')) { //DETECT EXISTING ACHIEVEMENT, REMOVE IT
 				let toReplace = achievementID + ",";//REPLACE FROM WITHIN DATA
 				dataArrayPlayer = dataArray[dataPlayerID].split(":")[0] + ":" + dataArray[dataPlayerID].split(":")[1].replace(toReplace, "");
 				dataArray[dataPlayerID] = dataArrayPlayer;
 				toSYNC = dataArray.join("||");
 				//console.log(toSYNC);
 			}
-			else if (dataArray[cleanPlayerID].split(":")[1].split(",")[0] == "" + achievementID) { //FIRST ACHIEVEMENT IN DATA?
+			else if (dataArray[dataPlayerID].split(":")[1].split(",")[0] == "" + achievementID) { //FIRST ACHIEVEMENT IN DATA?
 				let toReplace = achievementID + ",";//REPLACE FIRST ENTRY IN DATA
 				var firstDataArray = dataArray[dataPlayerID].split(":")[1].split(",");
 				firstDataArray.shift();
@@ -543,7 +541,6 @@
 
 			await game.settings.set('farchievements', 'clientdataSYNC', toSYNC);
 
-			//console.log("Setting Achievement: " + achievementname + "(ID:"+ achievementID + ")" + " for user: " + playerName); //TODO ACTUALLY ADD THE ACHIEVEMENT
 			//console.log("Achievementdata: " + game.settings.get('farchievements', 'achievementdata'));
 			if (document.getElementById('AchPlayerNav').className == "AchPlayerNav") //CHECK FOR EDITING WITHIN NORMAL WINDOW
 			{
