@@ -768,4 +768,4 @@ async function SendSyncMessage() {
 	if(document.getElementById('achsyncnormalmode') != null)
 		if (document.getElementById('achsyncnormalmode').innerHTML != "") 
 			document.getElementById('achsyncnormalmode').innerHTML = "";
-}});
+}
