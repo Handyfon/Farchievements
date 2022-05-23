@@ -1,0 +1,146 @@
+{
+    "Farchievements.Settings.EnableChatBarButton" : {
+        "Text":"Aktiviere Chat Schaltfläche",
+        "Hint": "Ermöglicht es, Farchivements aus dem Chat Protokoll zu öffnen."
+    },
+    "Farchievements.Settings.EnableAchievementMessage" : {
+        "Text": "Aktiviere Chat Nachricht",
+        "Hint": "Sendet eine Nachricht in den Chat, wenn ein Spieler eine Errungenschaft erhält."
+    },
+    "Farchievements.Settings.EnableScoreboard" : {
+        "Text": "Aktiviere Punktetafel",
+        "Hint": "Erlaubt es den Spielern, eine Punktetafel einzusehen um zu vergleichen, wie viele Errungenschaften sie bisher erhalten haben."
+    },
+    "Farchievements.Settings.EnableConfettiSupport" : {
+        "Text": "Aktiviere Konfetti ",
+        "Hint": "Aktiviere die Unterstützung für das 'Confetti' Modul."
+    },
+    "Farchievements.Settings.EnableContextButton" : {
+        "Text": "Aktiviere Kontextmenü für die Spielerliste",
+        "Hint": "Ermöglicht es, die Errungenschaften eines Spielers aus der Spielerliste zu öffnen."
+    },
+    "Farchievements.Settings.OmniView" : {
+        "Text": "Aktiviere OmniView",
+        "Hint": "Schaltet die Option ein, alles zu sehen."
+    },
+    "Farchievements.Settings.GameSettingsButton" : {
+        "Text": "Schaltfläche in den Einstellungen",
+        "Hint": "Aktiviere die Schaltfläche zum öffnen der Errungenschaften in den Spieleinstellungen."
+    },
+    "Farchievements.Settings.AchievementWindowTitle" : {
+        "Text": "Titel",
+        "Hint": "Der Titel des Errungenschaftsfensters."
+    },
+    "Farchievements.Settings.PlayerBackColor" : {
+        "Text": "Spieler Hintergrundfarbe",
+        "Hint": "Verwendet die Farbe des Spielers als Hintergrund des Errungenschaftsfensters."
+    },
+    "Farchievements.Settings.HideUnknown" : {
+        "Text": "Verstecke unbekannte Errungenschaften",
+        "Hint": "Blendet Errungenschaften aus, die der Spieler nicht besitzt."
+    },
+    "Farchievements.Settings.UnknownName" : {
+        "Text": "Unbekannte Errungenschaft",
+        "Hint": "Standardname für unbekannte Errungenschaften (leer lassen um zu deaktivieren)."
+    },
+    "Farchievements.Settings.AlwaysShowName" : {
+        "Text": "Zeige Namen immer an",
+        "Hint": "Zeige den Namen der Errungenschaft immer an."
+    },
+    "Farchievements.Settings.UnknownDes" : {
+        "Text": "Unbekannte Beschreibung",
+        "Hint": "Standardbeschreibung für unbekannte Errungenschaften (leer lassen um zu deaktivieren)."
+    },
+    "Farchievements.Settings.AlwaysShowDes" : {
+        "Text": "Zeige Beschreibung immer an",
+        "Hint": "Zeige die Beschreibung der Errungenschaft immer an."
+    },
+    "Farchievements.Settings.DescriptionOnHover" : {
+        "Text": "Beschreibung beim Hover",
+        "Hint": "Zeige die Beschreibung nur an, wenn die Maus über die Errungenschaft bewegt wird."
+    },
+
+    "Farchievements.Settings.achamount" : {
+        "Text": "Anzahl der Errungenschaften",
+        "Hint": "AchAmount."
+    },
+    "Farchievements.Settings.standarticon" : {
+        "Text": "Standard Bild für Errungenschaften",
+        "Hint": "Das Standard Bild, das beim Hinzufügen einer neuen Errungenschaft verwendet werden soll."
+    },
+    "Farchievements.Settings.bannerBackground" : {
+        "Text": "Banner Hintergund",
+        "Hint": "Der Hintergrund des Errungenschaftsbanners, welches angezeigt wird, wenn ein Spieler eine Errungenschaft erhält (2000x180 px)."
+    },
+    "Farchievements.Settings.achievementStinger" : {
+        "Text": "Errungenschafts-Ton",
+        "Hint": "Das Geräusch das während der Animation einer neuen Errungenschaft abgespielt werden soll."
+    },
+    "Farchievements.Settings.achievementStingerVolume" : {
+        "Text": "Errungenschafts-Ton Lautstärke",
+        "Hint": "Die Lautstärke des Tons der abgespielt wird, niedriger Wert empfohlen."
+    },
+    "Farchievements.Settings.achpretext" : {
+        "Text": "Präfix bei neuen Errungenschaften",
+        "Hint": "Das Präfix, das vor dem Namen der Errungenschaft angezeigt wird, wenn ein Spieler eine neue erhält."
+    },
+    "Farchievements.Settings.greyscale" : {
+        "Text": "Graustufe",
+        "Hint": "Zeigt die Bilder der unbekannten Errungenschaften in Graufstufen an, anstatt das Geheimnissymbol zu verwenden."
+    },
+    "Farchievements.Settings.mystery" : {
+        "Text": "Geheimnissymbol",
+        "Hint": "Das Standardbild, welches bei unbekannten Errungenschaften verwendet werden soll."
+    },
+    
+    "Farchievements.Settings.AchievementData" : {
+        "Text": "AchievementData (DONTTOUCH)",
+        "Hint": "The data for the achievements is saved here !!DONT TOUCH!!"
+    },
+    "Farchievements.Settings.ClientDataList" : {
+        "Text": "ClientDataList (DONTTOUCH)",
+        "Hint": "Will be synced between clients !!DONT TOUCH!!"
+    },
+    "Farchievements.Settings.ClientData" : {
+        "Text": "ClientData (DONTTOUCH)",
+        "Hint": "Your clients achievements !!DONT TOUCH!!"
+    },
+    "Farchievements.Settings.loadSettingsForPlayer" : {
+        "Text": "loadSettingsForPlayer (DONTTOUCH)",
+        "Hint": "loadSettingsForPlayer !!DONT TOUCH!!"
+    },
+    
+    "Farchievements.Notification":{
+        "Prefix": "Farchievements | ",
+        "PlayerIdChanged": "Die Spieler-IDs haben sich verändert, Spieler mit folgender Id wurde bereinigt: ",
+        "UserDoesNotExist": "Dieser Benutzer existiert nicht.",
+        "NoAchievements": "Dieser Benutzer hat noch keine Errungenschaften.",
+        "OverwriteWithNothing": "Du solltest die Daten nicht mit einem leeren Wert überschreiben.",
+        "InvalidData": "Diese Daten scheinen ungültig zu sein, bitte stelle sicher, dass du die korrekten Daten kopierst.",
+        "NoChange": "Die Daten haben sich nicht verändert.",
+        "Overwritten": "Die Errungenschaften dieser Welt wurden überschrieben.",
+        "CopiedToClipboard": "Errungenschaften in die Zwischenablage kopiert."
+    },
+    
+    "Farchievements.Title": "Farchievements",
+    "Farchievements.Achievement": "Errungenschaft",
+    "Farchievements.Achievements": "Errungenschaften",
+    "Farchievements.ViewAchievements": "Zeige Errungenschaften an",
+    "Farchievements.NewAchievement": "Neue Errungenschaft:",
+    "Farchievements.GainedAchivement": "erhält die",
+
+    "Farchievements.Html.SeeEverything": "Alles sehen",
+    "Farchievements.Html.Scoreboard": "Punktetafel",
+    "Farchievements.Html.GMView": "SL-Ansicht",
+    "Farchievements.Html.YourAchievements": "Deine Errungenschaften",
+    "Farchievements.Html.MyAchievements": "Meine Errungenschaften",
+    "Farchievements.Html.PlayersAchievements": "s Errungenschaften",
+    "Farchievements.Html.PushChangesNow": "Klicken um Änderungen jetzt zu verteilen",
+
+    "Farchievements.Html.ImportExport":{
+        "Title": "Farchievement Import/Export",
+        "Body": "Ein kleines Werkzeug um deine Errungenschaften zu importieren und zu exportieren. <b>Bitte erstell eine Sicherung bevor du daran denkst, es zu überschreiben!</b>",
+        "ClipboardOverwrite": "Aus Zwischenablage überschreiben",
+        "CopyToClipboard": "In Zwischenablage kopieren"
+    }
+}
