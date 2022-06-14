@@ -1,3 +1,43 @@
+.far-grid-item.listView{
+	height: 29px;
+}
+.far-grid-item.listView:hover {
+    transform: scale(1.2);
+    margin-top: 0;
+    margin-bottom: -12px;
+    transition: 0.2s;
+    filter: drop-shadow(0px 5px 6px black);
+    transition: 0s;
+    transform: unset;
+}
+.far-grid-item.listView .AchIcon {
+    display: none;
+}
+i.fas.fa-list.listViewSettings {
+    padding: 5px;
+    border: 1px solid;
+    border-radius: 2px;
+    background: #000000d9;
+    color: white;
+    margin-right: 68px;
+    position: ;
+}
+i.fas.fa-list.listViewSettings:active {
+    background: white;
+    color: black;
+}
+.far-grid-item.listView p.AchDescription {
+    background: #663400 !important;
+    border: 3px solid #655f00;
+    border-top: 8px solid #655f00;
+    overflow: visible;
+    max-height: min-content;
+	transition: 0s !important;
+}
+.far-grid-item.listView p.AchDescription:hover {
+    transition: 0s;
+    display: none;
+}
 #chat-controls .chat-control-icon {/*FIX CHAT CONTROL BAR*/
     flex: 0;
     flex-basis: auto;
@@ -7,7 +47,7 @@ label.AchSwitch {
     align-items: center;
     position: absolute;
     top: 2px;
-    right: 133px;
+    right: 163px;
     color: white;
     border: 1px solid;
     padding-left: 5px;
@@ -102,10 +142,10 @@ img.EditModeIcon:active {
     filter: brightness(0.5);
 }
 
-.grid-container {
+.far-grid-container {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
-    gap: 20px 5px;
+    gap: 22px 5px;
     grid-template-areas:
         ". . . . . ."
         ". . . . . ."
@@ -115,12 +155,12 @@ img.EditModeIcon:active {
         ". . . . . ."
         ". . . . . .";
 }
-.grid-item {
+.far-grid-item {
     height: 250px;
     width: 150px;
     /* background: #00000021; */
 }
-.grid-item:hover {
+.far-grid-item:hover {
     z-index: 1;
 }
 img.AchIcon {
@@ -242,8 +282,8 @@ img.EditModeIcon {
     min-width: 100%;
 }
 div#AchievementList {
-    overflow: overlay;
-	padding: 20px;
+    /* overflow: overlay; */
+    padding: 20px;
 }
 .overWrite{
 	position: absolute;
