@@ -447,7 +447,7 @@ Hooks.on('renderSettings', function() {
 		let x = 0.1;  // 0.1 seconds
 		
 		if(document.getElementById("FarchievementsSettings") == null && game.settings.get('farchievements', 'GameSettingsButton')){
-			$('#settings-game').append(`<div id="FarchievementsSettings"><h4>Farchievements</h4><button id="SettingsAchievementsButton" data-action="Achievements"><i class="fas fa-medal achievements-button"></i>${game.i18n.localize('Farchievements.Achievements')}</button></div>`);
+			$('#settings-game').append(`<div id="FarchievementsSettings" style="margin:0;><h4>Farchievements</h4><button id="SettingsAchievementsButton" data-action="Achievements"><i class="fas fa-medal achievements-button"></i>${game.i18n.localize('Farchievements.Achievements')}</button></div>`);
 			let AchievementsButton = document.getElementById("SettingsAchievementsButton");
 			if(AchievementsButton != null)
 			AchievementsButton.onclick = Achievements.initializeAchievements;
