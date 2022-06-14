@@ -50,6 +50,14 @@ Hooks.once('init', function() {
 		default: false,
 		type: Boolean,
     });
+	game.settings.register('farchievements', 'ListView', {
+        name: game.i18n.localize('Farchievements.Settings.ListView.Text'),
+        hint: game.i18n.localize('Farchievements.Settings.ListView.Hint'),
+        scope: 'world',
+        config: false,
+		default: false,
+		type: Boolean,
+    });
 	game.settings.register('farchievements', 'GameSettingsButton', {
         name: game.i18n.localize('Farchievements.Settings.GameSettingsButton.Text'),
         hint: game.i18n.localize('Farchievements.Settings.GameSettingsButton.Hint'),
@@ -429,14 +437,15 @@ class AchievementSync{
 		}
 	}
 }
-Hooks.on('renderSceneNavigation', function() {
+Hooks.on('renderSceneNavigation', async function() {
         Achievements.addChatControl();
         //console.log("AchievementsScreen GM true");
 		//sync achievements
 		if(!game.user.isGM)
 		AchievementSync.SyncAchievements();
-		let bannerstyle = 'top: -200px;background: url('+game.settings.get("farchievements", "bannerBackground")+')!important;background-size: cover !important;background-position: center !important;box-shadow: 0px -4px 6px black !important;display: flex;';
-		var el = `<div id="Achievementbar" style="display: none;" class="Achievementbar"><div id="FoundryAchievements" class="FoundryAchievementsBanner" style="'+bannerstyle+'"><img id="AchievementIMG" class="AchievementIMG" src="modules/farchievements/standardIcon.PNG"></img><p class="AchievementText"><label class="AchievementTextLabel">${game.i18n.localize('Farchievements.NewAchievement')}</label> (${game.i18n.localize('Farchievements.Achievement')}) </p><i class="Shiny"></i></div></div>`;
+		let style = await game.settings.get("farchievements", "bannerBackground");
+		let bannerstyle = 'top: -200px;background: url('+style+')!important;background-size: cover !important;background-position: center !important;box-shadow: 0px -4px 6px black !important;display: flex;';
+		var el = `<div id="Achievementbar" style="display: none;" class="Achievementbar"><div id="FoundryAchievements" class="FoundryAchievementsBanner" style="`+bannerstyle+`"><img id="AchievementIMG" class="AchievementIMG" src="modules/farchievements/standardIcon.PNG"></img><p class="AchievementText"><label class="AchievementTextLabel">${game.i18n.localize('Farchievements.NewAchievement')}</label> (${game.i18n.localize('Farchievements.Achievement')}) </p><i class="Shiny"></i></div></div>`;
 		document.getElementById("notifications").innerHTML = el;
 	
 });
@@ -447,7 +456,7 @@ Hooks.on('renderSettings', function() {
 		let x = 0.1;  // 0.1 seconds
 		
 		if(document.getElementById("FarchievementsSettings") == null && game.settings.get('farchievements', 'GameSettingsButton')){
-			$('#settings-game').append(`<div id="FarchievementsSettings" style="margin:0;><h4>Farchievements</h4><button id="SettingsAchievementsButton" data-action="Achievements"><i class="fas fa-medal achievements-button"></i>${game.i18n.localize('Farchievements.Achievements')}</button></div>`);
+			$('#settings-game').append(`<div id="FarchievementsSettings" style="margin:0;"><h4>Farchievements</h4><button id="SettingsAchievementsButton" data-action="Achievements"><i class="fas fa-medal achievements-button"></i>${game.i18n.localize('Farchievements.Achievements')}</button></div>`);
 			let AchievementsButton = document.getElementById("SettingsAchievementsButton");
 			if(AchievementsButton != null)
 			AchievementsButton.onclick = Achievements.initializeAchievements;

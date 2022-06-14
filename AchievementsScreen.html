@@ -5,8 +5,9 @@
 		{{localize 'Farchievements.Html.SeeEverything'}}<input id="AchSwitchInput" type="checkbox" style="align-items: center;">
 	</label>
 </div>
-<div class="Achievementssettings" id="hiddenforuser" style="text-align: -webkit-right; z-index:1;"><i class="fas fa-cogs achievementsettings" onclick="enterEditMode()"></i></div>
-<div class="Achievementssettings" id="hiddenforuser2" style="text-align: -webkit-right;"><i class="fas fa-file-export achievementImportExport" onclick="openImportExport()"></i></div>
+<div class="Achievementssettings" id="hiddenforuser" style="text-align: -webkit-right; z-index:2;"><i class="fas fa-cogs achievementsettings" onclick="enterEditMode()"></i></div>
+<div class="Achievementssettings" id="hiddenforuser2" style="text-align: -webkit-right; z-index:1;"><i class="fas fa-file-export achievementImportExport" onclick="openImportExport()"></i></div>
+<div class="Achievementssettings" id="hiddenforuser4" style="text-align: -webkit-right;"><i class="fas fa-list listViewSettings" onclick="toggleListMode()"></i></div>
 <head onload="onLoad()">
 	<script id="AchievementScript" onclick="loadAchievements()">
 	//ONLOAD SCRIPT
@@ -23,6 +24,9 @@
 			if (game.settings.get('farchievements', 'OmniView')) game.settings.set('farchievements', 'OmniView', false);
 			else game.settings.set('farchievements', 'OmniView', true);
 			//console.log(game.settings.get('farchievements', 'OmniView'));
+			reloadAchievements();
+		}
+		function reloadAchievements(){
 			if (document.getElementById('AchPlayerNav').className == "AchPlayerNav") //CHECK FOR EDITING WITHIN NORMAL WINDOW
 				loadAchievements();
 			else
@@ -57,7 +61,6 @@
 			document.getElementById('CustomAchievmentBackgroundStyling').innerHTML = '<style>.achievementsscreen-window .window-content{background: #232323;}</style>';
 			if (game.user.isGM) {//LOAD NAVIGATION BUTTONS
 				document.getElementById("AchPlayerNav").innerHTML = "";
-
 				$(".AchPlayerNav").append('<label id="PlayerNavScoreBoard" value="Scoreboard" class="PlayerNavButton"' + "Scoreboard" + `>${game.i18n.localize('Farchievements.Html.Scoreboard')}</label>`);
 				$('#PlayerNavScoreBoard').click(function () {
 					document.querySelector('.achievementsscreen-window .window-title').innerText = game.i18n.localize('Farchievements.Html.Scoreboard');
@@ -169,28 +172,29 @@
 			if (!game.user.isGM) document.getElementById("hiddenforuser").style = "display:none";
 			if (!game.user.isGM) document.getElementById("hiddenforuser2").style = "display:none";
 			if (!game.user.isGM) document.getElementById("hiddenforuser3").style = "display:none";
+			if (!game.user.isGM) document.getElementById("hiddenforuser4").style = "display:none";
 			//console.log("Loading Achievements");
 			//APPLY STYLING
 			document.getElementById('CustomAchievmentStyling').innerHTML = "";
-			document.getElementById('CustomAchievmentStyling').innerHTML = "<style>.grid-item:hover {transform: scale(1.2);margin-top: 12px;margin-bottom: -12px;transition: 0.2s;filter: drop-shadow(0px 5px 6px black)}.achievementsscreen-window {background: black;}</style>";
+			document.getElementById('CustomAchievmentStyling').innerHTML = "<style>.far-grid-item:hover {transform: scale(1.2);margin-top: 12px;margin-bottom: -12px;transition: 0.2s;filter: drop-shadow(0px 5px 6px black)}.achievementsscreen-window {background: black;}</style>";
 
 			// DESCRIPTION
 			if (game.settings.get('farchievements', 'DescriptionOnHover'))
-				document.getElementById('CustomAchievmentStyling').innerHTML += "<style>.grid-item:hover .AchDescription, .grid-item.hover .AchDescription {margin-top: -5px !important;transition: 0.3s !important; opacity:1;}p.AchDescription {margin-top: -25px;transition: 0.1s !important;opacity: 0;}</style>";
+				document.getElementById('CustomAchievmentStyling').innerHTML += "<style>.far-grid-item:hover .AchDescription, .far-grid-item.hover .AchDescription {margin-top: -5px !important;transition: 0.3s !important; opacity:1;}p.AchDescription {margin-top: -25px;transition: 0.1s !important;opacity: 0;}</style>";
 
 			const data = game.settings.get('farchievements', 'achievementdata').split(';;;');
 			document.getElementById('AchievementList').innerHTML = "";
 			let name = "";
 			let icon = game.settings.get('farchievements', 'standarticon');
 			let description = "";
-			let greyscale = "";
+			let greyscale = "filter: blur(0px);";
 			let displayOptions = "";
 			if (game.settings.get('farchievements', 'achievementdata').split(";;;").length <= 0) {
 				//console.log("Farchievements | There is no achievement yet")
 				return;
 			}
 			for (let i = 0; i <= game.settings.get('farchievements', 'achievementdata').split(";;;").length - 1; i++) { //length-1 because array //RENDER ACHIEVMENTS
-				greyscale = "";//RESET THE GRAYSCALE
+				greyscale = "filter: blur(0px);";//RESET THE GRAYSCALE
 				displayOptions = "" // RESET THE DISPLAYOPTIONS
 				if (data[i].split("////") == "") continue; //GUARD FROM EMPTY ARRAY ELEMENTS
 				name = data[i].split("////")[0].split(":::")[1];
@@ -222,8 +226,11 @@
 				else
 					AchName = '<p class="AchName" style="inline-size: fit-content;">' + name + '</p>';
 				let onClickFunction = '';
+				let listView = false;
+				if(game.settings.get('farchievements','ListView') && game.user.isGM)
+				listView = "listView";
 				if (playerIDToLoadFrom != "") onClickFunction = 'oncontextmenu="setAchievement(' + i + ',' + '\'' + playerIDToLoadFrom + '\')"';
-				document.getElementById('AchievementList').innerHTML += '<div ' + onClickFunction + ' id="Achievement-' + i + '" class="grid-item" style="' + greyscale + displayOptions + '">' + AchName + '<img class="AchIcon" src="' + icon + '"></img><p class="AchDescription">' + description + '</p></div>';
+				document.getElementById('AchievementList').innerHTML += '<div ' + onClickFunction + ' id="Achievement-' + i + '" class="far-grid-item '+listView+'" style="' + greyscale + displayOptions + '">' + AchName + '<img class="AchIcon" src="' + icon + '"></img><p class="AchDescription">' + description + '</p></div>';
 			}
 			document.getElementById("AchievementList").style = "grid-template-rows: repeat(" + Math.round((game.settings.get('farchievements', 'achievementdata').split(";;;").length - 2) / 6) + ", 1fr);"
 		}
@@ -349,11 +356,11 @@
 			//console.log("Loading Achievements");
 			//APPLY STYLING
 			document.getElementById('CustomAchievmentStyling').innerHTML = "";
-			document.getElementById('CustomAchievmentStyling').innerHTML = "<style>.grid-item:hover {transform: scale(1.2);margin-top: 12px;margin-bottom: -12px;transition: 0.2s;filter: drop-shadow(0px 5px 6px black)}.achievementsscreen-window {background: black;}</style>";
+			document.getElementById('CustomAchievmentStyling').innerHTML = "<style>.far-grid-item:hover {transform: scale(1.2);margin-top: 12px;margin-bottom: -12px;transition: 0.2s;filter: drop-shadow(0px 5px 6px black)}.achievementsscreen-window {background: black;}</style>";
 
 			// DESCRIPTION
 			if (game.settings.get('farchievements', 'DescriptionOnHover'))
-				document.getElementById('CustomAchievmentStyling').innerHTML += "<style>.grid-item:hover .AchDescription, .grid-item.hover .AchDescription {margin-top: -5px !important;transition: 0.3s !important; opacity:1;}p.AchDescription {margin-top: -25px;transition: 0.1s !important;opacity: 0;}</style>";
+				document.getElementById('CustomAchievmentStyling').innerHTML += "<style>.far-grid-item:hover .AchDescription, .far-grid-item.hover .AchDescription {margin-top: -5px !important;transition: 0.3s !important; opacity:1;}p.AchDescription {margin-top: -25px;transition: 0.1s !important;opacity: 0;}</style>";
 
 			const data = game.settings.get('farchievements', 'achievementdata').split(';;;');
 			document.getElementById('AchievementList').innerHTML = "";
@@ -434,7 +441,7 @@
 				if (data[i].split("////")[1] != "icon") { icon = icon = data[i].split("////")[1] } else { icon = game.settings.get('farchievements', 'standarticon') } //IF STANDARD ICON USE ICON DEFINED IN GAMESETTINGS
 				description = data[i].split("////")[2].split(";")[0];
 				let AchievementIconHTML = '<img class="EditModeIcon" id="EditIcon' + i + '" src="' + icon + '" onclick="setAchievementImg(' + i + ')"></img>';
-				document.getElementById('AchievementList').innerHTML += '<div id="Achievement-' + i + '" class="grid-item"><div class="achievementtools"><button class="deleteAchievement" type="button" onclick="deleteAchievement(' + i + ')"><i class="fas fa-trash-alt"></i></button></div><div><input class="AchInputName" maxlength="40" type="text" id="achievementname' + i + '" onchange="updateAchievement(1, ' + i + ')" value="' + name + '"></div><div style="flex;display: inline-flex;">' + AchievementIconHTML + '<div style="width: 50%;overflow-y: scroll;height: 76px;">' + labels + '</div></div><div><input class="AchInputImg" type="text" id="achievementimg' + i + '" onchange="updateAchievement(2, ' + i + ')" value="' + icon + '"></div><div><textarea input class="AchInputDes" type="text" id="achievementdes' + i + '" cols="40" rows="5" onchange="updateAchievement(3, ' + i + ')">' + description + '</textarea></div></div>';
+				document.getElementById('AchievementList').innerHTML += '<div id="Achievement-' + i + '" class="far-grid-item"><div class="achievementtools"><button class="deleteAchievement" type="button" onclick="deleteAchievement(' + i + ')"><i class="fas fa-trash-alt"></i></button></div><div><input class="AchInputName" maxlength="40" type="text" id="achievementname' + i + '" onchange="updateAchievement(1, ' + i + ')" value="' + name + '"></div><div style="flex;display: inline-flex;">' + AchievementIconHTML + '<div style="width: 50%;overflow-y: scroll;height: 76px;">' + labels + '</div></div><div><input class="AchInputImg" type="text" id="achievementimg' + i + '" onchange="updateAchievement(2, ' + i + ')" value="' + icon + '"></div><div><textarea input class="AchInputDes" type="text" id="achievementdes' + i + '" cols="40" rows="5" onchange="updateAchievement(3, ' + i + ')">' + description + '</textarea></div></div>';
 				document.getElementById('AchievementList').style.setProperty("transform", "scale(1) !important;");
 			}
 			document.getElementById("AchievementList").style = "grid-template-rows: repeat(" + Math.round((game.settings.get('farchievements', 'achievementdata').split(";;;").length - 2) / 6) + ", 1fr);"
@@ -575,6 +582,10 @@
 				current: icon,
 				callback: imagePath => { input.value = imagePath; updateAchievement(2, id); }
 			}).browse(icon);
+		}
+		async function toggleListMode(){
+			await game.settings.set('farchievements', 'ListView', !game.settings.get('farchievements', 'ListView'));
+			reloadAchievements();
 		}
 		async function openImportExport() {
 			let $dialog = $('.ImportExportWindow');
@@ -718,7 +729,7 @@
 	<div id="CustomAchievmentStyling"></div>
 	<div id="CustomAchievmentBackgroundStyling"></div>
 	<div id="AchPlayerNav" class="AchPlayerNav"></div>
-	<div id="AchievementList" onSync="loadAchievements()" class="grid-container" style="grid-template-rows: repeat(7, 1fr);"></div>
+	<div id="AchievementList" onSync="loadAchievements()" class="far-grid-container" style="grid-template-rows: repeat(7, 1fr);"></div>
 	<div style="display:none;" class="editmodebar" style="text-align: -webkit-right;"><i class="fas fa-plus-square achievementsettings" onclick="addAchievement()"></i><i id="SyncAch" onclick="SendSyncMessage()" class="fas fa-sync achievementsettings" title="{{localize 'Farchievements.Html.PushChangesNow'}}"></i></div>
 	<!-- <i class="fas fa-minus-square achievementsettings" onclick="removeAchievement()"></i> -->
 	<div id="achsyncnormalmode"></div>
