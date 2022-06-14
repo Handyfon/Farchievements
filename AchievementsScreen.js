@@ -1,8 +1,8 @@
 Hooks.once('init', function() {
 	const debouncedReload = debounce(() => window.location.reload(), 100);
 	game.settings.register('farchievements', 'EnableChatBarButton', {
-        name: 'Enable Chatbar Button',
-        hint: 'Allowes to access Farchivements from the chat bar',
+        name: game.i18n.localize('Farchievements.Settings.EnableChatBarButton.Text'),
+        hint: game.i18n.localize('Farchievements.Settings.EnableChatBarButton.Hint'),
         scope: 'world',
         config: true,
         default: false,
@@ -10,16 +10,16 @@ Hooks.once('init', function() {
 		onChange: debouncedReload,
 	});
 	game.settings.register('farchievements', 'EnableAchievementMessage', {
-        name: 'Enable Chatmessage',
-        hint: 'Posts a message when a player gained an achievement.',
+        name: game.i18n.localize('Farchievements.Settings.EnableAchievementMessage.Text'),
+        hint: game.i18n.localize('Farchievements.Settings.EnableAchievementMessage.Hint'),
         scope: 'world',
         config: true,
         default: false,
         type: Boolean,
 	});
 	game.settings.register('farchievements', 'EnableScoreboard', {
-        name: 'Enable Scoreboard',
-        hint: 'Enables Scoreboard for players.',
+        name: game.i18n.localize('Farchievements.Settings.EnableScoreboard.Text'),
+        hint: game.i18n.localize('Farchievements.Settings.EnableScoreboard.Hint'),
         scope: 'world',
         config: true,
         default: true,
@@ -27,32 +27,32 @@ Hooks.once('init', function() {
 	});
 	if (game.modules.get('confetti')?.active === true)
 	game.settings.register('farchievements', 'EnableConfettiSupport', {
-        name: 'Enable Confetti',
-		hint: 'Enable Support for the Confetti module',
+        name: game.i18n.localize('Farchievements.Settings.EnableConfettiSupport.Text'),
+		hint: game.i18n.localize('Farchievements.Settings.EnableConfettiSupport.Hint'),
         scope: 'world',
         config: true,
         default: true,
         type: Boolean,
     });
 	game.settings.register('farchievements', 'EnableContextButton', {
-        name: 'Enable the button for the player-list context menu',
-        hint: 'Enable the button for the player-list context menu.',
+        name: game.i18n.localize('Farchievements.Settings.EnableContextButton.Text'),
+        hint: game.i18n.localize('Farchievements.Settings.EnableContextButton.Hint'),
         scope: 'world',
         config: true,
         default: true,
         type: Boolean,
     });
 	game.settings.register('farchievements', 'OmniView', {
-        name: 'OmniView',
-        hint: 'OmniView',
+        name: game.i18n.localize('Farchievements.Settings.OmniView.Text'),
+        hint: game.i18n.localize('Farchievements.Settings.OmniView.Hint'),
         scope: 'world',
         config: true,
 		default: false,
 		type: Boolean,
     });
 	game.settings.register('farchievements', 'GameSettingsButton', {
-        name: 'Game Settings-Button',
-        hint: 'Enable the button within the Game Settings tab',
+        name: game.i18n.localize('Farchievements.Settings.GameSettingsButton.Text'),
+        hint: game.i18n.localize('Farchievements.Settings.GameSettingsButton.Hint'),
         scope: 'world',
         config: true,
         default: true,
@@ -60,89 +60,89 @@ Hooks.once('init', function() {
 		onChange: debouncedReload,
     });
 	game.settings.register('farchievements', 'AchievementWindowTitle', {
-        name: 'Title',
-        hint: 'Title of Achievement Window',
+        name: game.i18n.localize('Farchievements.Settings.AchievementWindowTitle.Text'),
+        hint: game.i18n.localize('Farchievements.Settings.AchievementWindowTitle.Hint'),
         scope: 'world',
         config: true,
-        default: "Your Achievements",
+        default: 'Your Achievements',
         type: String,
     });
 	game.settings.register('farchievements', 'PlayerBackColor', {
-        name: 'Player Background Color',
-        hint: 'Uses player color as background colorsheme for the Achievmentscreen',
+        name: game.i18n.localize('Farchievements.Settings.PlayerBackColor.Text'),
+        hint: game.i18n.localize('Farchievements.Settings.PlayerBackColor.Hint'),
         scope: 'world',
         config: true,
         default: true,
         type: Boolean,
     });
 	game.settings.register('farchievements', 'HideUnknown', {
-        name: 'Hide Unknown Achievements',
-        hint: 'Completely hide Unknown Achievements from your players',
+        name: game.i18n.localize('Farchievements.Settings.HideUnknown.Text'),
+        hint: game.i18n.localize('Farchievements.Settings.HideUnknown.Hint'),
         scope: 'world',
         config: true,
         default: false,
         type: Boolean,
     });
 	game.settings.register('farchievements', 'UnknownName', {
-        name: 'Unknown Achievement',
-        hint: 'Standard name of unknown Achievement (leave empty to disable)',
+        name: game.i18n.localize('Farchievements.Settings.UnknownName.Text'),
+        hint: game.i18n.localize('Farchievements.Settings.UnknownName.Hint'),
         scope: 'world',
         config: true,
-        default: "Unknown Achievement",
+        default: 'Unknown Achievement',
         type: String,
     });
 	game.settings.register('farchievements', 'AlwaysShowName', {
-        name: 'Always show name',
-        hint: 'Always displays the name of the achievement',
+        name: game.i18n.localize('Farchievements.Settings.AlwaysShowName.Text'),
+        hint: game.i18n.localize('Farchievements.Settings.AlwaysShowName.Hint'),
         scope: 'world',
         config: true,
         default: false,
         type: Boolean,
     });
 	game.settings.register('farchievements', 'UnknownDes', {
-        name: 'Unknown Description',
-        hint: 'Standard description of unknown Achievement (leave empty to disable)',
+        name: game.i18n.localize('Farchievements.Settings.UnknownDes.Text'),
+        hint: game.i18n.localize('Farchievements.Settings.UnknownDes.Hint'),
         scope: 'world',
         config: true,
         default: "",
         type: String,
     });
 	game.settings.register('farchievements', 'AlwaysShowDes', {
-        name: 'Always show description',
-        hint: 'Always displays the description of the achievement',
+        name: game.i18n.localize('Farchievements.Settings.AlwaysShowDes.Text'),
+        hint: game.i18n.localize('Farchievements.Settings.AlwaysShowDes.Hint'),
         scope: 'world',
         config: true,
         default: false,
         type: Boolean,
     });
 	game.settings.register('farchievements', 'DescriptionOnHover', {
-        name: 'Description on Hover',
-        hint: 'Display the discription only when the achievment is hovered.',
+        name: game.i18n.localize('Farchievements.Settings.DescriptionOnHover.Text'),
+        hint: game.i18n.localize('Farchievements.Settings.DescriptionOnHover.Hint'),
         scope: 'world',
         config: true,
-        default: "true",
+        default: true,
         type: Boolean,
     });
 	game.settings.register('farchievements', 'achamount', {
-        name: 'Achievement Amount',
-        hint: 'AchAmount',
+        name: game.i18n.localize('Farchievements.Settings.achamount.Text'),
+        hint: game.i18n.localize('Farchievements.Settings.achamount.Hint'),
         scope: 'world',
         config: false,
         default: "3",
         type: String,
     });
 	game.settings.register('farchievements', 'standarticon', {
-        name: 'Standard Achievement Icon',
-        hint: 'Standard Icon',
+        name: game.i18n.localize('Farchievements.Settings.standarticon.Text'),
+        hint: game.i18n.localize('Farchievements.Settings.standarticon.Hint'),
         scope: 'world',
         config: true,
-        default: "modules/farchievements/standardIcon_silver.webp",
+        default: "modules/farchievements/standardIcon.PNG",
 		type: String,
 		filePicker: 'image',
     });
 	game.settings.register('farchievements', 'bannerBackground', {
-        name: 'Banner background',
-        hint: 'Background for the achievement banner (2000 x 180 px)',
+        name: game.i18n.localize('Farchievements.Settings.bannerBackground.Text'),
+        hint: game.i18n.localize('Farchievements.Settings.bannerBackground.Hint'),
         scope: 'world',
         config: true,
         default: "modules/farchievements/achievementbanner.jpg",
@@ -150,8 +150,8 @@ Hooks.once('init', function() {
 		filePicker: 'image',
     });
 	game.settings.register('farchievements', 'achievementStinger', {
-        name: 'Achievement Stinger',
-		hint: 'Audio that will be played during the animation',
+        name: game.i18n.localize('Farchievements.Settings.achievementStinger.Text'),
+		hint: game.i18n.localize('Farchievements.Settings.achievementStinger.Hint'),
         scope: 'world',
         config: true,
         default: "modules/farchievements/standardStinger_by_JFarenheit.mp3",
@@ -159,11 +159,11 @@ Hooks.once('init', function() {
 		filePicker: 'audio',
 	});
 	game.settings.register('farchievements', 'achievementStingerVolume', {
-        name: 'Achievement Stinger Volume',
-        hint: 'This is the volume all stingers will be played on, I recommend to keep it low',
+        name: game.i18n.localize('Farchievements.Settings.achievementStingerVolume.Text'),
+        hint: game.i18n.localize('Farchievements.Settings.achievementStingerVolume.Hint'),
         scope: 'world',
         config: true,
-        default: "0.1",
+        default: 0.1,
 		type: Number,
 		range: {
 			min: 0,
@@ -172,24 +172,24 @@ Hooks.once('init', function() {
 		}
     });
 	game.settings.register('farchievements', 'achpretext', {
-        name: 'New Achievement Prefix',
-        hint: 'Prefix that is infront of the achievement name within the banner',
+        name: game.i18n.localize('Farchievements.Settings.achpretext.Text'),
+        hint: game.i18n.localize('Farchievements.Settings.achpretext.Hint'),
         scope: 'world',
         config: true,
         default: "Achievement Gained: ",
         type: String,
     });
 	game.settings.register('farchievements', 'greyscale', {
-        name: 'Greyscale Unowned Achievements',
-        hint: 'Displays the achievement icon but grayscaled instead of the mystery icon.',
+        name: game.i18n.localize('Farchievements.Settings.greyscale.Text'),
+        hint: game.i18n.localize('Farchievements.Settings.greyscale.Hint'),
         scope: 'world',
         config: true,
-        default: "true",
+        default: true,
         type: Boolean,
     });
 	game.settings.register('farchievements', 'mystery', {
-        name: 'Mystery Icon',
-        hint: 'Standard icon for unknown achievements',
+        name: game.i18n.localize('Farchievements.Settings.mystery.Text'),
+        hint: game.i18n.localize('Farchievements.Settings.mystery.Hint'),
         scope: 'world',
         config: true,
         default: "modules/farchievements/mystery.JPG",
@@ -197,32 +197,32 @@ Hooks.once('init', function() {
 		filePicker: 'image',
     });
 	game.settings.register('farchievements', 'achievementdata', {
-        name: 'AchievementData (DONTTOUCH)',
-        hint: 'The data for the achievements is saved here !!DONT TOUCH!!',
+        name: game.i18n.localize('Farchievements.Settings.AchievementData.Text'),
+        hint: game.i18n.localize('Farchievements.Settings.AchievementData.Hint'),
         scope: 'world',
-		config: false, // DISABLE
+		config: false,
 		default: "1:::Mounted////systems/dnd5e/icons/items/inventory/horseshoe.jpg////Acquire a mount.;;;2:::Translator////systems/dnd5e/icons/items/inventory/note-scroll.jpg////Act as the party translator.;;;3:::Argumenter////systems/dnd5e/icons/items/inventory/monster-beak.jpg////Argue with the DM over a dice roll.;;;4:::Bitte, Bitte Papa////systems/dnd5e/icons/items/inventory/runestone-dwarven.jpg////Ask a deity for a favor.;;;5:::Hardmode////icons/skills/wounds/injury-eyes-blood-red-pink.webp////Be deaf and blind simultaneously.;;;6:::You have no power here////systems/dnd5e/icons/skills/blood_12.jpg////Be ignored by the DM when citing rules.;;;7:::Special////systems/dnd5e/icons/skills/green_27.jpg////Be the only person to roll 20 at a session;;;8:::Actor////systems/dnd5e/icons/skills/emerald_07.jpg////Beat a performance check while in disguise;;;9:::Deiety////systems/dnd5e/icons/skills/yellow_13.jpg////Become deified.;;;10:::Brute////icons/magic/earth/barrier-stone-brown-green.webp////Burst through a wall.;;;11:::Ouch////https://assets.forge-vtt.com/5fa2d7054f8a4cf1b34c8a38/Icons/spellbook_page1/SpellBook08_13.png////Reach 0 HP twice in 1 encounter.;;;12:::Amazing Roleplayer////icons/skills/social/diplomacy-peace-alliance.webp////Roleplay your character exceptionally.;;;13:::(Un)advantage////icons/magic/control/voodoo-doll-pain-damage-purple.webp////Roll 2 1’s on an advantaged roll.;;;14:::Lucky////icons/magic/light/projectile-flare-blue.webp////Roll 2 20’s in a row.;;;15:::Never tell me the odds////icons/magic/control/buff-luck-fortune-clover-green.webp////Roll 2 20’s on a disadvantaged roll.;;;16:::Strongest in the Land////icons/skills/melee/unarmed-punch-fist.webp////Have a strength score over 20.;;;17:::Fastest in the Land////icons/magic/lightning/bolt-strike-cloud-gray.webp////Have a dexterity score over 20.;;;18:::Toughest in the Land////icons/magic/earth/strike-fist-stone-light.webp////Have a constitution score over 20.;;;19:::Smartest in the Land////icons/magic/control/silhouette-hold-beam-blue.webp////Have a intelligence score over 20.;;;20:::Wisest in the Land////icons/magic/nature/tree-elm-roots-brown.webp////Have a wisdom score over 20.;;;21:::The most Charming in the Land////icons/magic/unholy/strike-body-explode-disintegrate.webp////Have a charisma score over 20.;;;22:::I've nothing left to lose...////icons/magic/death/undead-skeleton-deformed-red.webp////...so the only path to choose is twisted. Be the sole survivor of a TPK;;;23:::Necromancer////icons/commodities/bones/bones-dragon-grey.webp////Raise the dead.;;;24:::Lorax////https://c.tenor.com/BzpCcZbxOAIAAAAd/lorax-the-lorax.gif////Speak for the trees;;;",
         type: String,
     });
 	game.settings.register('farchievements', 'clientdataSYNC', {
-        name: 'ClientDataList (DONTTOUCH)',
-        hint: 'will be synced between clients !!DONT TOUCH!!',
+        name: game.i18n.localize('Farchievements.Settings.ClientDataList.Text'),
+        hint: game.i18n.localize('Farchievements.Settings.ClientDataList.Hint'),
         scope: 'world',
 		config: false,
         default: "",
         type: String,
     });
 	game.settings.register('farchievements', 'clientdata', {
-        name: 'ClientData (DONTTOUCH)',
-        hint: 'your clients achievements !!DONT TOUCH!!',
+        name: game.i18n.localize('Farchievements.Settings.ClientData.Text'),
+        hint: game.i18n.localize('Farchievements.Settings.ClientData.Hint'),
         scope: 'client',
         config: false,
         default: "",
         type: String,
     });
 	game.settings.register('farchievements', 'loadSettingsForPlayer', {
-        name: 'loadSettingsForPlayer (DONTTOUCH)',
-        hint: 'loadSettingsForPlayer !!DONT TOUCH!!',
+        name: game.i18n.localize('Farchievements.Settings.loadSettingsForPlayer.Text'),
+        hint: game.i18n.localize('Farchievements.Settings.loadSettingsForPlayer.Hint'),
         scope: 'client',
         config: false,
         default: "",
@@ -327,7 +327,7 @@ class AchievementSync{
 				let tempUserName = game.user.name;
 				ChatMessage.create({
 					user: game.user.id,
-					content: tempUserName + " gained the '" + name +"' achievement",
+					content: `${tempUserName} ${game.i18n.localize('Farchievements.GainedAchivement')} '${name}' ${game.i18n.localize('Farchievements.Achievement')}`,
 					blind: false,
 				});
             }
@@ -387,7 +387,7 @@ class AchievementSync{
 						clientDataSYNC = ToSYNC.join("||") + "||";
 						console.log(clientDataSYNC);
 						if(userID != "")
-						ui.notifications.notify("Foundry Achievements | Player ID's Changed, purged Player with ID: " + userID);
+						ui.notifications.notify(game.i18n.localize('Farchievements.Notification.Prefix') + game.i18n.localize('Farchievements.Notification.PlayerIdChanged') + userID);
 					}
 				}
 			}
@@ -436,16 +436,18 @@ Hooks.on('renderSceneNavigation', function() {
 		if(!game.user.isGM)
 		AchievementSync.SyncAchievements();
 		let bannerstyle = 'top: -200px;background: url('+game.settings.get("farchievements", "bannerBackground")+')!important;background-size: cover !important;background-position: center !important;box-shadow: 0px -4px 6px black !important;display: flex;';
-		var el = '<div id="Achievementbar" style="display: none;" class="Achievementbar"><div id="FoundryAchievements" class="FoundryAchievementsBanner" style="'+bannerstyle+'"><img id="AchievementIMG" class="AchievementIMG" src="modules/farchievements/standardIcon.PNG"></img><p class="AchievementText"><label class="AchievementTextLabel">New Achievement:</label> (Achievement) </p><i class="Shiny"></i></div></div>';
-		document.getElementById("notifications").innerHTML = el;	
+		var el = `<div id="Achievementbar" style="display: none;" class="Achievementbar"><div id="FoundryAchievements" class="FoundryAchievementsBanner" style="'+bannerstyle+'"><img id="AchievementIMG" class="AchievementIMG" src="modules/farchievements/standardIcon.PNG"></img><p class="AchievementText"><label class="AchievementTextLabel">${game.i18n.localize('Farchievements.NewAchievement')}</label> (${game.i18n.localize('Farchievements.Achievement')}) </p><i class="Shiny"></i></div></div>`;
+		document.getElementById("notifications").innerHTML = el;
+	
 });
+
 Hooks.on('renderSettings', function() {
 	//ADD BUTTON TO SETTINGS
 	function refreshData(){
 		let x = 0.1;  // 0.1 seconds
 		
 		if(document.getElementById("FarchievementsSettings") == null && game.settings.get('farchievements', 'GameSettingsButton')){
-			$('#settings-game').append('<div id="FarchievementsSettings" style="margin:0;"><h4>Farchievements</h4><button id="SettingsAchievementsButton" data-action="Achievements"><i class="fas fa-medal achievements-button"></i>Achievements</button></div>');
+			$('#settings-game').append(`<div id="FarchievementsSettings" style="margin:0;><h4>Farchievements</h4><button id="SettingsAchievementsButton" data-action="Achievements"><i class="fas fa-medal achievements-button"></i>${game.i18n.localize('Farchievements.Achievements')}</button></div>`);
 			let AchievementsButton = document.getElementById("SettingsAchievementsButton");
 			if(AchievementsButton != null)
 			AchievementsButton.onclick = Achievements.initializeAchievements;
@@ -456,7 +458,7 @@ Hooks.on('renderSettings', function() {
 			if(document.getElementById("contextAchievement") == null){
 				let id = document.getElementsByClassName("context-items")[0].closest('.player').getAttribute("data-user-id");
 				if(id != game.user.id && game.user.isGM){//You can't open your own achievements
-					$(".context-items").append('<li class="context-item" id="contextAchievement"><i class="fas fa-medal"></i> View Achievements</li>');
+					$(".context-items").append(`<li class="context-item" id="contextAchievement"><i class="fas fa-medal"></i> ${game.i18n.localize('Farchievements.ViewAchievements')}</li>`);
 					let AchievmentContextButton = document.getElementById("contextAchievement");
 					game.settings.set('farchievements', 'loadSettingsForPlayer', id);
 					AchievmentContextButton.onclick = Achievements.initializeAchievements;
@@ -479,11 +481,13 @@ Hooks.on('renderSettings', function() {
 		WaitForReady();
 	}
 	
-	refreshData();});
+	refreshData();
+
+});
 Hooks.on("createChatMessage", async function (message){
-	if(message.data.content.includes("Achievements Synced"))
+	if(message.data.content.includes('Achievements Synced'))
 	AchievementSync.SyncAchievements();
-	if(message.data.content.includes("Farchievements-SyncRequest")){
+if(message.data.content.includes("Farchievements-SyncRequest")){
 	if(!game.user.isGM)return;
 	let NAME = message.data.content.split("|")[1];
 	let ACHIEVMENTNAME = message.data.content.split("|")[2];
@@ -497,7 +501,7 @@ Hooks.on("createChatMessage", async function (message){
 	Player = game.user;
 	}
 	if(Player == null){
-		ui.notifications.error("This user doesn't exist");
+		ui.notifications.error(game.i18n.localize('Farchievements.Notification.Prefix') + game.i18n.localize('Farchievements.Notification.UserDoesNotExist'));
 		return;
 	}
 	PID = dataArray.indexOf(dataArray.filter(entry => entry.includes(Player.id))[0]);
@@ -522,11 +526,11 @@ Hooks.on("createChatMessage", async function (message){
 
 	ChatMessage.create({
 		user : game.user.id,
-		content: "Achievements Synced",
+		content: 'Achievements Synced',
 		blind: false,
 		whisper : game.users.entities.filter(u => u.isGM).map(u => u.id)
 	});
-	ui.notifications.notify("Achievements Synced");
+	ui.notifications.notify('Achievements Synced');
 	AchievementSync.SyncAchievements();
 }});
 
