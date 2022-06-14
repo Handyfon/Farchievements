@@ -8,6 +8,18 @@
 	"styles": ["AchievementsScreen.css"],
 	"packs": [],
 	"socket": true,
+	"languages": [
+	  {
+		"lang": "de",
+		"name": "German",
+		"path": "lang/de.json"
+	  },
+	  {
+		"lang": "en",
+		"name": "English",
+		"path": "lang/en.json"
+	  }
+	],
     "url": "https://github.com/Handyfon/Farchievements/tree/master",
     "manifest": "https://raw.githubusercontent.com/Handyfon/Farchievements/master/module.json",
     "download": "https://raw.githubusercontent.com/Handyfon/Farchievements/master/farchievements.zip",
