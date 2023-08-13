@@ -1,4 +1,4 @@
-# Chat Media
+# Farchievements
 
 ![Latest Release Download Count](https://img.shields.io/github/downloads/p4535992/foundryvtt-farchievements/latest/module.zip?color=2b82fc&label=DOWNLOADS&style=for-the-badge)
 
