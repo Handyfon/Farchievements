@@ -264,6 +264,33 @@ p.AchDescription {
     color: white;
     padding: 5px;
 }
+.ChatAchName {
+    text-align-last: center;
+    background: #655f00;
+    color: #f7ff9e;
+    padding: 0;
+    margin: 0;
+    text-align: center;
+    line-break: auto;
+    font-size: 19px;
+    vertical-align: middle;
+    width: 100%;
+}
+.ChatAchDescription {
+    text-align: center;
+    border: 1px groove #000000;
+    margin: 0;
+    padding: 0;
+    margin-top: -5px;
+    contain: content;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background: #655f00;
+    line-break: auto;
+    height: fit-content;
+    color: white;
+    padding: 5px;
+}
 .AchInputName {
     width: 80% !important;
     background: #00000091 !important;

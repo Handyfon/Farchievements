@@ -314,7 +314,7 @@ class AchievementSync{
 	
 		let achievementsToGain = achievementsGainedList.split(",");
 		let data;
-		let name,icon;
+		let name,icon,description;
 		let toGain;
 		let stingerVolume = game.settings.get('farchievements', 'achievementStingerVolume');
 		for(let i = 0; i < achievementsToGain.length; i++){
@@ -324,6 +324,7 @@ class AchievementSync{
 			data = game.settings.get('farchievements', 'achievementdata').split(';;;')[toGain];
 			name = data.split(":::")[1].split("////")[0];
 			icon = data.split(":::")[1].split("////")[1];
+			description = data.split(":::")[1].split("////")[2];
 			if(icon == "icon"){icon = game.settings.get('farchievements', 'standarticon')} //IF STANDARD ICON USE ICON DEFINED IN GAMESETTINGS
 			await AudioHelper.play({ src: game.settings.get('farchievements', 'achievementStinger'), volume: stingerVolume, autoplay: true, loop: false}, false);
 			await AchievementSync.sleep(1800);
@@ -332,10 +333,12 @@ class AchievementSync{
 			document.getElementById("Achievementbar").style.setProperty("display", "flex");
 			if (game.settings.get('farchievements', 'EnableAchievementMessage')){
 
-				let tempUserName = game.user.name;
 				ChatMessage.create({
 					user: game.user.id,
-					content: `${tempUserName} ${game.i18n.localize('Farchievements.GainedAchivement')} '${name}' ${game.i18n.localize('Farchievements.Achievement')}`,
+					content: `	<div class="ChatAchName">${name}</div>
+								<img class="AchIcon" src="${icon}"/>
+								<div class="ChatAchDescription">${description}</div>
+							`,
 					blind: false,
 				});
             }
