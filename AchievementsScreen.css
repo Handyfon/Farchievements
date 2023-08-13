@@ -20,7 +20,7 @@ i.fas.fa-list.listViewSettings {
     background: #000000d9;
     color: white;
     margin-right: 68px;
-    position: ;
+    /* position: ; */
 }
 i.fas.fa-list.listViewSettings:active {
     background: white;
