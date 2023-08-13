@@ -15,7 +15,9 @@
 import { registerSettings } from "./scripts/settings.js";
 import CONSTANTS from "./scripts/constants/constants.js";
 import API from "./scripts/API/api.js";
-import { error } from "./scripts/lib/lib.js";
+import { error, i18n } from "./scripts/lib/lib.js";
+import { AchievementSync } from "./scripts/AchievementSync.js";
+import { Achievements } from "./scripts/Achievements.js";
 
 /* ------------------------------------ */
 /* Initialize module					*/

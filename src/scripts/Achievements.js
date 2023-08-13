@@ -1,4 +1,5 @@
-import CONSTANTS from "./constants";
+import CONSTANTS from "./constants/constants.js";
+import { AchievementsScreen } from "./AchievementsScreen.js";
 
 export class Achievements {
   static addChatControl() {

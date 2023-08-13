@@ -21,7 +21,7 @@ export class AchievementsScreen extends Application {
     templateData.data = super.getData();
     templateData.title = "Farchievements";
 
-    const templatePath = `modules/${CONSTANTS.MODULE_ID}/AchievementsScreen.html`;
+    const templatePath = `modules/${CONSTANTS.MODULE_ID}/templates/AchievementsScreen.html`;
     if (document.getElementsByClassName("achievementsscreen-window").length > 0) {
     }
     AchievementsScreen.renderMenu(templatePath, templateData);

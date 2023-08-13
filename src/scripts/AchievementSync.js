@@ -1,5 +1,5 @@
 import CONSTANTS from "./constants/constants";
-import { log } from "./lib/lib";
+import { log, i18n } from "./lib/lib";
 
 export class AchievementSync {
   static sleep(ms) {

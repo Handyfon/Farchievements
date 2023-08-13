@@ -381,10 +381,15 @@ div#FoundryAchievements {
   -ms-transform: translate(-50%, -50%);
   -o-transform: translate(-50%, -50%);
   background: rgba(0, 0, 0, 0.5);
-  @include fade-transition(background): ;
+  /* @include fade-transition(background); */
+  -webkit-transition: rgba(0, 0, 0, 0.5) 0.15s ease-in-out;
+  -moz-transition: rgba(0, 0, 0, 0.5) 0.15s ease-in-out;
+  -ms-transition: rgba(0, 0, 0, 0.5) 0.15s ease-in-out;
+  -o-transition: rgba(0, 0, 0, 0.5) 0.15s ease-in-out;
+  transition: rgba(0, 0, 0, 0.5) 0.15s ease-in-out;
 }
 .FoundryAchievementsBanner {
-  background: url(modules/farchievements/achievementbanner.jpg) !important;
+  background: url(modules/farchievements/assets/images/achievementbanner.jpg) !important;
   background-size: cover !important;
   background-position: center !important;
   box-shadow: 0px -4px 6px black !important;
@@ -415,7 +420,13 @@ p.AchievementText {
   color: white;
   width: 100%;
   text-shadow: 2px 2px 2px black;
-  @include fade-transition(background);
+  background: rgba(0, 0, 0, 0.5);
+  /* @include fade-transition(background); */
+  -webkit-transition: rgba(0, 0, 0, 0.5) 0.15s ease-in-out;
+  -moz-transition: rgba(0, 0, 0, 0.5) 0.15s ease-in-out;
+  -ms-transition: rgba(0, 0, 0, 0.5) 0.15s ease-in-out;
+  -o-transition: rgba(0, 0, 0, 0.5) 0.15s ease-in-out;
+  transition: rgba(0, 0, 0, 0.5) 0.15s ease-in-out;
 }
 label.AchievementTextLabel {
   border-radius: 5px;
@@ -453,13 +464,15 @@ label.AchievementTextLabel {
     transform: scale(1);
   }
 }
+/* 
 @mixin fade-transition($element) {
   -webkit-transition: $element 0.15s ease-in-out;
   -moz-transition: $element 0.15s ease-in-out;
   -ms-transition: $element 0.15s ease-in-out;
   -o-transition: $element 0.15s ease-in-out;
   transition: $element 0.15s ease-in-out;
-}
+} 
+*/
 .Shiny {
   /*   positioning */
   position: absolute;
