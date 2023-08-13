@@ -1,4 +1,5 @@
 import CONSTANTS from "../constants/constants.js";
+import SETTINGS from "../constants/settings.js";
 
 // =================================
 // Logger Utility
@@ -8,7 +9,7 @@ import CONSTANTS from "../constants/constants.js";
 // 0 = none, warnings = 1, debug = 2, all = 3
 
 export function debug(msg, args = "") {
-  if (game.settings.get(CONSTANTS.MODULE_ID, "debug")) {
+  if (game.settings.get(CONSTANTS.MODULE_ID, SETTINGS.debug)) {
     console.log(`DEBUG | ${CONSTANTS.MODULE_ID} | ${msg}`, args);
   }
   return msg;

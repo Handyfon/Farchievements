@@ -1,8 +1,4 @@
-import { SYSTEMS } from "../systems.mjs";
-import { applySystemSpecificStyles } from "../settings.mjs";
-import CONSTANTS from "./constants.mjs";
-import ItemProperties from "../apps/ItemProperties.mjs";
-import DefaultIcons from "../apps/DefaultIcons.mjs";
+import CONSTANTS from "./constants.js";
 
 const SETTINGS = {
   // Client settings
@@ -11,7 +7,7 @@ const SETTINGS = {
   EnableChatBarButton: "EnableChatBarButton",
   EnableAchievementMessage: "EnableAchievementMessage",
   EnableScoreboard: "EnableScoreboard",
-  EnableConfettiSupport: EnableConfettiSupport, // TODO TO REMOVE AND EMBEDDED THE CODE
+  EnableConfettiSupport: "EnableConfettiSupport", // TODO TO REMOVE AND EMBEDDED THE CODE
   EnableContextButton: "EnableContextButton",
   OmniView: "OmniView",
   ListView: "ListView",

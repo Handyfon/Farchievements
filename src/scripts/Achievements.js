@@ -1,9 +1,10 @@
 import CONSTANTS from "./constants/constants.js";
 import { AchievementsScreen } from "./AchievementsScreen.js";
+import SETTINGS from "./constants/settings.js";
 
 export class Achievements {
   static addChatControl() {
-    if (!game.settings.get(CONSTANTS.MODULE_ID, "EnableChatBarButton")) {
+    if (!game.settings.get(CONSTANTS.MODULE_ID, SETTINGS.EnableChatBarButton)) {
       return;
     }
     const chatControlLeft = document.getElementsByClassName("chat-control-icon")[0];

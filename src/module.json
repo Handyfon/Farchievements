@@ -2,7 +2,7 @@
   "id": "farchievements",
   "title": "Foundry Achievements",
   "description": "Achievements for FoundryVTT",
-  "version": "11.0.0",
+  "version": "11.0.1",
   "authors": [
     {
       "name": "Handyfon",
@@ -73,10 +73,10 @@
   },
   "manifestPlusVersion": "1.2.1",
   "url": "https://github.com/p4535992/foundryvtt-farchievements",
-  "manifest": "https://github.com/p4535992/foundryvtt-farchievements/releases/download/v11.0.0/module.json",
-  "download": "https://github.com/p4535992/foundryvtt-farchievements/releases/download/v11.0.0/module.zip",
-  "readme": "https://github.com/p4535992/foundryvtt-farchievements/blob/v11.0.0/README.md",
-  "changelog": "https://github.com/p4535992/foundryvtt-farchievements/blob/v11.0.0/CHANGELOG.md",
+  "manifest": "https://github.com/p4535992/foundryvtt-farchievements/releases/download/v11.0.1/module.json",
+  "download": "https://github.com/p4535992/foundryvtt-farchievements/releases/download/v11.0.1/module.zip",
+  "readme": "https://github.com/p4535992/foundryvtt-farchievements/blob/v11.0.1/README.md",
+  "changelog": "https://github.com/p4535992/foundryvtt-farchievements/blob/v11.0.1/CHANGELOG.md",
   "bugs": "https://github.com/p4535992/foundryvtt-farchievements/issues",
   "allowBugReporter": true,
   "relationships": {

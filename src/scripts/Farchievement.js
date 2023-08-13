@@ -11,15 +11,23 @@ export class Farchievement {
   static async AddAchievement(AchievementName, PlayerName) {
     if (!game.user.isGM) return;
     log(AchievementName);
-    let data = game.settings.get("farchievements", "achievementdata").split(";;;");
+    let data = game.settings.get(CONSTANTS.MODULE_ID, SETTINGS.achievementdata).split(";;;");
     let AchievementID, PlayerID;
-    for (let i = 0; i < game.settings.get("farchievements", "achievementdata").split(";;;").length; i++) {
+    for (let i = 0; i < game.settings.get(CONSTANTS.MODULE_ID, SETTINGS.achievementdata).split(";;;").length; i++) {
       if (
         AchievementName ==
-        game.settings.get("farchievements", "achievementdata").split(";;;")[i].split("////")[0].split(":::")[1]
+        game.settings
+          .get(CONSTANTS.MODULE_ID, SETTINGS.achievementdata)
+          .split(";;;")
+          [i].split("////")[0]
+          .split(":::")[1]
       ) {
         AchievementID =
-          game.settings.get("farchievements", "achievementdata").split(";;;")[i].split("////")[0].split(":::")[0] - 1;
+          game.settings
+            .get(CONSTANTS.MODULE_ID, SETTINGS.achievementdata)
+            .split(";;;")
+            [i].split("////")[0]
+            .split(":::")[0] - 1;
       }
     }
     PlayerID = game.users.getName(PlayerName).id;
@@ -37,15 +45,23 @@ export class Farchievement {
   static async RemoveAchievement(AchievementName, PlayerName) {
     if (!game.user.isGM) return;
     log(AchievementName);
-    let data = game.settings.get("farchievements", "achievementdata").split(";;;");
+    let data = game.settings.get(CONSTANTS.MODULE_ID, SETTINGS.achievementdata).split(";;;");
     let AchievementID, PlayerID;
-    for (let i = 0; i < game.settings.get("farchievements", "achievementdata").split(";;;").length; i++) {
+    for (let i = 0; i < game.settings.get(CONSTANTS.MODULE_ID, SETTINGS.achievementdata).split(";;;").length; i++) {
       if (
         AchievementName ==
-        game.settings.get("farchievements", "achievementdata").split(";;;")[i].split("////")[0].split(":::")[1]
+        game.settings
+          .get(CONSTANTS.MODULE_ID, SETTINGS.achievementdata)
+          .split(";;;")
+          [i].split("////")[0]
+          .split(":::")[1]
       ) {
         AchievementID =
-          game.settings.get("farchievements", "achievementdata").split(";;;")[i].split("////")[0].split(":::")[0] - 1;
+          game.settings
+            .get(CONSTANTS.MODULE_ID, SETTINGS.achievementdata)
+            .split(";;;")
+            [i].split("////")[0]
+            .split(":::")[0] - 1;
       }
     }
     PlayerID = game.users.getName(PlayerName).id;

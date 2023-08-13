@@ -10,21 +10,21 @@ export class AchievementSync {
     let data;
     let name, icon, description;
     let toGain;
-    let stingerVolume = game.settings.get(CONSTANTS.MODULE_ID, "achievementStingerVolume");
+    let stingerVolume = game.settings.get(CONSTANTS.MODULE_ID, SETTINGS.achievementStingerVolume);
     for (let i = 0; i < achievementsToGain.length; i++) {
       await AchievementSync.sleep(100);
       toGain = achievementsToGain[i];
       if (toGain == "") return;
-      data = game.settings.get(CONSTANTS.MODULE_ID, "achievementdata").split(";;;")[toGain];
+      data = game.settings.get(CONSTANTS.MODULE_ID, SETTINGS.achievementdata).split(";;;")[toGain];
       name = data.split(":::")[1].split("////")[0];
       icon = data.split(":::")[1].split("////")[1];
       description = data.split(":::")[1].split("////")[2];
       if (icon == "icon") {
-        icon = game.settings.get(CONSTANTS.MODULE_ID, "standarticon");
+        icon = game.settings.get(CONSTANTS.MODULE_ID, SETTINGS.standarticon);
       } //IF STANDARD ICON USE ICON DEFINED IN GAMESETTINGS
       await AudioHelper.play(
         {
-          src: game.settings.get(CONSTANTS.MODULE_ID, "achievementStinger"),
+          src: game.settings.get(CONSTANTS.MODULE_ID, SETTINGS.achievementStinger),
           volume: stingerVolume,
           autoplay: true,
           loop: false,
@@ -33,10 +33,13 @@ export class AchievementSync {
       );
       await AchievementSync.sleep(1800);
       document.getElementsByClassName("AchievementText")[0].innerHTML =
-        '<label class="AchievementTextLabel">' + game.settings.get("farchievements", "achpretext") + "</label>" + name;
+        '<label class="AchievementTextLabel">' +
+        game.settings.get(CONSTANTS.MODULE_ID, SETTINGS.achpretext) +
+        "</label>" +
+        name;
       document.getElementById("AchievementIMG").src = icon;
       document.getElementById("Achievementbar").style.setProperty("display", "flex");
-      if (game.settings.get(CONSTANTS.MODULE_ID, "EnableAchievementMessage")) {
+      if (game.settings.get(CONSTANTS.MODULE_ID, SETTINGS.EnableAchievementMessage)) {
         ChatMessage.create({
           user: game.user.id,
           content: `	<div class="ChatAchName">${name}</div>
@@ -49,7 +52,7 @@ export class AchievementSync {
 
       if (
         game.modules.get("confetti")?.active === true &&
-        game.settings.get(CONSTANTS.MODULE_ID, "EnableConfettiSupport")
+        game.settings.get(CONSTANTS.MODULE_ID, SETTINGS.EnableConfettiSupport)
       ) {
         for (let c = 0; c < 3; c++) {
           await AchievementSync.sleep(500);
@@ -70,7 +73,7 @@ export class AchievementSync {
       if (document.getElementById("SyncAchUnsaved") != null) {
         document.getElementById("SyncAchUnsaved").id = "SyncAch";
       }
-      let clientDataSYNC = game.settings.get(CONSTANTS.MODULE_ID, "clientdataSYNC");
+      let clientDataSYNC = game.settings.get(CONSTANTS.MODULE_ID, SETTINGS.clientdataSYNC);
       if (clientDataSYNC == "") {
         //IF THERE ARE NO USERS YET ADD ALL OF THEM
         for (let i = 0; i < game.users.contents.length; i++) {
@@ -114,22 +117,22 @@ export class AchievementSync {
           }
         }
       }
-      game.settings.set(CONSTANTS.MODULE_ID, "clientdataSYNC", clientDataSYNC);
+      game.settings.set(CONSTANTS.MODULE_ID, SETTINGS.clientdataSYNC, clientDataSYNC);
     } else {
       //IF USER IS PLAYER
       let myID = game.user.id;
-      let SYNCSETTINGS = game.settings.get(CONSTANTS.MODULE_ID, "clientdataSYNC");
-      let mysettings = game.settings.get(CONSTANTS.MODULE_ID, "clientdata");
+      let SYNCSETTINGS = game.settings.get(CONSTANTS.MODULE_ID, SETTINGS.clientdataSYNC);
+      let mysettings = game.settings.get(CONSTANTS.MODULE_ID, SETTINGS.clientdata);
       if (mysettings == "") mysettings = ":"; //hotfix by XLilCasper#9701
       let mySYNCSettings = "";
       for (
         let i = 0;
-        i < game.settings.get(CONSTANTS.MODULE_ID, "clientdataSYNC").split("||").length;
+        i < game.settings.get(CONSTANTS.MODULE_ID, SETTINGS.clientdataSYNC).split("||").length;
         i++ //FOR EVERY ENTRY IN CLIENTDATASYNC
       ) {
-        if (game.settings.get(CONSTANTS.MODULE_ID, "clientdataSYNC").split("||")[i].includes(myID)) {
+        if (game.settings.get(CONSTANTS.MODULE_ID, SETTINGS.clientdataSYNC).split("||")[i].includes(myID)) {
           //FIND THE SETTINGS FOR THE CURRENT USER BY USERID
-          mySYNCSettings = game.settings.get(CONSTANTS.MODULE_ID, "clientdataSYNC").split("||")[i]; // MYSYNC = SETTINGS FOR MY USERID
+          mySYNCSettings = game.settings.get(CONSTANTS.MODULE_ID, SETTINGS.clientdataSYNC).split("||")[i]; // MYSYNC = SETTINGS FOR MY USERID
         }
       }
       if (mysettings != mySYNCSettings) {
@@ -151,7 +154,7 @@ export class AchievementSync {
           }
         }
         if (amountGained != 0) AchievementSync.PlayAnimation(achievementsGainedList, amountGained);
-        game.settings.set(CONSTANTS.MODULE_ID, "clientdata", clientDataToSync);
+        game.settings.set(CONSTANTS.MODULE_ID, SETTINGS.clientdata, clientDataToSync);
         if (document.getElementById("AchievementScript") != null)
           //IF ACHIEVEMENTSCREEN IS OPEN FOR THE PLAYER RELOAD IT
           document.getElementById("AchievementScript").onclick();

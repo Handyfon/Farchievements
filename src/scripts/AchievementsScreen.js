@@ -1,4 +1,5 @@
 import CONSTANTS from "./constants/constants";
+import SETTINGS from "./constants/settings";
 
 export class AchievementsScreen extends Application {
   activateListeners(html) {
@@ -38,7 +39,7 @@ export class AchievementsScreen extends Application {
     renderTemplate(path, data).then((dlg) => {
       new Dialog(
         {
-          title: game.settings.get(CONSTANTS.MODULE_ID, "AchievementWindowTitle"),
+          title: game.settings.get(CONSTANTS.MODULE_ID, SETTINGS.AchievementWindowTitle),
           content: dlg,
           buttons: {},
         },

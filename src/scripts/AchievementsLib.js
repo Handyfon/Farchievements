@@ -1,11 +1,12 @@
 import CONSTANTS from "./constants/constants";
+import SETTINGS from "./constants/settings";
 
 export async function addAchievementFromCommand(achievementID, PID) {
   let cleanPlayerID = game.users.contents.indexOf(game.users.get(PID)) - 1;
   let dataPlayerID = cleanPlayerID; //++xathick
   let player = game.users.get(PID);
   let playerName = player.name;
-  let clientdataSYNC = game.settings.get(CONSTANTS.MODULE_ID, "clientdataSYNC"); //GET DATA
+  let clientdataSYNC = game.settings.get(CONSTANTS.MODULE_ID, SETTINGS.clientdataSYNC); //GET DATA
   let dataArray = clientdataSYNC.split("||"); //DATA TO ARRAY
   let dataArrayPlayer; //DATA TO ARRAY
   let toSYNC;
@@ -14,17 +15,17 @@ export async function addAchievementFromCommand(achievementID, PID) {
     if (dataArray[index].split(":")[0] == PID) {
       dataPlayerID = index;
     }
-    game.settings.get(CONSTANTS.MODULE_ID, "clientdataSYNC").split("||");
+    game.settings.get(CONSTANTS.MODULE_ID, SETTINGS.clientdataSYNC).split("||");
   }
   if (dataArray[dataPlayerID] == "" || dataArray[dataPlayerID] == "NULL") {
     // IF NO DATA YET ADD ACHIEVEMENT
     dataArrayPlayer = game.users.contents[dataPlayerID]._id + ":" + achievementID + ",";
     dataArray[dataPlayerID] = dataArrayPlayer; //++xathick
     toSYNC = dataArray.join("||");
-    await game.settings.set(CONSTANTS.MODULE_ID, "clientdataSYNC", toSYNC);
+    await game.settings.set(CONSTANTS.MODULE_ID, SETTINGS.clientdataSYNC, toSYNC);
     if (document.getElementById("AchPlayerNav").className == "AchPlayerNav") {
       //CHECK FOR EDITING WITHIN NORMAL WINDOW
-      await game.settings.set(CONSTANTS.MODULE_ID, "loadSettingsForPlayer", PID);
+      await game.settings.set(CONSTANTS.MODULE_ID, SETTINGS.loadSettingsForPlayer, PID);
       $("#achsyncnormalmode").append(
         '<i id="SyncAch2" onclick="SendSyncMessage()" class="fas fa-sync achievementsettings" title="Click to push changes right now"></i>'
       );
@@ -69,13 +70,13 @@ export async function addAchievementFromCommand(achievementID, PID) {
     document.getElementById("SyncAch").id = "SyncAchUnsaved";
   }
 
-  await game.settings.set(CONSTANTS.MODULE_ID, "clientdataSYNC", toSYNC);
+  await game.settings.set(CONSTANTS.MODULE_ID, SETTINGS.clientdataSYNC, toSYNC);
   SendSyncMessage();
   //RELOAD ANY OPEN WINDOW
   if (document.getElementById("AchPlayerNav") == null) return;
   if (document.getElementById("AchPlayerNav").className == "AchPlayerNav") {
     //CHECK FOR EDITING WITHIN NORMAL WINDOW
-    await game.settings.set(CONSTANTS.MODULE_ID, "loadSettingsForPlayer", PID);
+    await game.settings.set(CONSTANTS.MODULE_ID, SETTINGS.loadSettingsForPlayer, PID);
     $("#achsyncnormalmode").append(
       '<i id="SyncAch2" onclick="SendSyncMessage()" class="fas fa-sync achievementsettings" title="Click to push changes right now"></i>'
     );
@@ -87,7 +88,7 @@ export async function removeAchievementFromCommand(achievementID, PID) {
   let dataPlayerID = cleanPlayerID; //++xathick
   let player = game.users.get(PID);
   let playerName = player.name;
-  let clientdataSYNC = game.settings.get(CONSTANTS.MODULE_ID, "clientdataSYNC"); //GET DATA
+  let clientdataSYNC = game.settings.get(CONSTANTS.MODULE_ID, SETTINGS.clientdataSYNC); //GET DATA
   let dataArray = clientdataSYNC.split("||"); //DATA TO ARRAY
   let dataArrayPlayer; //DATA TO ARRAY
   let toSYNC;
@@ -96,17 +97,17 @@ export async function removeAchievementFromCommand(achievementID, PID) {
     if (dataArray[index].split(":")[0] == PID) {
       dataPlayerID = index;
     }
-    game.settings.get(CONSTANTS.MODULE_ID, "clientdataSYNC").split("||");
+    game.settings.get(CONSTANTS.MODULE_ID, SETTINGS.clientdataSYNC).split("||");
   }
   if (dataArray[dataPlayerID] == "" || dataArray[dataPlayerID] == "NULL") {
     // IF NO DATA YET ADD ACHIEVEMENT
     dataArrayPlayer = game.users.contents[dataPlayerID]._id + ":" + achievementID + ",";
     dataArray[dataPlayerID] = dataArrayPlayer; //++xathick
     toSYNC = dataArray.join("||");
-    await game.settings.set(CONSTANTS.MODULE_ID, "clientdataSYNC", toSYNC);
+    await game.settings.set(CONSTANTS.MODULE_ID, SETTINGS.clientdataSYNC, toSYNC);
     if (document.getElementById("AchPlayerNav").className == "AchPlayerNav") {
       //CHECK FOR EDITING WITHIN NORMAL WINDOW
-      await game.settings.set(CONSTANTS.MODULE_ID, "loadSettingsForPlayer", PID);
+      await game.settings.set(CONSTANTS.MODULE_ID, SETTINGS.loadSettingsForPlayer, PID);
       $("#achsyncnormalmode").append(
         '<i id="SyncAch2" onclick="SendSyncMessage()" class="fas fa-sync achievementsettings" title="Click to push changes right now"></i>'
       );
@@ -154,7 +155,7 @@ export async function removeAchievementFromCommand(achievementID, PID) {
     document.getElementById("SyncAch").id = "SyncAchUnsaved";
   }
 
-  await game.settings.set(CONSTANTS.MODULE_ID, "clientdataSYNC", toSYNC);
+  await game.settings.set(CONSTANTS.MODULE_ID, SETTINGS.clientdataSYNC, toSYNC);
   SendSyncMessage();
   //RELOAD ANY OPEN WINDOW
   if (document.getElementById("AchPlayerNav") == null) {
@@ -162,7 +163,7 @@ export async function removeAchievementFromCommand(achievementID, PID) {
   }
   if (document.getElementById("AchPlayerNav").className == "AchPlayerNav") {
     //CHECK FOR EDITING WITHIN NORMAL WINDOW
-    await game.settings.set(CONSTANTS.MODULE_ID, "loadSettingsForPlayer", PID);
+    await game.settings.set(CONSTANTS.MODULE_ID, SETTINGS.loadSettingsForPlayer, PID);
     $("#achsyncnormalmode").append(
       '<i id="SyncAch2" onclick="SendSyncMessage()" class="fas fa-sync achievementsettings" title="Click to push changes right now"></i>'
     );
