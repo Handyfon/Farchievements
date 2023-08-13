@@ -57,10 +57,13 @@ Hooks.once("ready", () => {
 
 Hooks.on("renderSceneNavigation", async function () {
   Achievements.addChatControl();
-  //console.log("AchievementsScreen GM true");
+  //log("AchievementsScreen GM true");
   //sync achievements
-  if (!game.user.isGM) AchievementSync.SyncAchievements();
+  if (!game.user.isGM) {
+    AchievementSync.SyncAchievements();
+  }
   let style = await game.settings.get("farchievements", "bannerBackground");
+  let imageStandardIconPath = `modules/farchievements/assets/images/standard_icon/standardIcon.png`;
   let bannerstyle =
     "top: -200px;background: url(" +
     style +
@@ -68,9 +71,9 @@ Hooks.on("renderSceneNavigation", async function () {
   var el =
     `<div id="Achievementbar" style="display: none;" class="Achievementbar"><div id="FoundryAchievements" class="FoundryAchievementsBanner" style="` +
     bannerstyle +
-    `"><img id="AchievementIMG" class="AchievementIMG" src="modules/farchievements/standardIcon.PNG"></img><p class="AchievementText"><label class="AchievementTextLabel">${game.i18n.localize(
-      "Farchievements.NewAchievement"
-    )}</label> (${game.i18n.localize("Farchievements.Achievement")}) </p><i class="Shiny"></i></div></div>`;
+    `"><img id="AchievementIMG" class="AchievementIMG" src="${imageStandardIconPath}"></img><p class="AchievementText"><label class="AchievementTextLabel">${i18n(
+      "farchievements.NewAchievement"
+    )}</label> (${i18n("farchievements.Achievement")}) </p><i class="Shiny"></i></div></div>`;
   document.getElementById("notifications").innerHTML = el;
 });
 
@@ -84,8 +87,8 @@ Hooks.on("renderSettings", function () {
       game.settings.get("farchievements", "GameSettingsButton")
     ) {
       $("#settings-game").append(
-        `<div id="FarchievementsSettings" style="margin:0;"><h4>Farchievements</h4><button id="SettingsAchievementsButton" data-action="Achievements"><i class="fas fa-medal achievements-button"></i>${game.i18n.localize(
-          "Farchievements.Achievements"
+        `<div id="FarchievementsSettings" style="margin:0;"><h4>Farchievements</h4><button id="SettingsAchievementsButton" data-action="Achievements"><i class="fas fa-medal achievements-button"></i>${i18n(
+          "farchievements.Achievements"
         )}</button></div>`
       );
       let AchievementsButton = document.getElementById("SettingsAchievementsButton");
@@ -99,8 +102,8 @@ Hooks.on("renderSettings", function () {
         if (id != game.user.id && game.user.isGM) {
           //You can't open your own achievements
           $(".context-items").append(
-            `<li class="context-item" id="contextAchievement"><i class="fas fa-medal"></i> ${game.i18n.localize(
-              "Farchievements.ViewAchievements"
+            `<li class="context-item" id="contextAchievement"><i class="fas fa-medal"></i> ${i18n(
+              "farchievements.ViewAchievements"
             )}</li>`
           );
           let AchievmentContextButton = document.getElementById("contextAchievement");
@@ -144,8 +147,7 @@ Hooks.on("createChatMessage", async function (message) {
     }
     if (Player == null) {
       ui.notifications.error(
-        game.i18n.localize("Farchievements.Notification.Prefix") +
-          game.i18n.localize("Farchievements.Notification.UserDoesNotExist")
+        i18n("farchievements.Notification.Prefix") + i18n("farchievements.Notification.UserDoesNotExist")
       );
       return;
     }
@@ -156,18 +158,16 @@ Hooks.on("createChatMessage", async function (message) {
       dataArrayPlayer = game.users._source[PID].id + ":" + achievementID + ",";
       dataArray[PID] = dataArrayPlayer;
       toSYNC = dataArray.join("||");
-      console.log(toSYNC);
+      log(toSYNC);
       //await game.settings.set(CONSTANTS.MODULE_ID, 'clientdataSYNC', toSYNC);
 
-      console.log(
-        "Setting Achievement: " + achievementname + "(ID:" + achievementID + ")" + " for user: " + playerName
-      ); //TODO ACTUALLY ADD THE ACHIEVEMENT
+      log("Setting Achievement: " + achievementname + "(ID:" + achievementID + ")" + " for user: " + playerName); //TODO ACTUALLY ADD THE ACHIEVEMENT
       return;
     } else {
       dataArrayPlayer = dataArray[PID].split(":")[0] + ":" + dataArray[PID].split(":")[1] + achievementID + ",";
       dataArray[PID] = dataArrayPlayer;
       toSYNC = dataArray.join("||");
-      console.log(toSYNC);
+      log(toSYNC);
     }
     await game.settings.set(CONSTANTS.MODULE_ID, "clientdataSYNC", toSYNC);
 

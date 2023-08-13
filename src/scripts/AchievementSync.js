@@ -73,9 +73,7 @@ export class AchievementSync {
         for (let i = 0; i < game.users.contents.length; i++) {
           if (game.users.contents[i].isGM) continue;
           clientDataSYNC += game.users.contents[i].id + ":||";
-          console.log(
-            "Foundry Achievements | Added " + game.users.contents[i].name + " with ID: " + game.users.contents[i].id
-          );
+          log("Foundry Achievements | Added " + game.users.contents[i].name + " with ID: " + game.users.contents[i].id);
         }
       } else {
         for (let i = 0; i < game.users.contents.length; i++) {
@@ -84,7 +82,7 @@ export class AchievementSync {
             //IF A NEW USER IS DETECTED ADD HIM TO THE SYNC SETTING
             clientDataSYNC += game.users.contents[i].id + ":||";
             //ui.notifications.notify("Foundry Achievements | Added "+game.users.contents[i].name+" with ID: " + game.users.contents[i].id);
-            console.log(
+            log(
               "Foundry Achievements | Added " + game.users.contents[i].name + " with ID: " + game.users.contents[i].id
             );
           }
@@ -103,11 +101,11 @@ export class AchievementSync {
             //ToSYNC.pop(i);
             ToSYNC.splice(i, 1);
             clientDataSYNC = ToSYNC.join("||") + "||";
-            console.log(clientDataSYNC);
+            log(clientDataSYNC);
             if (userID != "")
               ui.notifications.notify(
-                game.i18n.localize("Farchievements.Notification.Prefix") +
-                  game.i18n.localize("Farchievements.Notification.PlayerIdChanged") +
+                i18n("farchievements.Notification.Prefix") +
+                  i18n("farchievements.Notification.PlayerIdChanged") +
                   userID
               );
           }

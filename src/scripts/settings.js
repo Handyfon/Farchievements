@@ -4,8 +4,8 @@ import CONSTANTS from "./constants/constants.js";
 export const registerSettings = function () {
   const debouncedReload = debounce(() => window.location.reload(), 100);
   game.settings.register(CONSTANTS.MODULE_ID, "EnableChatBarButton", {
-    name: game.i18n.localize("Farchievements.Settings.EnableChatBarButton.Text"),
-    hint: game.i18n.localize("Farchievements.Settings.EnableChatBarButton.Hint"),
+    name: i18n("farchievements.Settings.EnableChatBarButton.Text"),
+    hint: i18n("farchievements.Settings.EnableChatBarButton.Hint"),
     scope: "world",
     config: true,
     default: false,
@@ -13,16 +13,16 @@ export const registerSettings = function () {
     onChange: debouncedReload,
   });
   game.settings.register(CONSTANTS.MODULE_ID, "EnableAchievementMessage", {
-    name: game.i18n.localize("Farchievements.Settings.EnableAchievementMessage.Text"),
-    hint: game.i18n.localize("Farchievements.Settings.EnableAchievementMessage.Hint"),
+    name: i18n("farchievements.Settings.EnableAchievementMessage.Text"),
+    hint: i18n("farchievements.Settings.EnableAchievementMessage.Hint"),
     scope: "world",
     config: true,
     default: false,
     type: Boolean,
   });
   game.settings.register(CONSTANTS.MODULE_ID, "EnableScoreboard", {
-    name: game.i18n.localize("Farchievements.Settings.EnableScoreboard.Text"),
-    hint: game.i18n.localize("Farchievements.Settings.EnableScoreboard.Hint"),
+    name: i18n("farchievements.Settings.EnableScoreboard.Text"),
+    hint: i18n("farchievements.Settings.EnableScoreboard.Hint"),
     scope: "world",
     config: true,
     default: true,
@@ -30,8 +30,8 @@ export const registerSettings = function () {
   });
   if (game.modules.get("confetti")?.active === true) {
     game.settings.register(CONSTANTS.MODULE_ID, "EnableConfettiSupport", {
-      name: game.i18n.localize("Farchievements.Settings.EnableConfettiSupport.Text"),
-      hint: game.i18n.localize("Farchievements.Settings.EnableConfettiSupport.Hint"),
+      name: i18n("farchievements.Settings.EnableConfettiSupport.Text"),
+      hint: i18n("farchievements.Settings.EnableConfettiSupport.Hint"),
       scope: "world",
       config: true,
       default: true,
@@ -39,32 +39,32 @@ export const registerSettings = function () {
     });
   }
   game.settings.register(CONSTANTS.MODULE_ID, "EnableContextButton", {
-    name: game.i18n.localize("Farchievements.Settings.EnableContextButton.Text"),
-    hint: game.i18n.localize("Farchievements.Settings.EnableContextButton.Hint"),
+    name: i18n("farchievements.Settings.EnableContextButton.Text"),
+    hint: i18n("farchievements.Settings.EnableContextButton.Hint"),
     scope: "world",
     config: true,
     default: true,
     type: Boolean,
   });
   game.settings.register(CONSTANTS.MODULE_ID, "OmniView", {
-    name: game.i18n.localize("Farchievements.Settings.OmniView.Text"),
-    hint: game.i18n.localize("Farchievements.Settings.OmniView.Hint"),
+    name: i18n("farchievements.Settings.OmniView.Text"),
+    hint: i18n("farchievements.Settings.OmniView.Hint"),
     scope: "world",
     config: true,
     default: false,
     type: Boolean,
   });
   game.settings.register(CONSTANTS.MODULE_ID, "ListView", {
-    name: game.i18n.localize("Farchievements.Settings.ListView.Text"),
-    hint: game.i18n.localize("Farchievements.Settings.ListView.Hint"),
+    name: i18n("farchievements.Settings.ListView.Text"),
+    hint: i18n("farchievements.Settings.ListView.Hint"),
     scope: "world",
     config: false,
     default: false,
     type: Boolean,
   });
   game.settings.register(CONSTANTS.MODULE_ID, "GameSettingsButton", {
-    name: game.i18n.localize("Farchievements.Settings.GameSettingsButton.Text"),
-    hint: game.i18n.localize("Farchievements.Settings.GameSettingsButton.Hint"),
+    name: i18n("farchievements.Settings.GameSettingsButton.Text"),
+    hint: i18n("farchievements.Settings.GameSettingsButton.Hint"),
     scope: "world",
     config: true,
     default: true,
@@ -72,107 +72,107 @@ export const registerSettings = function () {
     onChange: debouncedReload,
   });
   game.settings.register(CONSTANTS.MODULE_ID, "AchievementWindowTitle", {
-    name: game.i18n.localize("Farchievements.Settings.AchievementWindowTitle.Text"),
-    hint: game.i18n.localize("Farchievements.Settings.AchievementWindowTitle.Hint"),
+    name: i18n("farchievements.Settings.AchievementWindowTitle.Text"),
+    hint: i18n("farchievements.Settings.AchievementWindowTitle.Hint"),
     scope: "world",
     config: true,
     default: "Your Achievements",
     type: String,
   });
   game.settings.register(CONSTANTS.MODULE_ID, "PlayerBackColor", {
-    name: game.i18n.localize("Farchievements.Settings.PlayerBackColor.Text"),
-    hint: game.i18n.localize("Farchievements.Settings.PlayerBackColor.Hint"),
+    name: i18n("farchievements.Settings.PlayerBackColor.Text"),
+    hint: i18n("farchievements.Settings.PlayerBackColor.Hint"),
     scope: "world",
     config: true,
     default: true,
     type: Boolean,
   });
   game.settings.register(CONSTANTS.MODULE_ID, "HideUnknown", {
-    name: game.i18n.localize("Farchievements.Settings.HideUnknown.Text"),
-    hint: game.i18n.localize("Farchievements.Settings.HideUnknown.Hint"),
+    name: i18n("farchievements.Settings.HideUnknown.Text"),
+    hint: i18n("farchievements.Settings.HideUnknown.Hint"),
     scope: "world",
     config: true,
     default: false,
     type: Boolean,
   });
   game.settings.register(CONSTANTS.MODULE_ID, "UnknownName", {
-    name: game.i18n.localize("Farchievements.Settings.UnknownName.Text"),
-    hint: game.i18n.localize("Farchievements.Settings.UnknownName.Hint"),
+    name: i18n("farchievements.Settings.UnknownName.Text"),
+    hint: i18n("farchievements.Settings.UnknownName.Hint"),
     scope: "world",
     config: true,
     default: "Unknown Achievement",
     type: String,
   });
   game.settings.register(CONSTANTS.MODULE_ID, "AlwaysShowName", {
-    name: game.i18n.localize("Farchievements.Settings.AlwaysShowName.Text"),
-    hint: game.i18n.localize("Farchievements.Settings.AlwaysShowName.Hint"),
+    name: i18n("farchievements.Settings.AlwaysShowName.Text"),
+    hint: i18n("farchievements.Settings.AlwaysShowName.Hint"),
     scope: "world",
     config: true,
     default: false,
     type: Boolean,
   });
   game.settings.register(CONSTANTS.MODULE_ID, "UnknownDes", {
-    name: game.i18n.localize("Farchievements.Settings.UnknownDes.Text"),
-    hint: game.i18n.localize("Farchievements.Settings.UnknownDes.Hint"),
+    name: i18n("farchievements.Settings.UnknownDes.Text"),
+    hint: i18n("farchievements.Settings.UnknownDes.Hint"),
     scope: "world",
     config: true,
     default: "",
     type: String,
   });
   game.settings.register(CONSTANTS.MODULE_ID, "AlwaysShowDes", {
-    name: game.i18n.localize("Farchievements.Settings.AlwaysShowDes.Text"),
-    hint: game.i18n.localize("Farchievements.Settings.AlwaysShowDes.Hint"),
+    name: i18n("farchievements.Settings.AlwaysShowDes.Text"),
+    hint: i18n("farchievements.Settings.AlwaysShowDes.Hint"),
     scope: "world",
     config: true,
     default: false,
     type: Boolean,
   });
   game.settings.register(CONSTANTS.MODULE_ID, "DescriptionOnHover", {
-    name: game.i18n.localize("Farchievements.Settings.DescriptionOnHover.Text"),
-    hint: game.i18n.localize("Farchievements.Settings.DescriptionOnHover.Hint"),
+    name: i18n("farchievements.Settings.DescriptionOnHover.Text"),
+    hint: i18n("farchievements.Settings.DescriptionOnHover.Hint"),
     scope: "world",
     config: true,
     default: true,
     type: Boolean,
   });
   game.settings.register(CONSTANTS.MODULE_ID, "achamount", {
-    name: game.i18n.localize("Farchievements.Settings.achamount.Text"),
-    hint: game.i18n.localize("Farchievements.Settings.achamount.Hint"),
+    name: i18n("farchievements.Settings.achamount.Text"),
+    hint: i18n("farchievements.Settings.achamount.Hint"),
     scope: "world",
     config: false,
     default: "3",
     type: String,
   });
   game.settings.register(CONSTANTS.MODULE_ID, "standarticon", {
-    name: game.i18n.localize("Farchievements.Settings.standarticon.Text"),
-    hint: game.i18n.localize("Farchievements.Settings.standarticon.Hint"),
+    name: i18n("farchievements.Settings.standarticon.Text"),
+    hint: i18n("farchievements.Settings.standarticon.Hint"),
     scope: "world",
     config: true,
-    default: "modules/farchievements/standardIcon.PNG",
+    default: `modules/farchievements/assets/images/standard_icon/standardIcon.png`,
     type: String,
     filePicker: "image",
   });
   game.settings.register(CONSTANTS.MODULE_ID, "bannerBackground", {
-    name: game.i18n.localize("Farchievements.Settings.bannerBackground.Text"),
-    hint: game.i18n.localize("Farchievements.Settings.bannerBackground.Hint"),
+    name: i18n("farchievements.Settings.bannerBackground.Text"),
+    hint: i18n("farchievements.Settings.bannerBackground.Hint"),
     scope: "world",
     config: true,
-    default: "modules/farchievements/achievementbanner.jpg",
+    default: `modules/${CONSTANTS.MODULE_ID}/assets/achievementbanner.jpg`,
     type: String,
     filePicker: "image",
   });
   game.settings.register(CONSTANTS.MODULE_ID, "achievementStinger", {
-    name: game.i18n.localize("Farchievements.Settings.achievementStinger.Text"),
-    hint: game.i18n.localize("Farchievements.Settings.achievementStinger.Hint"),
+    name: i18n("farchievements.Settings.achievementStinger.Text"),
+    hint: i18n("farchievements.Settings.achievementStinger.Hint"),
     scope: "world",
     config: true,
-    default: "modules/farchievements/standardStinger_by_JFarenheit.mp3",
+    default: `modules/${CONSTANTS.MODULE_ID}/assets/tracks/standardStinger_by_JFarenheit.mp3`,
     type: String,
     filePicker: "audio",
   });
   game.settings.register(CONSTANTS.MODULE_ID, "achievementStingerVolume", {
-    name: game.i18n.localize("Farchievements.Settings.achievementStingerVolume.Text"),
-    hint: game.i18n.localize("Farchievements.Settings.achievementStingerVolume.Hint"),
+    name: i18n("farchievements.Settings.achievementStingerVolume.Text"),
+    hint: i18n("farchievements.Settings.achievementStingerVolume.Hint"),
     scope: "world",
     config: true,
     default: 0.1,
@@ -184,33 +184,33 @@ export const registerSettings = function () {
     },
   });
   game.settings.register(CONSTANTS.MODULE_ID, "achpretext", {
-    name: game.i18n.localize("Farchievements.Settings.achpretext.Text"),
-    hint: game.i18n.localize("Farchievements.Settings.achpretext.Hint"),
+    name: i18n("farchievements.Settings.achpretext.Text"),
+    hint: i18n("farchievements.Settings.achpretext.Hint"),
     scope: "world",
     config: true,
     default: "Achievement Gained: ",
     type: String,
   });
   game.settings.register(CONSTANTS.MODULE_ID, "greyscale", {
-    name: game.i18n.localize("Farchievements.Settings.greyscale.Text"),
-    hint: game.i18n.localize("Farchievements.Settings.greyscale.Hint"),
+    name: i18n("farchievements.Settings.greyscale.Text"),
+    hint: i18n("farchievements.Settings.greyscale.Hint"),
     scope: "world",
     config: true,
     default: true,
     type: Boolean,
   });
   game.settings.register(CONSTANTS.MODULE_ID, "mystery", {
-    name: game.i18n.localize("Farchievements.Settings.mystery.Text"),
-    hint: game.i18n.localize("Farchievements.Settings.mystery.Hint"),
+    name: i18n("farchievements.Settings.mystery.Text"),
+    hint: i18n("farchievements.Settings.mystery.Hint"),
     scope: "world",
     config: true,
-    default: "modules/farchievements/mystery.JPG",
+    default: `modules/${CONSTANTS.MODULE_ID}/assets/mystery.jpg`,
     type: String,
     filePicker: "image",
   });
   game.settings.register(CONSTANTS.MODULE_ID, "achievementdata", {
-    name: game.i18n.localize("Farchievements.Settings.AchievementData.Text"),
-    hint: game.i18n.localize("Farchievements.Settings.AchievementData.Hint"),
+    name: i18n("farchievements.Settings.AchievementData.Text"),
+    hint: i18n("farchievements.Settings.AchievementData.Hint"),
     scope: "world",
     config: false,
     default:
@@ -218,24 +218,24 @@ export const registerSettings = function () {
     type: String,
   });
   game.settings.register(CONSTANTS.MODULE_ID, "clientdataSYNC", {
-    name: game.i18n.localize("Farchievements.Settings.ClientDataList.Text"),
-    hint: game.i18n.localize("Farchievements.Settings.ClientDataList.Hint"),
+    name: i18n("farchievements.Settings.ClientDataList.Text"),
+    hint: i18n("farchievements.Settings.ClientDataList.Hint"),
     scope: "world",
     config: false,
     default: "",
     type: String,
   });
   game.settings.register(CONSTANTS.MODULE_ID, "clientdata", {
-    name: game.i18n.localize("Farchievements.Settings.ClientData.Text"),
-    hint: game.i18n.localize("Farchievements.Settings.ClientData.Hint"),
+    name: i18n("farchievements.Settings.ClientData.Text"),
+    hint: i18n("farchievements.Settings.ClientData.Hint"),
     scope: "client",
     config: false,
     default: "",
     type: String,
   });
   game.settings.register(CONSTANTS.MODULE_ID, "loadSettingsForPlayer", {
-    name: game.i18n.localize("Farchievements.Settings.loadSettingsForPlayer.Text"),
-    hint: game.i18n.localize("Farchievements.Settings.loadSettingsForPlayer.Hint"),
+    name: i18n("farchievements.Settings.loadSettingsForPlayer.Text"),
+    hint: i18n("farchievements.Settings.loadSettingsForPlayer.Hint"),
     scope: "client",
     config: false,
     default: "",

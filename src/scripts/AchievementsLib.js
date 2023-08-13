@@ -120,7 +120,7 @@ export async function removeAchievementFromCommand(achievementID, PID) {
       dataArray[dataPlayerID].split(":")[0] + ":" + dataArray[dataPlayerID].split(":")[1].replace(toReplace, "");
     dataArray[dataPlayerID] = dataArrayPlayer;
     toSYNC = dataArray.join("||");
-    //console.log(toSYNC);
+    //log(toSYNC);
   } else if (dataArray[dataPlayerID].split(":")[1].split(",")[0] == "" + achievementID) {
     //FIRST ACHIEVEMENT IN DATA?
     let toReplace = achievementID + ","; //REPLACE FIRST ENTRY IN DATA
@@ -128,7 +128,7 @@ export async function removeAchievementFromCommand(achievementID, PID) {
     firstDataArray.shift();
     dataArray[dataPlayerID] = dataArray[dataPlayerID].split(":")[0] + ":" + firstDataArray;
     toSYNC = dataArray.join("||");
-    //console.log(toSYNC);
+    //log(toSYNC);
   } else if (
     dataArray[dataPlayerID].split(":")[1].split(",")[dataArray[dataPlayerID].split(":")[1].split(",")[0].length + 1] ==
     "" + achievementID
@@ -139,7 +139,7 @@ export async function removeAchievementFromCommand(achievementID, PID) {
     firstDataArray.pop();
     dataArray[dataPlayerID] = dataArray[dataPlayerID].split(":")[0] + ":" + firstDataArray;
     toSYNC = dataArray.join("||");
-    //console.log(toSYNC);
+    //log(toSYNC);
   }
   if (document.getElementById("SyncAchUnsaved") != null) {
     if (document.getElementById("SyncAchUnsaved").value == toSYNC) {
