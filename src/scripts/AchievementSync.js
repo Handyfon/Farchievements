@@ -1,4 +1,5 @@
 import CONSTANTS from "./constants/constants";
+import SETTINGS from "./constants/settings";
 import { log, i18n } from "./lib/lib";
 
 export class AchievementSync {
