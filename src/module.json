@@ -65,7 +65,7 @@
   "packs": [],
   "scripts": [],
   "esmodules": ["module.js"],
-  "styles": ["AchievementsScreen.css"],
+  "styles": ["styles/AchievementsScreen.css"],
   "compatibility": {
     "minimum": 11,
     "verified": 11,
