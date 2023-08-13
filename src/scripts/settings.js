@@ -148,7 +148,7 @@ export const registerSettings = function () {
     hint: i18n("farchievements.Settings.standarticon.Hint"),
     scope: "world",
     config: true,
-    default: `modules/farchievements/assets/images/standard_icon/standardIcon.png`,
+    default: `modules/${CONSTANTS.MODULE_ID}/assets/images/standard_icon/standardIcon.png`,
     type: String,
     filePicker: "image",
   });

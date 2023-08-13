@@ -1,28 +1,87 @@
 {
-  "name": "farchievements",
+  "id": "farchievements",
   "title": "Foundry Achievements",
   "description": "Achievements for FoundryVTT",
-  "version": "10.3",
-  "author": "Handyfon",
-  "esmodules": ["AchievementsScreen.js"],
-  "styles": ["AchievementsScreen.css"],
-  "packs": [],
+  "version": "11.0.0",
+  "authors": [
+    {
+      "name": "Handyfon",
+      "url": "https://github.com/Handyfon",
+      "discord": "https://discord.gg/gs5hAgxBx3",
+      "patreon": "https://www.patreon.com/Handyfon"
+    },
+    {
+      "name": "p4535992",
+      "url": "https://github.com/p4535992",
+      "discord": "",
+      "twitter": "",
+      "patreon": "",
+      "github": "p4535992",
+      "ko-fi": "",
+      "reddit": "",
+      "email": ""
+    }
+  ],
+  "type": "module",
   "socket": true,
+  "includes": [
+    "./assets/**",
+    "./languages/**",
+    "./languages/**",
+    "./scripts/**",
+    "./styles/**",
+    "./templates/**",
+    "./module.json",
+    "./README.md",
+    "./icons/**",
+    "./packs/**"
+  ],
+  "media": [
+    {
+      "type": "icon",
+      "location": ""
+    },
+    {
+      "type": "cover",
+      "location": ""
+    },
+    {
+      "type": "screenshot",
+      "location": ""
+    }
+  ],
   "languages": [
     {
       "lang": "de",
       "name": "German",
-      "path": "lang/de.json"
+      "path": "languages/de.json"
     },
     {
       "lang": "en",
       "name": "English",
-      "path": "lang/en.json"
+      "path": "languages/en.json"
     }
   ],
-  "url": "https://github.com/Handyfon/Farchievements/tree/master",
-  "manifest": "https://raw.githubusercontent.com/Handyfon/Farchievements/master/module.json",
-  "download": "https://raw.githubusercontent.com/Handyfon/Farchievements/master/farchievements.zip",
-  "minimumCoreVersion": "10",
-  "compatibleCoreVersion": "10"
+  "packs": [],
+  "scripts": [],
+  "esmodules": ["module.js"],
+  "styles": ["AchievementsScreen.css"],
+  "compatibility": {
+    "minimum": 11,
+    "verified": 11,
+    "maximum": 11
+  },
+  "manifestPlusVersion": "1.2.1",
+  "url": "https://github.com/p4535992/foundryvtt-farchievements",
+  "manifest": "https://github.com/p4535992/foundryvtt-farchievements/releases/download/v11.0.0/module.json",
+  "download": "https://github.com/p4535992/foundryvtt-farchievements/releases/download/v11.0.0/module.zip",
+  "readme": "https://github.com/p4535992/foundryvtt-farchievements/blob/v11.0.0/README.md",
+  "changelog": "https://github.com/p4535992/foundryvtt-farchievements/blob/v11.0.0/CHANGELOG.md",
+  "bugs": "https://github.com/p4535992/foundryvtt-farchievements/issues",
+  "allowBugReporter": true,
+  "relationships": {
+    "systems": [],
+    "requires": [],
+    "conflicts": []
+  }
 }

@@ -1,3 +1,5 @@
+import CONSTANTS from "./constants/constants";
+
 export async function addAchievementFromCommand(achievementID, PID) {
   let cleanPlayerID = game.users.contents.indexOf(game.users.get(PID)) - 1;
   let dataPlayerID = cleanPlayerID; //++xathick

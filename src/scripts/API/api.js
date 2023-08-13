@@ -1,3 +1,4 @@
+import { Farchievement } from "../Farchievement.js";
 import CONSTANTS from "../constants/constants.js";
 
 const API = {
@@ -21,6 +22,7 @@ const API = {
     await game.settings.set(CONSTANTS.MODULE_ID, "clientdata", "");
     location.reload();
   },
+  Farchievements: new Farchievement(),
 };
 
 export default API;

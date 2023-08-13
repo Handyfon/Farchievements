@@ -1,3 +1,6 @@
+import CONSTANTS from "./constants/constants";
+import { log } from "./lib/lib";
+
 export class AchievementSync {
   static sleep(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));

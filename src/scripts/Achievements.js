@@ -2,7 +2,9 @@ import CONSTANTS from "./constants";
 
 export class Achievements {
   static addChatControl() {
-    if (!game.settings.get(CONSTANTS.MODULE_ID, "EnableChatBarButton")) return;
+    if (!game.settings.get(CONSTANTS.MODULE_ID, "EnableChatBarButton")) {
+      return;
+    }
     const chatControlLeft = document.getElementsByClassName("chat-control-icon")[0];
     let tableNode = document.getElementById("achievements-button");
 

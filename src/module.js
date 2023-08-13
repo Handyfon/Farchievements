@@ -63,7 +63,7 @@ Hooks.on("renderSceneNavigation", async function () {
     AchievementSync.SyncAchievements();
   }
   let style = await game.settings.get("farchievements", "bannerBackground");
-  let imageStandardIconPath = `modules/farchievements/assets/images/standard_icon/standardIcon.png`;
+  let imageStandardIconPath = `modules/${CONSTANTS.MODULE_ID}/assets/images/standard_icon/standardIcon.png`;
   let bannerstyle =
     "top: -200px;background: url(" +
     style +
