@@ -30,24 +30,23 @@ To install this module manually:
 
 # Features
 
-## Images and Gifs:
-
-#### Foundry Achievements Button:
-
-![Foundry Achievements Button](./wiki/foundry_achievements_button.png)
-
-#### Player View:<br>
-
-![Foundry Achievements Player View](./wiki/foundry_achievements_player_view.gif)
-
-
-#### GM VIEW:   
-
-![Foundry Achievements GM VIEW](./wiki/foundry_achievements_gm_view.png)
-
-#### GM VIEW Edit mode
-
-![GM VIEW EXPLAINED](./wiki/gm_view_explained.png)
+<h1>Images and Gifs:</h1>
+<div>
+Foundry Achievements Button:<br>
+<img src="https://i.imgur.com/bWEobgB.png" title="Foundry Achievements Button"></img>
+</div>
+<div>
+Player View:<br>
+<img src="https://i.imgur.com/gDg6gNv.gif" title="Foundry Achievements Player View"></img></br>
+</div>
+<div>
+GM VIEW:                                      
+<img src="https://i.imgur.com/ILS3qfQ.png" title="Foundry Achievements GM VIEW"></img></br>
+</div>
+<div>
+GM VIEW Edit mode
+<img src="https://i.imgur.com/97odi5O.png" title="GM VIEW EXPLAINED"></img></br>
+</div>
 
 ## Issues
 
