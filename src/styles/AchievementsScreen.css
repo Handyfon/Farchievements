@@ -1,0 +1,674 @@
+.far-grid-item.listView {
+  height: 29px;
+}
+.far-grid-item.listView:hover {
+  transform: scale(1.2);
+  margin-top: 0;
+  margin-bottom: -12px;
+  transition: 0.2s;
+  filter: drop-shadow(0px 5px 6px black);
+  transition: 0s;
+  transform: unset;
+}
+.far-grid-item.listView .AchIcon {
+  display: none;
+}
+i.fas.fa-list.listViewSettings {
+  padding: 5px;
+  border: 1px solid;
+  border-radius: 2px;
+  background: #000000d9;
+  color: white;
+  margin-right: 68px;
+  /* position: ; */
+}
+i.fas.fa-list.listViewSettings:active {
+  background: white;
+  color: black;
+}
+.far-grid-item.listView p.AchDescription {
+  background: #663400 !important;
+  border: 3px solid #655f00;
+  border-top: 8px solid #655f00;
+  overflow: visible;
+  max-height: min-content;
+  transition: 0s !important;
+}
+.far-grid-item.listView p.AchDescription:hover {
+  transition: 0s;
+  display: none;
+}
+#chat-controls .chat-control-icon {
+  /*FIX CHAT CONTROL BAR*/
+  flex: 0;
+  flex-basis: auto;
+}
+label.AchSwitch {
+  display: flex;
+  align-items: center;
+  position: absolute;
+  top: 2px;
+  right: 163px;
+  color: white;
+  border: 1px solid;
+  padding-left: 5px;
+  border-radius: 3px;
+  height: 26px;
+  background: black;
+}
+div#AchPlayerNav {
+  display: flex;
+  overflow-y: hidden;
+}
+.PlayerNavButton {
+  max-width: fit-content;
+  border-radius: 8px;
+  padding: 5px;
+  background: #ffeb00;
+  margin-right: 5px;
+  border: 1px solid #ffeb00;
+  height: 27px;
+}
+.PlayerNavButton:hover {
+  background: #4c4c00;
+  border: 1px solid yellow;
+  color: yellow;
+}
+div#AchPlayerNav.hidden {
+  display: none;
+}
+i#SyncAchUnsaved {
+  border-radius: 5px;
+  background: #0a4000d4;
+  border: 2px dashed lime;
+  transition: 0.2s;
+  transform: scale(1.2);
+}
+i#SyncAchUnsaved:hover {
+  border-radius: 5px;
+  background: #28ff0085;
+  border: 2px dashed #004200;
+  color: #002500;
+}
+i#SyncAch2 {
+  border-radius: 5px;
+  background: #0a4000d4;
+  border: 2px dashed lime;
+  transition: 0.2s;
+  transform: scale(1.2);
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+}
+i#SyncAch2:hover {
+  border-radius: 5px;
+  background: #28ff0085;
+  border: 2px dashed #004200;
+  color: #002500;
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+}
+p.AchDescription {
+  text-align: center;
+  border: 1px groove #000000;
+  margin: 0;
+  padding: 0;
+  margin-top: -5px;
+  max-height: 60px;
+  contain: content;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: #655f00;
+  line-break: auto;
+  height: fit-content;
+  color: white;
+  padding: 5px;
+}
+label.AchievmentButtonLabel {
+  margin-top: -25px;
+} /*
+.grid-item.draggable:hover {
+    background: #cafbca;
+}
+.grid-item.hovered{
+	background:red;
+}*/
+img.EditModeIcon:hover {
+  border: 1px solid #ff6400;
+  transition: 0.02s;
+  filter: drop-shadow(0px 0px 3px black);
+}
+img.EditModeIcon:active {
+  filter: brightness(0.5);
+}
+
+.far-grid-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+  gap: 22px 5px;
+  grid-template-areas:
+    ". . . . . ."
+    ". . . . . ."
+    ". . . . . ."
+    ". . . . . ."
+    ". . . . . ."
+    ". . . . . ."
+    ". . . . . .";
+}
+.far-grid-item {
+  height: 250px;
+  width: 150px;
+  /* background: #00000021; */
+}
+.far-grid-item:hover {
+  z-index: 1;
+}
+img.AchIcon {
+  background: #0000004f;
+  min-width: 100%;
+  min-height: 59%;
+}
+.achievementsettings {
+  padding: 5px;
+  border: 1px solid;
+  border-radius: 2px;
+  background: #000000d9;
+  color: white;
+}
+.achievementsettings:hover {
+  background: black;
+  color: white;
+}
+.achievementsettings:active {
+  background: white;
+  color: black;
+}
+i.fas.fa-file-export.achievementImportExport:active {
+  background: white;
+  color: black;
+}
+.Achievementssettings {
+  position: absolute;
+  top: 2px;
+  right: 64px;
+}
+i.fas.fa-plus-square.achievementsettings {
+  width: 100px;
+  text-align: -webkit-center;
+  font-size: 20px;
+}
+i.fas.fa-sync.achievementsettings {
+  left: 0px;
+  bottom: 0px;
+  position: absolute;
+  height: 100;
+  z-index: 20;
+  transition: 0.2s;
+  width: 60px;
+  text-align-last: center;
+}
+.editmodebar {
+  display: block;
+  position: absolute;
+  bottom: 10px;
+  width: 98%;
+  text-align: right;
+}
+.deleteAchievement {
+  position: relative;
+  height: 26px;
+  left: 118px;
+  width: 20%;
+  font-size: 16px;
+}
+.achievementtools {
+  height: 0px;
+}
+p.AchName {
+  text-align-last: center;
+  background: #655f00;
+  color: #f7ff9e;
+  padding: 0;
+  margin: 0;
+  text-align: center;
+  line-break: auto;
+  font-size: 19px;
+  min-height: 10em;
+  display: table-cell;
+  vertical-align: middle;
+  height: 48px;
+  width: 150px;
+}
+.grid-item {
+  transition: 0.2s;
+}
+i#achievements-button:active {
+  color: #ffa35b;
+}
+i#achievements-button:hover {
+  color: gold;
+}
+p.AchDescription {
+  text-align: center;
+  border: 1px groove #000000;
+  margin: 0;
+  padding: 0;
+  margin-top: -5px;
+  max-height: 60px;
+  contain: content;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: #655f00;
+  line-break: auto;
+  height: fit-content;
+  color: white;
+  padding: 5px;
+}
+.ChatAchName {
+  text-align-last: center;
+  background: #655f00;
+  color: #f7ff9e;
+  padding: 0;
+  margin: 0;
+  text-align: center;
+  line-break: auto;
+  font-size: 19px;
+  vertical-align: middle;
+  width: 100%;
+}
+.ChatAchDescription {
+  text-align: center;
+  border: 1px groove #000000;
+  margin: 0;
+  padding: 0;
+  margin-top: -5px;
+  contain: content;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: #655f00;
+  line-break: auto;
+  height: fit-content;
+  color: white;
+  padding: 5px;
+}
+.AchInputName {
+  width: 80% !important;
+  background: #00000091 !important;
+  color: white !important;
+}
+img.EditModeIcon {
+  width: 50%;
+  /* margin-left: 24%; */
+  border: unset;
+}
+.AchInputDes {
+  max-width: 100%;
+  min-height: 120px;
+  max-height: 120px;
+  background: #ffffff5c;
+  min-width: 100%;
+}
+div#AchievementList {
+  /* overflow: overlay; */
+  padding: 20px;
+}
+.overWrite {
+  position: absolute;
+  width: 25px;
+  height: 25px;
+  right: 9px;
+  background: #383838;
+  color: white;
+}
+i.fas.fa-file-export.achievementImportExport {
+  padding: 5px;
+  border: 1px solid;
+  border-radius: 2px;
+  background: #000000d9;
+  color: white;
+  margin-right: 35px;
+}
+.AchEnableLabel:active {
+  background: #5dbce8;
+}
+.AchEnableLabel:hover {
+  background: #005780;
+  transform: scale(1.1);
+}
+.AchEnableLabel {
+  border: 1px solid;
+  padding: 0 3px 0 3px;
+  border-radius: 5px;
+  background: #9e9e9e;
+  flex: 1;
+  color: white;
+  max-width: 100%;
+  display: inline-table;
+  margin-left: 5px;
+}
+.playerHas {
+  background: #568255;
+  border-radius: 0;
+  border-color: white;
+}
+i.fas.fa-trash-alt {
+  margin-top: 3px;
+}
+.deleteAchievement {
+  position: relative;
+  right: -118px;
+  width: 20%;
+  top: 0px;
+  font-size: 16px;
+  height: 27px;
+  display: inline-flex;
+}
+.deleteAchievement:hover {
+  background: #d20000;
+  transform: scale(1.1);
+  color: white !important;
+  transition: 0.1s;
+}
+div#FoundryAchievements {
+  width: fit-content;
+  align-items: center;
+  border-radius: 4px;
+  z-index: 1;
+  margin: auto;
+  -webkit-transform: translate(0, 0);
+  -moz-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  -o-transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.5);
+  /* @include fade-transition(background); */
+  -webkit-transition: rgba(0, 0, 0, 0.5) 0.15s ease-in-out;
+  -moz-transition: rgba(0, 0, 0, 0.5) 0.15s ease-in-out;
+  -ms-transition: rgba(0, 0, 0, 0.5) 0.15s ease-in-out;
+  -o-transition: rgba(0, 0, 0, 0.5) 0.15s ease-in-out;
+  transition: rgba(0, 0, 0, 0.5) 0.15s ease-in-out;
+}
+.FoundryAchievementsBanner {
+  background: url(modules/farchievements/assets/images/achievementbanner.jpg) !important;
+  background-size: cover !important;
+  background-position: center !important;
+  box-shadow: 0px -4px 6px black !important;
+}
+div#Achievementbar {
+  width: 100%;
+  top: 0px;
+  position: fixed;
+  border-radius: 4px;
+  z-index: 1;
+  height: 8vh;
+  left: 0;
+  display: flex;
+  align-items: center;
+  animation-duration: 10s;
+  animation-name: slidein;
+}
+img#AchievementIMG {
+  max-width: 8%;
+  border: unset;
+  -webkit-animation: scaleloop 2s infinite;
+  margin-right: -8%;
+}
+p.AchievementText {
+  align-self: center;
+  font-size: 200%;
+  text-align: center;
+  color: white;
+  width: 100%;
+  text-shadow: 2px 2px 2px black;
+  background: rgba(0, 0, 0, 0.5);
+  /* @include fade-transition(background); */
+  -webkit-transition: rgba(0, 0, 0, 0.5) 0.15s ease-in-out;
+  -moz-transition: rgba(0, 0, 0, 0.5) 0.15s ease-in-out;
+  -ms-transition: rgba(0, 0, 0, 0.5) 0.15s ease-in-out;
+  -o-transition: rgba(0, 0, 0, 0.5) 0.15s ease-in-out;
+  transition: rgba(0, 0, 0, 0.5) 0.15s ease-in-out;
+}
+label.AchievementTextLabel {
+  border-radius: 5px;
+  text-shadow: 0 0 black;
+  color: gold;
+  text-shadow: 0 0 3px;
+  padding: 0px 5px 0px 0px;
+  margin-right: 5px;
+  -webkit-background-clip: text;
+}
+@keyframes slidein {
+  from {
+    top: -20%;
+  }
+
+  75% {
+    top: 5%;
+  }
+
+  25% {
+    top: 6%;
+  }
+  to {
+    top: -40%;
+  }
+}
+@keyframes scaleloop {
+  from {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+/* 
+@mixin fade-transition($element) {
+  -webkit-transition: $element 0.15s ease-in-out;
+  -moz-transition: $element 0.15s ease-in-out;
+  -ms-transition: $element 0.15s ease-in-out;
+  -o-transition: $element 0.15s ease-in-out;
+  transition: $element 0.15s ease-in-out;
+} 
+*/
+.Shiny {
+  /*   positioning */
+  position: absolute;
+  opacity: 0;
+  top: 0;
+  left: 0;
+
+  /*   gradient   */
+  background: -moz-linear-gradient(
+    left,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.03) 1%,
+    rgba(255, 255, 255, 0.6) 30%,
+    rgba(255, 255, 255, 0.85) 50%,
+    rgba(255, 255, 255, 0.85) 70%,
+    rgba(255, 255, 255, 0.85) 71%,
+    rgba(255, 255, 255, 0) 100%
+  ); /* FF3.6+ */
+  background: -webkit-gradient(
+    linear,
+    left top,
+    right top,
+    color-stop(0%, rgba(255, 255, 255, 0)),
+    color-stop(1%, rgba(255, 255, 255, 0.03)),
+    color-stop(30%, rgba(255, 255, 255, 0.85)),
+    color-stop(50%, rgba(255, 255, 255, 0.85)),
+    color-stop(70%, rgba(255, 255, 255, 0.85)),
+    color-stop(71%, rgba(255, 255, 255, 0.85)),
+    color-stop(100%, rgba(255, 255, 255, 0))
+  ); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(
+    left,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.03) 1%,
+    rgba(255, 255, 255, 0.6) 30%,
+    rgba(255, 255, 255, 0.85) 50%,
+    rgba(255, 255, 255, 0.85) 70%,
+    rgba(255, 255, 255, 0.85) 71%,
+    rgba(255, 255, 255, 0) 100%
+  ); /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(
+    left,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.03) 1%,
+    rgba(255, 255, 255, 0.6) 30%,
+    rgba(255, 255, 255, 0.85) 50%,
+    rgba(255, 255, 255, 0.85) 70%,
+    rgba(255, 255, 255, 0.85) 71%,
+    rgba(255, 255, 255, 0) 100%
+  ); /* Opera 11.10+ */
+  background: -ms-linear-gradient(
+    left,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.03) 1%,
+    rgba(255, 255, 255, 0.6) 30%,
+    rgba(255, 255, 255, 0.85) 50%,
+    rgba(255, 255, 255, 0.85) 70%,
+    rgba(255, 255, 255, 0.85) 71%,
+    rgba(255, 255, 255, 0) 100%
+  ); /* IE10+ */
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.03) 1%,
+    rgba(255, 255, 255, 0.6) 30%,
+    rgba(255, 255, 255, 0.85) 50%,
+    rgba(255, 255, 255, 0.85) 70%,
+    rgba(255, 255, 255, 0.85) 71%,
+    rgba(255, 255, 255, 0) 100%
+  ); /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00ffffff', endColorstr='#00ffffff',GradientType=1 ); /* IE6-9 */
+
+  /*  forming the shine element
+    play around with the width, skew and gradient to get different effects
+  */
+  width: 15%;
+  height: 100%;
+  transform: skew(-10deg, 0deg);
+  -webkit-transform: skew(-10deg, 0deg);
+  -moz-transform: skew(-10deg, 0deg);
+  -ms-transform: skew(-10deg, 0deg);
+  -o-transform: skew(-10deg, 0deg);
+
+  /*  animating it  */
+  animation: move 2s;
+  animation-iteration-count: infinite;
+  animation-delay: 1s;
+  -webkit-animation: move 2s;
+  -webkit-animation-iteration-count: infinite;
+  -webkit-animation-delay: 1s;
+  -moz-transform: skew(-10deg, 0deg);
+  -moz-animation: move 2s;
+  -moz-animation-iteration-count: infinite;
+  -moz-animation-delay: 1s;
+  -ms-transform: skew(-10deg, 0deg);
+  -ms-animation: move 2s;
+  -ms-animation-iteration-count: infinite;
+  -ms-animation-delay: 1s;
+  -o-transform: skew(-10deg, 0deg);
+  -o-animation: move 2s;
+  -o-animation-iteration-count: infinite;
+  -o-animation-delay: 1s;
+}
+
+/*  */
+@keyframes move {
+  0% {
+    left: 0;
+    opacity: 0;
+  }
+  5% {
+    opacity: 0;
+  }
+  48% {
+    opacity: 0.2;
+  }
+  80% {
+    opacity: 0;
+  }
+  100% {
+    left: 82%;
+  }
+}
+
+@-webkit-keyframes move {
+  0% {
+    left: 0;
+    opacity: 0;
+  }
+  5% {
+    opacity: 0;
+  }
+  48% {
+    opacity: 0.2;
+  }
+  80% {
+    opacity: 0;
+  }
+  100% {
+    left: 82%;
+  }
+}
+
+@-moz-keyframes move {
+  0% {
+    left: 0;
+    opacity: 0;
+  }
+  5% {
+    opacity: 0;
+  }
+  48% {
+    opacity: 0.2;
+  }
+  80% {
+    opacity: 0;
+  }
+  100% {
+    left: 88%;
+  }
+}
+
+@-ms-keyframes move {
+  0% {
+    left: 0;
+    opacity: 0;
+  }
+  5% {
+    opacity: 0;
+  }
+  48% {
+    opacity: 0.2;
+  }
+  80% {
+    opacity: 0;
+  }
+  100% {
+    left: 82%;
+  }
+}
+
+@-o-keyframes move {
+  0% {
+    left: 0;
+    opacity: 0;
+  }
+  5% {
+    opacity: 0;
+  }
+  48% {
+    opacity: 0.2;
+  }
+  80% {
+    opacity: 0;
+  }
+  100% {
+    left: 82%;
+  }
+}

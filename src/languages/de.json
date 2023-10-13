@@ -1,0 +1,180 @@
+{
+  "farchievements.Settings.EnableChatBarButton": {
+    "Text": "Aktiviere Chat Schaltfläche",
+    "Hint": "Ermöglicht es, Farchivements aus dem Chat Protokoll zu öffnen."
+  },
+  "farchievements.Settings.EnableAchievementMessage": {
+    "Text": "Aktiviere Chat Nachricht",
+    "Hint": "Sendet eine Nachricht in den Chat, wenn ein Spieler eine Errungenschaft erhält."
+  },
+  "farchievements.Settings.EnableScoreboard": {
+    "Text": "Aktiviere Punktetafel",
+    "Hint": "Erlaubt es den Spielern, eine Punktetafel einzusehen um zu vergleichen, wie viele Errungenschaften sie bisher erhalten haben."
+  },
+  "farchievements.Settings.EnableConfettiSupport": {
+    "Text": "Aktiviere Konfetti ",
+    "Hint": "Aktiviere die Unterstützung für das 'Confetti' Modul."
+  },
+  "farchievements.Settings.EnableContextButton": {
+    "Text": "Aktiviere Kontextmenü für die Spielerliste",
+    "Hint": "Ermöglicht es, die Errungenschaften eines Spielers aus der Spielerliste zu öffnen."
+  },
+  "farchievements.Settings.OmniView": {
+    "Text": "Aktiviere OmniView",
+    "Hint": "Schaltet die Option ein, alles zu sehen."
+  },
+  "farchievements.Settings.loadPerPage": {
+    "Text": "Ladeanzahl Achievements",
+    "Hint": "Bestimmt wie viele Achievements pro Seite geladen werden."
+  },
+  "farchievements.Settings.GameSettingsButton": {
+    "Text": "Schaltfläche in den Einstellungen",
+    "Hint": "Aktiviere die Schaltfläche zum öffnen der Errungenschaften in den Spieleinstellungen."
+  },
+  "farchievements.Settings.AchievementWindowTitle": {
+    "Text": "Titel",
+    "Hint": "Der Titel des Errungenschaftsfensters."
+  },
+  "farchievements.Settings.PlayerBackColor": {
+    "Text": "Spieler Hintergrundfarbe",
+    "Hint": "Verwendet die Farbe des Spielers als Hintergrund des Errungenschaftsfensters."
+  },
+  "farchievements.Settings.HideUnknown": {
+    "Text": "Verstecke unbekannte Errungenschaften",
+    "Hint": "Blendet Errungenschaften aus, die der Spieler nicht besitzt."
+  },
+  "farchievements.Settings.UnknownName": {
+    "Text": "Unbekannte Errungenschaft",
+    "Hint": "Standardname für unbekannte Errungenschaften (leer lassen um zu deaktivieren)."
+  },
+  "farchievements.Settings.AlwaysShowName": {
+    "Text": "Zeige Namen immer an",
+    "Hint": "Zeige den Namen der Errungenschaft immer an."
+  },
+  "farchievements.Settings.UnknownDes": {
+    "Text": "Unbekannte Beschreibung",
+    "Hint": "Standardbeschreibung für unbekannte Errungenschaften (leer lassen um zu deaktivieren)."
+  },
+  "farchievements.Settings.AlwaysShowDes": {
+    "Text": "Zeige Beschreibung immer an",
+    "Hint": "Zeige die Beschreibung der Errungenschaft immer an."
+  },
+  "farchievements.Settings.DescriptionOnHover": {
+    "Text": "Beschreibung beim Hover",
+    "Hint": "Zeige die Beschreibung nur an, wenn die Maus über die Errungenschaft bewegt wird."
+  },
+
+  "farchievements.Settings.achamount": {
+    "Text": "Anzahl der Errungenschaften",
+    "Hint": "AchAmount."
+  },
+  "farchievements.Settings.standarticon": {
+    "Text": "Standard Bild für Errungenschaften",
+    "Hint": "Das Standard Bild, das beim Hinzufügen einer neuen Errungenschaft verwendet werden soll."
+  },
+  "farchievements.Settings.standardBackground": {
+    "Text": "Standard Hintergrund für den Errungenschaften-Viewer",
+    "Hint": "Der Hintergrund hinter der jeweiligen Liste von Errungenschaften."
+  },
+  "farchievements.Settings.bannerBackground": {
+    "Text": "Banner Hintergund",
+    "Hint": "Der Hintergrund des Errungenschaftsbanners, welches angezeigt wird, wenn ein Spieler eine Errungenschaft erhält (2000x180 px)."
+  },
+  "farchievements.Settings.achievementStinger": {
+    "Text": "Errungenschafts-Ton",
+    "Hint": "Das (längere) Geräusch das während der Animation einer neuen Errungenschaft abgespielt werden soll."
+  },
+  "farchievements.Settings.achievementStingerVolume": {
+    "Text": "Errungenschafts-Ton Lautstärke",
+    "Hint": "Die Lautstärke des Tons der abgespielt wird, niedriger Wert empfohlen."
+  },
+  "farchievements.Settings.achpretext": {
+    "Text": "Präfix bei neuen Errungenschaften",
+    "Hint": "Das Präfix, das vor dem Namen der Errungenschaft angezeigt wird, wenn ein Spieler eine neue erhält."
+  },
+  "farchievements.Settings.greyscale": {
+    "Text": "Graustufe",
+    "Hint": "Zeigt die Bilder der unbekannten Errungenschaften in Graufstufen an, anstatt das Geheimnissymbol zu verwenden."
+  },
+  "farchievements.Settings.mystery": {
+    "Text": "Geheimnissymbol",
+    "Hint": "Das Standardbild, welches bei unbekannten Errungenschaften verwendet werden soll."
+  },
+  "farchievements.Settings.ListView": {
+    "Text": "Listenmodus",
+    "Hint": "Eine komprimierte Ansicht der Achievements"
+  },
+
+  "farchievements.Settings.AchievementData": {
+    "Text": "AchievementData (DONTTOUCH)",
+    "Hint": "The data for the achievements is saved here !!DONT TOUCH!!"
+  },
+  "farchievements.Settings.ClientDataList": {
+    "Text": "ClientDataList (DONTTOUCH)",
+    "Hint": "Will be synced between clients !!DONT TOUCH!!"
+  },
+  "farchievements.Settings.ClientData": {
+    "Text": "ClientData (DONTTOUCH)",
+    "Hint": "Your clients achievements !!DONT TOUCH!!"
+  },
+  "farchievements.Settings.loadSettingsForPlayer": {
+    "Text": "loadSettingsForPlayer (DONTTOUCH)",
+    "Hint": "loadSettingsForPlayer !!DONT TOUCH!!"
+  },
+  "farchievements.Settings.bannerAnimation": {
+    "Text": "Banner Animation",
+    "Hint": "Wähle die Animation und die Art des Sounds der Abgespielt wird"
+  },
+  "farchievements.Settings.achievementSound": {
+    "Text": "Errungenschafts-Sound",
+    "Hint": "Das (kurze) Geräusch das während der Animation einer neuen Errungenschaft abgespielt werden soll."
+  },
+  "farchievements.Settings.achievementSoundVolume": {
+    "Text": "Errungenschafts-Sound Lautstärke",
+    "Hint": "Die Lautstärke des Tons der abgespielt wird, niedriger Wert empfohlen."
+  },
+
+  "farchievements.Notification": {
+    "Prefix": "Farchievements | ",
+    "PlayerIdChanged": "Die Spieler-IDs haben sich verändert, Spieler mit folgender Id wurde bereinigt: ",
+    "UserDoesNotExist": "Dieser Benutzer existiert nicht.",
+    "NoAchievements": "Dieser Benutzer hat noch keine Errungenschaften.",
+    "OverwriteWithNothing": "Du solltest die Daten nicht mit einem leeren Wert überschreiben.",
+    "InvalidData": "Diese Daten scheinen ungültig zu sein, bitte stelle sicher, dass du die korrekten Daten kopierst.",
+    "NoChange": "Die Daten haben sich nicht verändert.",
+    "Overwritten": "Die Errungenschaften dieser Welt wurden überschrieben.",
+    "CopiedToClipboard": "Errungenschaften in die Zwischenablage kopiert."
+  },
+
+  "farchievements.Title": "Farchievements",
+  "farchievements.Achievement": "Errungenschaft",
+  "farchievements.Achievements": "Errungenschaften",
+  "farchievements.ViewAchievements": "Zeige Errungenschaften an",
+  "farchievements.NewAchievement": "Neue Errungenschaft:",
+  "farchievements.GainedAchivement": "erhält die",
+
+  "farchievements.Html.SeeEverything": "Alles sehen",
+  "farchievements.Html.Scoreboard": "Punktetafel",
+  "farchievements.Html.GMView": "SL-Ansicht",
+  "farchievements.Html.YourAchievements": "Deine Errungenschaften",
+  "farchievements.Html.MyAchievements": "Meine Errungenschaften",
+  "farchievements.Html.PlayersAchievements": "s Errungenschaften",
+  "farchievements.Html.PushChangesNow": "Klicken um Änderungen jetzt zu verteilen",
+  "farchievements.Html.ScoreText": "Wert",
+  "farchievements.Html.GlowText": "Leuchtend",
+  "farchievements.Html.LoadPerPage": "Achievements pro Seite",
+
+  "farchievements.Html.ImportExport": {
+    "Title": "Farchievement Import/Export",
+    "Body": "Ein kleines Werkzeug um deine Errungenschaften zu importieren und zu exportieren. <br><b>Bitte erstelle ein Backup, bevor du daran denkst, überschreiben zu drücken!</b>",
+    "ClipboardOverwrite": "Aus Zwischenablage überschreiben",
+    "CopyToClipboard": "In Zwischenablage kopieren"
+  },
+  "farchievements.Html.SanitySaver": {
+    "Title": "Farchievements | Vernunftretter",
+    "Body1": "<p>Sieht aus, als hättest du das Abspielen von<b>",
+    "Body2": " neuen</b>  Errungenschaften vor dir. Möchtest du deine Vernunft bewahren und diese Überspringen, oder alle ansehen?</p>",
+    "ButtonSeeAll": "Lebenszeit verschwenden",
+    "ButtonSkip": "Überspringen"
+  }
+}
