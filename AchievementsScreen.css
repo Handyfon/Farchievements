@@ -1,0 +1,738 @@
+.far-grid-item.listView{
+	height: 29px;
+}
+.far-grid-item.listView:hover {
+    transform: scale(1.2);
+    margin-top: 0;
+    margin-bottom: -12px;
+    transition: 0.2s;
+    filter: drop-shadow(0px 5px 6px black);
+    transition: 0s;
+    transform: unset;
+}
+.far-grid-item.listView .AchIcon {
+    display: none;
+    background-size: cover;
+    background-repeat: no-repeat;
+
+}
+i.fas.fa-list.listViewSettings {
+    padding: 5px;
+    border: 1px solid;
+    border-radius: 2px;
+    background: #000000d9;
+    color: white;
+    margin-right: 68px;
+}
+i.fas.fa-list.listViewSettings:active {
+    background: white;
+    color: black;
+}
+.far-grid-item.listView p.AchDescription {
+    border: unset;
+    background: #663400 !important;
+    overflow: visible;
+    max-height: min-content;
+	transition: 0s !important;
+	filter: drop-shadow(0px 10px 4px #0000009e);
+}
+.far-grid-item:hover .AchDescription, .far-grid-item.hover .AchDescription {
+    margin-top: -5px !important;
+    transition: 0.3s !important;
+    opacity: 1;
+    width: 100%;
+    height: fit-content;
+    display: block;
+    position: absolute;
+    line-break: strict;
+}
+.far-grid-item.listView p.AchDescription:hover {
+    transition: 0s;
+    display: none;
+}
+.far-grid-item.unknownAch {
+    filter: grayscale(1) !important;
+}
+#chat-controls .chat-control-icon {/*FIX CHAT CONTROL BAR*/
+    flex: 0;
+    flex-basis: auto;
+}
+label.AchSwitch {
+    display: flex;
+    align-items: center;
+    position: absolute;
+    top: 2px;
+    right: 163px;
+    color: white;
+    border: 1px solid;
+    padding-left: 5px;
+    border-radius: 3px;
+    height: 26px;
+    background: black;
+}
+div#AchPlayerNav {
+    padding: 10px;
+    padding-left: 5px;
+    padding-right: 5px;
+    z-index: 1;
+    overflow: auto;
+    display: flex;
+    overflow-y: hidden;
+}
+label#PlayerNavGMVIEW {
+    min-width: 66px;
+}
+.PlayerNavButton {
+    max-width: fit-content;
+    border-radius: 8px;
+    padding: 5px;
+    background: #ffeb00;
+    margin-right: 5px;
+    border: 1px solid #ffeb00;
+    height: 27px;
+}
+.PlayerNavButton:hover {
+    background: #4c4c00;
+    border: 1px solid yellow;
+    color: yellow;
+}
+.achEditPoints {
+    display: flex;
+	align-items: center;
+}
+div#AchPlayerNav.hidden {
+    display: none;
+}
+i#SyncAchUnsaved {
+    border-radius: 5px;
+    background: #0a4000d4;
+    border: 2px dashed lime;
+    transition: 0.2s;
+    transform: scale(1.2);
+}
+i#SyncAchUnsaved:hover {
+    border-radius: 5px;
+    background: #28ff0085;
+    border: 2px dashed #004200;
+    color: #002500;
+}
+i#SyncAch2 {
+    border-radius: 5px;
+    background: #0a4000d4;
+    border: 2px dashed lime;
+    transition: 0.2s;
+    transform: scale(1.2);
+	position: absolute;
+    bottom: 20px;
+    left: 20px;
+}
+i#SyncAch2:hover {
+    border-radius: 5px;
+    background: #28ff0085;
+    border: 2px dashed #004200;
+    color: #002500;
+	position: absolute;
+    bottom: 20px;
+    left: 20px;
+}
+p.AchDescription {
+    text-align: center;
+    border: 1px groove #000000;
+    margin: 0;
+    padding: 0;
+    margin-top: -5px;
+    max-height: 60px;
+    contain: content;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background: #655f00;
+    line-break: auto;
+    height: fit-content;
+    color: white;
+    padding: 5px;
+	filter: drop-shadow(2px 4px 6px black);
+	line-break: anywhere;
+}
+p.AchDescription {
+    /* margin-top: -25px; */
+    transition: 0s;
+    /* opacity: 0; */
+    min-width: 100%;
+}
+label.AchievmentButtonLabel {
+    margin-top: -25px;
+}/*
+.grid-item.draggable:hover {
+    background: #cafbca;
+}
+.grid-item.hovered{
+	background:red;
+}*/
+img.EditModeIcon:hover {
+    border: 1px solid #ff6400;
+    transition: 0.02s;
+    filter: drop-shadow(0px 0px 3px black);
+}
+img.EditModeIcon:active {
+    filter: brightness(0.5);
+}
+
+.far-grid-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    gap: 22px 5px;
+    grid-template-areas: ". . . . . ";
+    place-items: center;
+}
+.ScoreboardTitle {
+    width: 100%;
+    border-bottom: 3px solid;
+    color: #fbff00;
+    background: #66180000;
+    filter: opacity(1.0);
+}
+.far-grid-item {
+    height: 200px;
+    width: 150px;
+    /* background: #00000021; */
+    height: fit-content;
+}
+.far-grid-item:hover {
+    z-index: 1;
+}
+img.AchIcon {
+    /* background: #0000008c; */
+    min-width: 100%;
+    max-width: 75%;
+    min-height: 150px;
+    max-height: 150px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background: linear-gradient( 0deg, rgba(0,0,0,0.3570361738445378) 0%, rgba(0,0,0,0.894851299894958) 100%);
+}
+.achievementsettings {
+    padding: 5px;
+    border: 1px solid;
+    border-radius: 2px;
+    background: #000000d9;
+    color: white;
+}
+.achievementsettings:hover {
+background:black;
+color:white;
+}
+.achievementsettings:active {
+background:white;
+color:black;
+}
+i.fas.fa-file-export.achievementImportExport:active {
+    background: white;
+    color: black;
+}
+.Achievementssettings {
+    position: absolute;
+    top: 2px;
+    right: 64px;
+}
+i.fas.fa-plus-square.achievementsettings {
+    width: 100px;
+    text-align: -webkit-center;
+    font-size: 20px;
+    position: absolute;
+    right: 50px;
+    bottom: 1px;
+    height: 34px;
+}
+i.fas.fa-sync.achievementsettings {
+    left: 0px;
+    bottom: 0px;
+    position: absolute;
+    height: 100;
+    z-index: 20;
+    transition: 0.2s;
+    width: 60px;
+    text-align-last: center;
+}
+.editmodebar {
+    z-index: 1;
+}
+.achievementtools {
+	height: 0px;
+}
+p.AchName {
+    text-align-last: center;
+    background: #1a2000c4;
+    padding: 0;
+    margin: 0;
+    text-align: center;
+    line-break: auto;
+    font-size: 19px;
+    min-height: 10em;
+    display: table-cell;
+    vertical-align: middle;
+    height: 48px;
+    width: 150px;
+}
+.grid-item {
+    transition: 0.2s;
+}
+.achScoreLabel {
+    background: #0000008c;
+    padding: 0px 5px;
+    border-radius: 100px;
+}
+i#achievements-button:active {
+    color: #ffa35b;
+}
+i#achievements-button:hover {
+    color: gold;
+}
+.AchInputName {
+    width: 80% !important;
+    background: #00000091 !important;
+    color: white !important;
+}
+img.EditModeIcon {
+    min-width: 75px;
+    min-height: 75px;
+    max-height: 75px;
+    max-width: 75px;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+.AchInputDes {
+    max-width: 100%;
+    min-height: 120px;
+    max-height: 120px;
+    background: #ffffff5c;
+    min-width: 100%;
+}
+div#AchievementList {
+    padding: 20px;
+    margin-top: 10px;
+}
+img.tinyAchImg {
+    max-width: 22px;
+    margin-bottom: -8px;
+    margin-right: 2px;
+    margin-left: -5px;
+}
+.achievementsscreen-window {
+    min-height: 500px;
+	max-height: 100vh;
+}
+label.achScoreTextLabel {
+    font-size: 10px;
+    border-radius: 0;
+    margin-right: 5px;
+    padding: 5px;
+    border-radius: 5px 5px;
+}
+label.achScoreTextLabel:hover {
+    pointer-events: all;
+    filter: drop-shadow(2px 4px 6px black);
+    font-size: 12px;
+    transition: 0.05s;
+}
+.FarchScoreboardUser div {
+    background: #00000061;
+    padding-bottom: 7px;
+}
+.FarchScoreboardUser {
+    filter: drop-shadow(2px 4px 6px black);
+    transition: 0.2s;
+    width: 100%;
+    text-align: center;
+}
+.overWrite{
+	position: absolute;
+    width: 25px;
+    height: 25px;
+    right: 9px;
+    background: #383838;
+    color: white;
+}
+i.fas.fa-file-export.achievementImportExport {
+    padding: 5px;
+    border: 1px solid;
+    border-radius: 2px;
+    background: #000000d9;
+    color: white;
+    margin-right: 35px;
+}
+.AchEnableLabel:active {
+    background: #000000;
+    color: white;
+    border-color: white;
+}
+.AchEnableLabel:hover {
+    transform: scale(1.1);
+    filter: drop-shadow(0px 4px 3px black);
+}
+.AchEnableLabel {
+    border: 1px solid;
+    padding: 0 3px 0 3px;
+    border-radius: 5px;
+    background: #4e4b4b;
+    flex: 1;
+    color: #a5a5a5;
+    max-width: 100%;
+    display: inline-table;
+    margin-left: 5px;
+    max-width: 94%;
+    width: fit-content;
+}
+.playerHas {
+    background: #026c00;
+    border-radius: 0;
+    border-color: #0eff00;
+    color: lime;
+    text-shadow: 0px 0px 2px #1cfef5;
+}
+.deleteAchievement i.fas.fa-trash-alt {
+    margin-left: 5px;
+    margin-top: 3px;
+}
+.deleteAchievement {
+    position: relative;
+    right: -150px;
+    width: 20%;
+    top: 0px;
+    font-size: 18px;
+    height: 27px;
+    display: inline-flex;
+    color: #440000;
+    border: unset;
+    background: #54000052;
+}
+.deleteAchievement:hover {
+    background: #d20000;
+    transform: scale(1.1);
+    color: white !important;
+    transition: 0.1s;
+}
+div#FoundryAchievements {
+    width: fit-content;
+    align-items: center;
+    z-index: 1;
+    margin: auto;
+    -webkit-transform: translate(0, 0);
+    -moz-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    -o-transform: translate(-50%, -50%);
+    background: #000000eb !important;
+    padding: 10px !important;
+    max-width: 45vw;
+    max-height: 80px;
+    background-size: auto !important;
+    background-position: center !important;
+    width: 100%;
+}
+.FoundryAchievementsBanner {
+    background: url(modules/farchievements/achievementbanner.jpg) !important;
+    background-position: center !important;
+    box-shadow: 0px -4px 6px black;
+}
+div#Achievementbar {
+    width: 100%;
+    top: 0px;
+    position: fixed;
+    border-radius: 4px;
+    z-index: 1;
+    height: 8vh;
+    left: 0;
+    align-items: center;
+    animation-duration: 10s;
+    /* animation-name: slidein; */
+    pointer-events: none;
+	max-height: 50px;
+    top: 50px;
+}
+img#AchievementIMG {
+    max-width: 8%;
+    border: unset;
+    -webkit-animation: scaleloop 2s infinite;
+    margin-right: -8%;
+    filter: drop-shadow(2px 4px 6px black);
+    outline: 1px solid black;
+    background: black;
+}
+p.AchievementText {
+    align-self: center;
+    font-size: 200%;
+    text-align: center;
+    color: white;
+    width: 100%;
+    text-shadow: 2px 2px 2px black;
+	@include fade-transition(background);
+}
+label.AchievementTextLabel {
+    border-radius: 5px;
+    text-shadow: 0 0 black;
+    color: gold;
+    text-shadow: 0 0 3px;
+    padding: 0px 5px 0px 0px;
+    margin-right: 5px;
+    -webkit-background-clip: text;
+}
+.editmodeList {
+    gap: 10px 5px !important;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr !important;
+    grid-template-areas:
+        ". . . . . "
+        ". . . . . "
+        ". . . . . "
+        ". . . . . "
+        ". . . . . "
+        ". . . . . "
+        ". . . . . " !important;
+    padding-bottom: 80px !important;
+}
+.editmodeList .far-grid-item {
+    width: 190px !important;
+    height: 333px;
+}
+.playerbackground {
+    /* background: #ff00003d; */
+    width: 99.5%;
+    height: 97%;
+    position: absolute;
+    margin-left: -5px;
+    margin-top: -7px;
+    filter: blur(5px);
+    z-index: 0;
+    pointer-events: none;
+    background-size: cover;
+    opacity: 0.5;
+}
+.pageNav {
+    display: flex;
+    color: white;
+    z-index: 1;
+    align-items: center;
+    position: absolute;
+    bottom: -2px;
+    width: 100%;
+    background: #000000bf;
+    z-index: 1;
+    margin-left: -8px;
+    height: 40px;
+}
+
+.window-resizable-handle {
+    z-index: 2;
+}
+.AchInputPoints {
+    flex: 0.7;
+    text-align: center !important;
+}
+.PlayerNavButton.active {
+	background: #4c4c00;
+	border: 1px solid yellow;
+	color: yellow;
+}
+.glowAchInputLabel{
+	margin-left:5px;
+}
+.glowingAch{
+	animation: goldRim 1.5s ease-in-out infinite alternate;
+}
+.glowingAchCustom{
+	animation: customRim 1.5s ease-in-out infinite alternate;
+}
+label#nextPageLabel {
+    flex: 1;
+    text-align: center;
+    visibility: hidden;
+    text-decoration-line: underline;
+    color: yellow;
+    filter: drop-shadow(2px 4px 6px black);
+}
+label#nextPageLabel:hover {
+    text-decoration-line: underline;
+}
+label#lastPageLabel {
+    flex: 1;
+    text-align: center;
+	visibility: hidden;
+    text-decoration-line: underline;
+    color: yellow;
+    filter: drop-shadow(2px 4px 6px black);
+}
+label#lastPageLabel:hover {
+    text-decoration-line: underline;
+}
+input#toLoadNumber {
+    flex: 0.2;
+    text-align: center;
+    border-radius: 20px;
+    color: white;
+    margin-left: 5px;
+}
+@keyframes slidein {
+  from {
+    top: -20%;
+  }
+
+  75% {
+    top: 5%;
+  }
+
+  25% {
+    top: 6%;
+  }
+  to {
+    top: -40%;
+  }
+}
+@keyframes fadeOut {
+  from {
+	  opacity: 0%
+  }
+  30%{
+	  opacity: 100%
+  }
+  0% {
+    opacity: 0%
+  }
+}
+@keyframes scaleloop {
+  from {
+    transform: scale(1.0);
+  }
+  50%{
+	transform: scale(1.2);
+  }
+  to {
+    transform: scale(1.0);
+  }
+}
+@mixin fade-transition($element) {
+	-webkit-transition: $element 0.15s ease-in-out;
+	-moz-transition: $element 0.15s ease-in-out;
+	-ms-transition: $element 0.15s ease-in-out;
+	-o-transition: $element 0.15s ease-in-out;
+	transition: $element 0.15s ease-in-out;
+}
+.Shiny{
+/*   positioning */
+		position: absolute;
+		opacity: 0;
+		top: 0;
+		left: 0;
+  
+/*   gradient   */
+		background: -moz-linear-gradient(left,  rgba(255,255,255,0) 0%, rgba(255,255,255,0.03) 1%, rgba(255,255,255,0.6) 30%, rgba(255,255,255,0.85) 50%, rgba(255,255,255,0.85) 70%, rgba(255,255,255,0.85) 71%, rgba(255,255,255,0) 100%); /* FF3.6+ */
+		background: -webkit-gradient(linear, left top, right top, color-stop(0%,rgba(255,255,255,0)), color-stop(1%,rgba(255,255,255,0.03)), color-stop(30%,rgba(255,255,255,0.85)), color-stop(50%,rgba(255,255,255,0.85)), color-stop(70%,rgba(255,255,255,0.85)), color-stop(71%,rgba(255,255,255,0.85)), color-stop(100%,rgba(255,255,255,0))); /* Chrome,Safari4+ */
+		background: -webkit-linear-gradient(left,  rgba(255,255,255,0) 0%,rgba(255,255,255,0.03) 1%,rgba(255,255,255,0.6) 30%,rgba(255,255,255,0.85) 50%,rgba(255,255,255,0.85) 70%,rgba(255,255,255,0.85) 71%,rgba(255,255,255,0) 100%); /* Chrome10+,Safari5.1+ */
+		background: -o-linear-gradient(left,  rgba(255,255,255,0) 0%,rgba(255,255,255,0.03) 1%,rgba(255,255,255,0.6) 30%,rgba(255,255,255,0.85) 50%,rgba(255,255,255,0.85) 70%,rgba(255,255,255,0.85) 71%,rgba(255,255,255,0) 100%); /* Opera 11.10+ */
+		background: -ms-linear-gradient(left,  rgba(255,255,255,0) 0%,rgba(255,255,255,0.03) 1%,rgba(255,255,255,0.6) 30%,rgba(255,255,255,0.85) 50%,rgba(255,255,255,0.85) 70%,rgba(255,255,255,0.85) 71%,rgba(255,255,255,0) 100%); /* IE10+ */
+		background: linear-gradient(to right,  rgba(255,255,255,0) 0%,rgba(255,255,255,0.03) 1%,rgba(255,255,255,0.6) 30%,rgba(255,255,255,0.85) 50%,rgba(255,255,255,0.85) 70%,rgba(255,255,255,0.85) 71%,rgba(255,255,255,0) 100%); /* W3C */
+		filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00ffffff', endColorstr='#00ffffff',GradientType=1 ); /* IE6-9 */
+    
+/*  forming the shine element
+    play around with the width, skew and gradient to get different effects
+  */
+		width: 15%;
+		height: 100%;
+     transform: skew(-10deg,0deg);
+		-webkit-transform: skew(-10deg,0deg);
+     -moz-transform: skew(-10deg,0deg);
+     -ms-transform: skew(-10deg,0deg);
+     -o-transform: skew(-10deg,0deg);
+  
+/*  animating it  */
+     animation: move 2s;
+		animation-iteration-count: infinite;
+		animation-delay: 1s;
+		-webkit-animation: move 2s;
+		-webkit-animation-iteration-count: infinite;
+		-webkit-animation-delay: 1s;
+		-moz-transform: skew(-10deg,0deg);
+		-moz-animation: move 2s;
+		-moz-animation-iteration-count: infinite;
+		-moz-animation-delay: 1s;
+		-ms-transform: skew(-10deg,0deg);
+		-ms-animation: move 2s;
+		-ms-animation-iteration-count: infinite;
+		-ms-animation-delay: 1s;
+		-o-transform: skew(-10deg,0deg);
+		-o-animation: move 2s;
+		-o-animation-iteration-count: infinite;
+		-o-animation-delay: 1s;
+	}
+
+/*  */
+@keyframes move {
+	0%  { left: 0; opacity: 0; }
+	5% {opacity: 0.0}
+	48% {opacity: 0.2}
+	80% {opacity: 0.0}
+	100% { left: 82%}
+}
+
+@-webkit-keyframes move {
+	0%  { left: 0; opacity: 0; }
+	5% {opacity: 0.0}
+	48% {opacity: 0.2}
+	80% {opacity: 0.0}
+	100% { left: 82%}
+}
+
+@-moz-keyframes move {
+	0%  { left: 0; opacity: 0; }
+	5% {opacity: 0.0}
+	48% {opacity: 0.2}
+	80% {opacity: 0.0}
+	100% { left: 88%}
+}
+
+@-ms-keyframes move {
+	0%  { left: 0; opacity: 0; }
+	5% {opacity: 0.0}
+	48% {opacity: 0.2}
+	80% {opacity: 0.0}
+	100% { left: 82%}
+}
+
+@-o-keyframes move {
+	0%  { left: 0; opacity: 0; }
+	5% {opacity: 0.0}
+	48% {opacity: 0.2}
+	80% {opacity: 0.0}
+	100% { left: 82%}
+}
+@keyframes goldRim {
+  from {
+    box-shadow: 0 0 1px #fff, 0 0 2px #fff, 0 0 3px #fff, 0 0 4px #ffb411,
+      0 0 7px #ffb411, 0 0 8px #ffb411, 0 0 10px #ffb411, 0 0 50px #ffb411;
+  }
+  to {
+    box-shadow: 0 0 5px #fff, 0 0 1px #fff, 0 0 1px #fff, 0 0 2px #ffb411,
+      0 0 3px #ffb411, 0 0 4px #ffb411, 0 0 5px #ffb411, 0 0 7px #ffb411;
+  }
+}
+@keyframes silverRim {
+  from {
+    box-shadow: 0 0 1px #fff, 0 0 2px #fff, 0 0 3px #fff, 0 0 4px #c9fff8,
+      0 0 4px #c9fff8, 0 0 6px #c9fff8, 0 0 8px #c9fff8, 0 0 10px #c9fff8;
+  }
+  to {
+    box-shadow: 0 0 5px #fff, 0 0 1px #fff, 0 0 1px #fff, 0 0 1px #c9fff8,
+      0 0 1px #c9fff8, 0 0 2px #c9fff8, 0 0 2px #c9fff8, 0 0 5px #c9fff8;
+  }
+}
+/*DRAG AND DROP*/
+.DragAndDropHandler {
+    border: 1px solid black;
+    text-align: center;
+}
+.far-grid-item.over {
+    border: 3px dashed #0037ff;
+    background: #7ca4ffa6;
+}
+.DragAndDropHandler:hover {
+    background: #003abd9e;
+    color: #e2e6ff;
+    border-color: #e2e6ff;
+}
