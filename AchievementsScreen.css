@@ -5,7 +5,6 @@
     transform: scale(1.2);
     margin-top: 0;
     margin-bottom: -12px;
-    transition: 0.2s;
     filter: drop-shadow(0px 5px 6px black);
     transition: 0s;
     transform: unset;
@@ -28,6 +27,17 @@ i.fas.fa-list.listViewSettings:active {
     background: white;
     color: black;
 }
+.far-grid-item::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, rgba(255, 255, 255, 0.3) 0%, transparent 100%);
+    pointer-events: none; /* Prevent the pseudo-element from capturing mouse events */
+    z-index: -1; /* Place the pseudo-element below the card content */
+  }
 .far-grid-item.listView p.AchDescription {
     border: unset;
     background: #663400 !important;
@@ -38,16 +48,30 @@ i.fas.fa-list.listViewSettings:active {
 }
 .far-grid-item:hover .AchDescription, .far-grid-item.hover .AchDescription {
     margin-top: -5px !important;
-    transition: 0.3s !important;
     opacity: 1;
     width: 100%;
     height: fit-content;
     display: block;
     position: absolute;
     line-break: strict;
+    opacity: 1;
+    bottom: 0;
+    background: #000000bd !important;
+}
+p.AchDescription {
+    min-width: 100%;
+    margin-top: -5px !important;
+    opacity: 1;
+    width: 100%;
+    height: fit-content;
+    display: block;
+    position: absolute;
+    line-break: strict;
+    opacity: 1;
+    bottom: 0;
+    background: #000000bd !important;
 }
 .far-grid-item.listView p.AchDescription:hover {
-    transition: 0s;
     display: none;
 }
 .far-grid-item.unknownAch {
@@ -191,17 +215,26 @@ img.EditModeIcon:active {
     background: #66180000;
     filter: opacity(1.0);
 }
+textarea.AchInputDes {
+    color: black !important;
+}
 .far-grid-item {
     height: 200px;
     width: 150px;
-    /* background: #00000021; */
     height: fit-content;
+    opacity: 0.9;
+    font-weight: bold;
+    z-index: 10;
+    border-radius: 10px;
+    border: 1px solid;
+    will-change: transform;
+    border: 2px solid #000000b0;
+    border-radius: 0;
 }
 .far-grid-item:hover {
     z-index: 1;
 }
 img.AchIcon {
-    /* background: #0000008c; */
     min-width: 100%;
     max-width: 75%;
     min-height: 150px;
@@ -266,12 +299,13 @@ p.AchName {
     margin: 0;
     text-align: center;
     line-break: auto;
-    font-size: 19px;
     min-height: 10em;
     display: table-cell;
     vertical-align: middle;
     height: 48px;
     width: 150px;
+    padding: 5px;
+    font-size: 14px;
 }
 .grid-item {
     transition: 0.2s;
@@ -309,7 +343,6 @@ img.EditModeIcon {
 }
 div#AchievementList {
     padding: 20px;
-    margin-top: 10px;
 }
 img.tinyAchImg {
     max-width: 22px;
@@ -586,14 +619,17 @@ input#toLoadNumber {
   }
 }
 @keyframes fadeOut {
-  from {
-	  opacity: 0%
-  }
-  30%{
-	  opacity: 100%
-  }
   0% {
-    opacity: 0%
+    opacity: 0%;
+  }
+  30% {
+    opacity: 100%;
+  }
+  80%{
+    opacity: 100%;
+  }
+  100% {
+    opacity: 0%;
   }
 }
 @keyframes scaleloop {
@@ -735,4 +771,71 @@ input#toLoadNumber {
     background: #003abd9e;
     color: #e2e6ff;
     border-color: #e2e6ff;
+}
+.AchievementChatDisplay {
+    display: flex;
+    align-items: center;
+}
+.AchievementChatDisplay b {
+    flex: 1;
+    text-align: center;
+}
+.chatAchImg{
+    max-width: 30px;
+    max-height: 30px;
+}
+.achNameChatP {
+    flex: 1;
+    text-align-last: center;
+}
+.achGainedChatText {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    font-size: 10px;
+    align-items: center;
+    color: #c9c7b8;
+}
+li.chat-message.message.flexcol.achievementChatDisplayMessage {
+    background: #000000a6;
+    color: white;
+    backdrop-filter: blur(5px);
+    border: 1px solid black;
+}
+li.chat-message.message.flexcol.achievementChatDisplayMessage header.message-header.flexrow{
+    color: #c9c7b8;
+    margin-bottom: -20px;
+}
+
+
+.achievement-card {
+    width: 200px;
+    height: 300px;
+    background: #f7ff9e;
+    color: #313320;
+    border: 2px solid transparent;
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+    cursor: pointer;
+    transform-origin: center; /* Set the transform origin to the card's center */
+    transform: perspective(800px) rotateX(0deg) rotateY(0deg); /* Initialize transform */
+}
+  
+.achievement-card:hover {
+border-color: #313320; /* Change the border color on hover */
+}
+
+.AchName, .AchDescription {
+background: #313320;
+color: #f7ff9e;
+padding: 5px;
+margin: 0;
+}
+
+.AchIcon {
+    width: 100px;
+    height: 100px;
+    margin: 2px auto;
+    display: block;
 }

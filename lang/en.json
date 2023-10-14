@@ -27,6 +27,10 @@
         "Text": "ListMode",
         "Hint": "Toggles the List Mode"
     },
+    "Farchievements.Settings.ChatMessage" : {
+        "Text": "Chat Message",
+        "Hint": "Sends a message to the chat for each achievement a user gained."
+    },
     "Farchievements.Settings.loadPerPage" : {
         "Text": "LoadPerPage",
         "Hint": "How many achievements should be loaded at once."

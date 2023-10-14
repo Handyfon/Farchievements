@@ -108,7 +108,10 @@
         "Text": "Listenmodus",
         "Hint": "Eine komprimierte Ansicht der Achievements"
     },
-    
+    "Farchievements.Settings.ChatMessage" : {
+        "Text": "Chat Nachricht",
+        "Hint": "Schickt eine Nachricht in den Chat für jedes erhaltene Achievement. "
+    },
     "Farchievements.Settings.AchievementData" : {
         "Text": "AchievementData (DONTTOUCH)",
         "Hint": "The data for the achievements is saved here !!DONT TOUCH!!"

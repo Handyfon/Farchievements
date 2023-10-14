@@ -161,32 +161,6 @@
 			let playerIDToLoadFrom = game.settings.get('farchievements', 'loadSettingsForPlayer'); //RESET PLAYER ID
 			document.getElementById('CustomAchievmentBackgroundStyling').innerHTML = '<style>.achievementsscreen-window .window-content{background: #232323;}</style>';
 			loadPlayerNav(false);
-			/*if (playerIDToLoadFrom != "") {
-				//ui.notifications.notify("loading achievements for player with ID: " + playerIDToLoadFrom);
-				//console.log("loading achievements for player with ID: " + playerIDToLoadFrom);
-				/*let mySYNCSettings = "";
-				for (let i = 0; i < game.settings.get('farchievements', 'clientdataSYNC').split("||").length; i++)//FOR EVERY ENTRY IN CLIENTDATASYNC
-				{
-					if (game.settings.get('farchievements', 'clientdataSYNC').split("||")[i].includes(playerIDToLoadFrom) && mySYNCSettings == "") {//FIND THE SETTINGS FOR THE CURRENT USER BY USERID
-						mySYNCSettings = game.settings.get('farchievements', 'clientdataSYNC').split("||")[i]; // MYSYNC = SETTINGS FOR MY USERID
-					}
-				}
-				let clientDataToSync = game.user.id + ":";
-				let achievementnumber = 0;
-				let amountGained = 0;
-				let achievementsGainedList = "";
-				if (mySYNCSettings == "") {
-					ui.notifications.warn(game.i18n.localize('Farchievements.Notification.NoAchievements'));
-					return;
-				}
-				for (let i = 0; i < mySYNCSettings.split(':')[1].split(',').length; i++) {
-					achievementnumber = mySYNCSettings.split(':')[1].split(',')[i];
-					if (mySYNCSettings.split(':')[1].split(',')[i] != "") {
-						clientDataToSync += achievementnumber + ","; //ADD THE ACHIEVEMENT TO THE SYNC REGARDLESS
-					}
-				}
-				game.settings.set('farchievements', 'clientdata', clientDataToSync);
-			}*/
 			//CHANGE WINDOW TITLE AND COLOR
 			if(game.users.size>1){
 				if (playerIDToLoadFrom != "" && game.settings.get('farchievements', 'PlayerBackColor') || !game.user.isGM && game.settings.get('farchievements', 'PlayerBackColor')) {
@@ -200,28 +174,20 @@
 					if (r <= 150) r = 150;
 					if (g <= 150) g = 150;
 					if (b <= 150) b = 150;
-					//console.log(""+r+b+g);
 					var luma = 0.2126 * r + 0.7152 * g + 0.0722 * b; // per ITU-R BT.709
 					let newHexColor = c;
-					//console.log(luma);
-
 					let newVal = -1 + (50 / luma);
 					newHexColor = shadeHexColor(game.users.find(user => user.id == playerIDToLoadFrom).color, newVal);
 					document.querySelector('.achievementsscreen-window .window-header').style['background'] = newHexColor;
-					//console.log(game.users.find(user => user.id == playerIDToLoadFrom).color + " -> " + newHexColor + " | Luma/Newval: "+luma+"/"+newVal);
-					//DARKER
 					newVal = -1 + (30 / luma);
 					newHexColor = shadeHexColor(game.users.find(user => user.id == playerIDToLoadFrom).color, newVal);
 					document.getElementById('CustomAchievmentBackgroundStyling').innerHTML = '<style>.achievementsscreen-window .window-content{background: ' + newHexColor + ';}</style>';
 					if(game.users.get(playerIDToLoadFrom).character)
 					document.getElementById('playerbackground').style.backgroundImage = "url("+game.users.get(playerIDToLoadFrom).character.img+")";
-					
-					//ui.notifications.notify(game.settings.get('farchievements', 'clientdata'));
 				}
 				else{
 					document.getElementById('playerbackground').style.backgroundImage = "url("+game.settings.get('farchievements', 'standardBackground')+")";
 				}
-				//game.users.find(user => user.id == "T41gRCS1vIdM00bD")
 				if (!game.user.isGM) document.getElementById("hiddenforuser").style = "display:none";
 				if (!game.user.isGM) document.getElementById("hiddenforuser2").style = "display:none";
 				if (!game.user.isGM) document.getElementById("hiddenforuser3").style = "display:none";
@@ -231,7 +197,7 @@
 			
 			//APPLY STYLING
 			document.getElementById('CustomAchievmentStyling').innerHTML = "";
-			document.getElementById('CustomAchievmentStyling').innerHTML = "<style>.far-grid-item:hover {transform: scale(1.2);transition: 0.2s;filter: drop-shadow(0px 5px 6px black)}.achievementsscreen-window {background: black;}</style>";
+			document.getElementById('CustomAchievmentStyling').innerHTML = "<style>.far-grid-item:hover {transform: scale(1.2);filter: drop-shadow(0px 5px 6px black)}.achievementsscreen-window {background: black;}</style>";
 
 			//DESCRIPTION STYLE
 			let alwaysShowInsert = "display: none;";
@@ -345,7 +311,51 @@
 				document.getElementById('AchievementList').innerHTML += '<div ' + onClickFunction + ' id="Achievement-' + i + '" class="far-grid-item '+listView + known+'" style="' + greyscale + displayOptions + colorOptions +'background:'+color+';'+glowstyle+'" >' + AchName + '<img class="AchIcon" src="' + icon + '"></img><p class="AchDescription" style="color:'+color+'; background:'+getColorChange(color)+';">' + description + "</p>"+glowStyleContainer+"</div>";
 			}
 			document.getElementById("AchievementList").style = "grid-template-rows: repeat(" + Math.round(loadAm / 6) + ", 1fr);"
-			
+
+			// NEW CODE FOR THE TILT EFFECT
+			const achievementCards = document.querySelectorAll('.far-grid-item');
+
+			achievementCards.forEach((card, index) => {
+				card.addEventListener('mousemove', (e) => {
+				const cardRect = card.getBoundingClientRect();
+				const cardCenterX = cardRect.left + cardRect.width / 2;
+				const cardCenterY = cardRect.top + cardRect.height / 2;
+				const xAxis = (e.clientX - cardCenterX) / 5; // Decrease the division factor for more tilt
+				const yAxis = (e.clientY - cardCenterY) / 5; // Decrease the division factor for more tilt
+				
+				// Calculate relative Y-position of cursor within the card
+				const relativeY = (e.clientY - cardRect.top) / cardRect.height;
+
+				// Calculate brightness based on relative Y for a 3d effect
+				const minBrightness = 0.8;
+				const maxBrightness = 1.5;
+
+				// Calculate contrast based on relative Y for a holo effect
+				const minContrast = 1;
+				const maxContrast = 1.2;
+
+				let contrast = minContrast + (maxContrast - minContrast) * relativeY;
+
+				brightness = minBrightness + (maxBrightness - minBrightness) * relativeY;
+
+
+				// Apply the increased tilt effect, scaling, and glint to the card with a very fast transition
+				card.style.transition = 'transform 0s'; // Very fast transition
+				card.style.transform = `perspective(800px) rotateY(${xAxis}deg) rotateX(${yAxis}deg) scale(1.2)`;
+				card.style.zIndex = '10000';
+				card.style.filter = `brightness(${brightness}) contrast(${contrast})`;
+				// Update the glint position based on the cursor
+				});
+
+				card.addEventListener('mouseleave', () => {
+				// Reset the card's transform, transition, and glint position when the cursor leaves
+				card.style.transform = 'perspective(800px) rotateX(0deg) rotateY(0deg) scale(1)';
+				card.style.zIndex = '10';
+				card.style.transition = 'transform 0.2s'; 
+				card.style.filter = `brightness(1)`;
+				});
+			});
+
 		}
 		function hidePageNav(){
 			document.getElementsByClassName("pageNav")[0].style.display = "none";

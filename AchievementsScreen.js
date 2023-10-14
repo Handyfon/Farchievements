@@ -3,7 +3,7 @@ Hooks.once('init', function() {
 	game.settings.register('farchievements', 'showAchOnStartup', {
         name: game.i18n.localize('Farchievements.Settings.showAchOnStartup.Text'),
         hint: game.i18n.localize('Farchievements.Settings.showAchOnStartup.Hint'),
-        scope: 'world',
+        scope: 'client',
         config: true,
         default: false,
         type: Boolean,
@@ -16,14 +16,6 @@ Hooks.once('init', function() {
         default: false,
         type: Boolean,
 		onChange: debouncedReload,
-	});
-	game.settings.register('farchievements', 'EnableAchievementMessage', {
-        name: game.i18n.localize('Farchievements.Settings.EnableAchievementMessage.Text'),
-        hint: game.i18n.localize('Farchievements.Settings.EnableAchievementMessage.Hint'),
-        scope: 'world',
-        config: true,
-        default: false,
-        type: Boolean,
 	});
 	game.settings.register('farchievements', 'EnableScoreboard', {
         name: game.i18n.localize('Farchievements.Settings.EnableScoreboard.Text'),
@@ -64,6 +56,14 @@ Hooks.once('init', function() {
         scope: 'world',
         config: true,
 		default: false,
+		type: Boolean,
+    });
+	game.settings.register('farchievements', 'chatMessage', {
+        name: game.i18n.localize('Farchievements.Settings.ChatMessage.Text'),
+        hint: game.i18n.localize('Farchievements.Settings.ChatMessage.Hint'),
+        scope: 'world',
+        config: true,
+		default: true,
 		type: Boolean,
     });
 	game.settings.register('farchievements', 'loadPerPage', {
@@ -200,7 +200,7 @@ Hooks.once('init', function() {
         hint: game.i18n.localize('Farchievements.Settings.bannerAnimation.Hint'),
         scope: 'world',
         config: true,
-        default: "upsize",
+        default: "slidein",
         type: String,
 		choices: {
 			"slidein": "sliding banner (SFX: stinger)",
@@ -393,7 +393,7 @@ class AchievementSync{
 	static async PlayAnimation(achievementsGainedList){
 		await game.settings.set('farchievements', 'clientdata', game.settings.get('farchievements', 'clientdata') + achievementsGainedList);
 		let AchievementList = JSON.parse(game.settings.get('farchievements', 'achievementdataNEW'));
-		let achievementsToGain = achievementsGainedList.split(",");
+		let achievementsToGain = achievementsGainedList.split("||||%%%||||");
 		let data;
 		let name,icon;
 		let toGain;
@@ -408,7 +408,7 @@ class AchievementSync{
 			name = AchievementToGain.name;
 			icon = AchievementToGain.image;
 			if(icon == "icon"){icon = game.settings.get('farchievements', 'standarticon')} //IF STANDARD ICON USE ICON DEFINED IN GAMESETTINGS
-			
+			displayMyNewAchievementInChat(AchievementToGain.name);
 			//SET HTML
 			document.getElementsByClassName("AchievementText")[0].innerHTML = '<label class="AchievementTextLabel">'+game.settings.get("farchievements", "achpretext")+'</label>' + name;
 			document.getElementById("AchievementIMG").src = icon;
@@ -423,7 +423,7 @@ class AchievementSync{
 
 			let dur = 13;
 			if(anim == "fadeOut") 
-				dur = 3;
+				dur = 5;
 				
 			let durText = ""+dur+"s";
 			document.getElementById("Achievementbar").style.setProperty("animation-name", anim);
@@ -439,16 +439,6 @@ class AchievementSync{
 				await AchievementSync.sleep(1800);
 			document.getElementById("Achievementbar").style.setProperty("display", "flex");//ENABLE ACHIEVEMENT
 			
-			//CREATE MESSAGE
-			if (game.settings.get('farchievements', 'EnableAchievementMessage')){
-
-				let tempUserName = game.user.name;
-				ChatMessage.create({
-					user: game.user.id,
-					content: `${tempUserName} ${game.i18n.localize('Farchievements.GainedAchivement')} '${name}' ${game.i18n.localize('Farchievements.Achievement')}`,
-					blind: false,
-				});
-            }
 			//?CONFETTI MODULE
 			if (game.modules.get('confetti')?.active === true && game.settings.get('farchievements', 'EnableConfettiSupport')){
 				for(let c = 0; c <3; c++){
@@ -464,7 +454,7 @@ class AchievementSync{
 			//game.settings.set('farchievements', 'clientdata', game.settings.get('farchievements', 'clientdata') + "," +name);
 		}
 	}
-	static SyncAchievements(skip = null){
+	static SyncAchievements(skip = null, start = false){
 		//console.log("SYNC Achievements");//DEBUG
 		if(game.user.isGM){
 			if(!game.ready) return; //IF GAME IS READY, ELSE CHANGES WOULDN'T BE SAVED
@@ -472,46 +462,7 @@ class AchievementSync{
 			if(document.getElementById('SyncAchUnsaved') != null){
 				document.getElementById('SyncAchUnsaved').id = "SyncAch";
 			}
-			//OLD CODE REDUNDANT WITH NEW DATA STRUCTURE
-			/*let clientDataSYNC = game.settings.get('farchievements', 'clientdataSYNC');
-			if(clientDataSYNC == ""){ //IF THERE ARE NO USERS YET ADD ALL OF THEM
-				for(let i = 0; i < game.users.contents.length; i++){
-					if(game.users.contents[i].isGM) continue;
-					clientDataSYNC += game.users.contents[i].id + ":||"
-					console.log("Foundry Achievements | Added "+game.users.contents[i].name+" with ID: " + game.users.contents[i].id);
-				}
-			}
-			else{
-				for(let i = 0; i < game.users.contents.length; i++){
-					if(game.users.contents[i].isGM) continue;
-					if(!clientDataSYNC.includes(game.users.contents[i].id)){ //IF A NEW USER IS DETECTED ADD HIM TO THE SYNC SETTING
-						clientDataSYNC += game.users.contents[i].id + ":||"
-						//ui.notifications.notify("Foundry Achievements | Added "+game.users.contents[i].name+" with ID: " + game.users.contents[i].id);
-						console.log("Foundry Achievements | Added "+game.users.contents[i].name+" with ID: " + game.users.contents[i].id);
-					}
-				}
-				//CHECK FOR REDUNDANT USERS AND REMOVE THEM
-				let userID;
-				let ToSYNC = clientDataSYNC.split('||');
-				if(game.users.contents.length == 1){
-					ui.notifications.notify("Farchievements | you need to create some players in order to use this module");
-					return;
-				}
-				for(let i = 0; i < clientDataSYNC.split('||').length; i++){
-					userID = clientDataSYNC.split('||')[i].split(":")[0];
-					if(game.users.get(userID) == null){ //IF A NEW USER IS DETECTED ADD HIM TO THE SYNC SETTING
-						//ToSYNC.pop(i);
-						ToSYNC.splice(i, 1);
-						clientDataSYNC = ToSYNC.join("||") + "||";
-						//console.log(clientDataSYNC);
-						if(userID != "")
-						ui.notifications.notify(game.i18n.localize('Farchievements.Notification.Prefix') + game.i18n.localize('Farchievements.Notification.PlayerIdChanged') + userID);
-						
-					}
-				}
-				
-			 }*/
-			//game.settings.set('farchievements', 'clientdataSYNC', clientDataSYNC);
+			return;
 		}
 		else{//IF USER IS PLAYER
 			//FOR EACH ACHIEVEMENT IF NOT IN CLIENTDATA PLAY ANIMATION AND ADD IT
@@ -523,35 +474,37 @@ class AchievementSync{
 				if(achievement.players.includes(game.userId)){
 					//ADD TO LIST
 					if(existingAchievements.includes(achievement.name))return;
-					AchievementsToPlay += achievement.name + ",";
+					AchievementsToPlay += achievement.name + "||||%%%||||";
 				}
 			});
 			//console.log(AchievementsToPlay);
 			if(AchievementsToPlay != ""){
-				let amount = AchievementsToPlay.split(",").length -2;
+				let amount = AchievementsToPlay.split("||||%%%||||").length -1;
 				if(skip == true){
 					game.settings.set('farchievements', 'clientdata', game.settings.get('farchievements', 'clientdata') + AchievementsToPlay);
 					return;
 				}
-				if(amount > 5 ){
+				if(start && amount > 0){
 					let d = new Dialog({
-						 title: `${game.i18n.localize('Farchievements.Html.SanitySaver.Title')}`,
-						 content: `${game.i18n.localize('Farchievements.Html.SanitySaver.Body1')} `+ amount +`${game.i18n.localize('Farchievements.Html.SanitySaver.Body2')}`,
-						 buttons: {
-						  one: {
-						   icon: '<i class="fas fa-check"></i>',
-						   label:  `${game.i18n.localize('Farchievements.Html.SanitySaver.ButtonSeeAll')}`,
-						   callback: () => AchievementSync.PlayAnimation(AchievementsToPlay)
-						  },
-						  two: {
-						   icon: '<i class="fas fa-times"></i>',
-						  label: `${game.i18n.localize('Farchievements.Html.SanitySaver.ButtonSkip')}`,
-						   callback: () => game.settings.set('farchievements', 'clientdata', game.settings.get('farchievements', 'clientdata') + AchievementsToPlay)
-						  }
-						 },
-						 default: "two",
-						});
-						d.render(true);
+						title: `${game.i18n.localize('Farchievements.Html.SanitySaver.Title')}`,
+						content: `${game.i18n.localize('Farchievements.Html.SanitySaver.Body1')} ` + amount + `${game.i18n.localize('Farchievements.Html.SanitySaver.Body2')}`,
+						buttons: {
+							one: {
+								icon: '<i class="fas fa-check"></i>',
+								label: `${game.i18n.localize('Farchievements.Html.SanitySaver.ButtonSeeAll')}`,
+								callback: () => AchievementSync.PlayAnimation(AchievementsToPlay)
+							},
+							two: {
+								icon: '<i class="fas fa-times"></i>',
+								label: `${game.i18n.localize('Farchievements.Html.SanitySaver.ButtonSkip')}`,
+								callback: () => {
+									game.settings.set('farchievements', 'clientdata', game.settings.get('farchievements', 'clientdata') + AchievementsToPlay);
+									displayMyNewAchievementInChat(AchievementsToPlay.split("||||%%%||||")); // Call the function to display achievements in chat
+								}
+							}
+						}
+					});
+					d.render(true);
 				}
 				else{
 					AchievementSync.PlayAnimation(AchievementsToPlay);
@@ -584,7 +537,7 @@ Hooks.on('ready', async function() {
 	}
 	//sync achievements
 	if(!game.user.isGM)
-		AchievementSync.SyncAchievements(game.settings.get('farchievements', 'showAchOnStartup'));
+		AchievementSync.SyncAchievements(game.settings.get('farchievements', 'showAchOnStartup'), true);
 });
 
 Hooks.on('renderSettings', function() {
@@ -953,6 +906,43 @@ async function removeAchievementFromCommand(achievementID, PID) {
 			else
 				window.loadAchievementsEditMode();
 }
+
+async function displayMyNewAchievementInChat(newAchievements){
+	if(!game.settings.get('farchievements', 'chatMessage')) return;
+	let AchievementList = JSON.parse(game.settings.get('farchievements', 'achievementdataNEW'));
+	if (!Array.isArray(newAchievements)) {
+		if(newAchievements != ""){
+			if (newAchievements === "" || newAchievements === " ") return; // Skip empty or space strings
+			console.log("Achievement to display:", newAchievements);
+			let achievementData = AchievementList.find(x=>x.name == newAchievements);
+			let displayContent = '<p class="achGainedChatText">Achievement Gained:</p>'+ '<div class="AchievementChatDisplay"><img class="chatAchImg" src="'+achievementData.image+'"></img><b class="achNameChatP">'+newAchievements+'<b/> </div>';
+
+			ChatMessage.create({
+				content: displayContent,
+				blind: false,
+			});
+		}
+        return;
+    }
+
+    newAchievements.forEach(achievement => {
+        if (achievement === "" || achievement === " ") return; // Skip empty or space strings
+        console.log("Achievement to display:", achievement);
+		let achievementData = AchievementList.find(x=>x.name == achievement);
+		let displayContent = '<p class="achGainedChatText">Achievement Gained:</p>'+ '<div class="AchievementChatDisplay"><img class="chatAchImg" src="'+achievementData.image+'"></img><b class="achNameChatP">'+achievement+'<b/> </div>';
+
+        ChatMessage.create({
+            content: displayContent,
+            blind: false,
+        });
+    });
+}
+
+Hooks.on("renderChatMessage", (chatMessage, html, data) => {
+    if (html.find(".achGainedChatText").length) {
+        html.addClass("achievementChatDisplayMessage");
+    }
+});
 
 async function SendSyncMessage() {
 	ChatMessage.create({
