@@ -176,6 +176,11 @@
     "Farchievements.Html.ScoreText": "Score",
     "Farchievements.Html.GlowText": "Glow",
     "Farchievements.Html.LoadPerPage": "Load Per Page",
+    "Farchievements.Html.AmountNeeded": "Amount Needed",
+    "Farchievements.Html.ValuetoRoll": "Value to Roll",
+    "Farchievements.Html.ProgressType": "Progress Type",
+    "Farchievements.Html.DiceType": "Dice Type",
+    "Farchievements.Html.ChainLength": "Chain Length",
 	
 
     "Farchievements.Html.ImportExport":{

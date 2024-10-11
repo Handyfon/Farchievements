@@ -164,7 +164,7 @@ Hooks.once('init', function() {
         name: game.i18n.localize('Farchievements.Settings.achamount.Text'),
         hint: game.i18n.localize('Farchievements.Settings.achamount.Hint'),
         scope: 'world',
-        config: true,
+        config: false,
         default: "3",
         type: String,
     });
@@ -280,8 +280,8 @@ Hooks.once('init', function() {
         name: game.i18n.localize('Farchievements.Settings.AchievementData.Text'),
         hint: game.i18n.localize('Farchievements.Settings.AchievementData.Hint'),
         scope: 'world',
-		config: true,
-		default: "1:::Mounted////icons/sundries/misc/horseshoe-iron.webp////Acquire a mount.;;;2:::Translator////icons/sundries/scrolls/scroll-bound-blue-white.webp////Act as the party translator.;;;3:::Argumenter////icons/commodities/bones/beak-orange-green.webp////Argue with the DM over a dice roll.;;;4:::Bitte, Bitte Papa////icons/sundries/lights/candle-pillar-lit-yellow.webp////Ask a deity for a favor.;;;5:::Hardmode////icons/skills/wounds/injury-eyes-blood-red-pink.webp////Be deaf and blind simultaneously.;;;6:::You have no power here////icons/skills/wounds/injury-eyes-blood-red-pink.webp////Be ignored by the DM when citing rules.;;;7:::Special////icons/magic/unholy/silhouette-light-fire-blue.webp////Be the only person to roll 20 at a session;;;8:::Actor////icons/environment/people/spearfighter.webp////Beat a performance check while in disguise;;;9:::Deiety////icons/magic/holy/barrier-shield-winged-blue.webp////Become deified.;;;10:::Brute////icons/magic/earth/barrier-stone-brown-green.webp////Burst through a wall.;;;11:::Ouch////icons/skills/wounds/bone-broken-marrow-red.webp////Reach 0 HP twice in 1 encounter.;;;12:::Amazing Roleplayer////icons/skills/social/diplomacy-peace-alliance.webp////Roleplay your character exceptionally.;;;13:::(Un)advantage////icons/magic/control/voodoo-doll-pain-damage-purple.webp////Roll 2 1’s on an advantaged roll.;;;14:::Lucky////icons/magic/light/projectile-flare-blue.webp////Roll 2 20’s in a row.;;;15:::Never tell me the odds////icons/magic/control/buff-luck-fortune-clover-green.webp////Roll 2 20’s on a disadvantaged roll.;;;16:::Strongest in the Land////icons/skills/melee/unarmed-punch-fist.webp////Have a strength score over 20.;;;17:::Fastest in the Land////icons/magic/lightning/bolt-strike-cloud-gray.webp////Have a dexterity score over 20.;;;18:::Toughest in the Land////icons/magic/earth/strike-fist-stone-light.webp////Have a constitution score over 20.;;;19:::Smartest in the Land////icons/magic/control/silhouette-hold-beam-blue.webp////Have a intelligence score over 20.;;;20:::Wisest in the Land////icons/magic/nature/tree-elm-roots-brown.webp////Have a wisdom score over 20.;;;21:::The most Charming in the Land////icons/magic/unholy/strike-body-explode-disintegrate.webp////Have a charisma score over 20.;;;22:::I've nothing left to lose...////icons/magic/death/undead-skeleton-deformed-red.webp////...so the only path to choose is twisted. Be the sole survivor of a TPK;;;23:::Necromancer////icons/commodities/bones/bones-dragon-grey.webp////Raise the dead.;;;24:::Lorax////https://c.tenor.com/BzpCcZbxOAIAAAAd/lorax-the-lorax.gif////Speak for the trees;;;",
+		config: false,
+		default: "1:::Mounted////icons/sundries/misc/horseshoe-iron.webp////Acquire a mount.;;;2:::Translator////icons/sundries/scrolls/scroll-bound-blue-white.webp////Act as the party translator.;;;3:::Argumenter////icons/commodities/bones/beak-orange-green.webp////Argue with the DM over a dice roll.;;;4:::Bitte, Bitte Papa////icons/sundries/lights/candle-pillar-lit-yellow.webp////Ask a deity for a favor.;;;5:::Hardmode////icons/skills/wounds/injury-eyes-blood-red-pink.webp////Be deaf and blind simultaneously.;;;6:::You have no power here////icons/skills/wounds/injury-eyes-blood-red-pink.webp////Be ignored by the DM when citing rules.;;;7:::Special////icons/magic/unholy/silhouette-light-fire-blue.webp////Be the only person to roll 20 at a session;;;8:::Actor////icons/environment/people/spearfighter.webp////Beat a performance check while in disguise;;;9:::Deiety////icons/magic/holy/barrier-shield-winged-blue.webp////Become deified.;;;10:::Brute////icons/magic/earth/barrier-stone-brown-green.webp////Burst through a wall.;;;11:::Ouch////icons/skills/wounds/bone-broken-marrow-red.webp////Reach 0 HP twice in 1 encounter.;;;12:::Amazing Roleplayer////icons/skills/social/diplomacy-peace-alliance.webp////Roleplay your character exceptionally.;;;13:::(Un)advantage////icons/magic/control/voodoo-doll-pain-damage-purple.webp////Roll 2 1’s on an advantaged roll.;;;14:::Lucky////icons/magic/light/projectile-flare-blue.webp////Roll 2 20’s in a row.;;;15:::Never tell me the odds////icons/magic/control/buff-luck-fortune-clover-green.webp////Roll 2 20’s on a disadvantaged roll.;;;16:::Strongest in the Land////icons/skills/melee/unarmed-punch-fist.webp////Have a strength score over 20.;;;17:::Fastest in the Land////icons/magic/lightning/bolt-strike-cloud-gray.webp////Have a dexterity score over 20.;;;18:::Toughest in the Land////icons/magic/earth/strike-fist-stone-light.webp////Have a constitution score over 20.;;;19:::Smartest in the Land////icons/magic/control/silhouette-hold-beam-blue.webp////Have a intelligence score over 20.;;;20:::Wisest in the Land////icons/magic/nature/tree-elm-roots-brown.webp////Have a wisdom score over 20.;;;21:::The most Charming in the Land////icons/magic/unholy/strike-body-explode-disintegrate.webp////Have a charisma score over 20.;;;22:::I have nothing left to lose...////icons/magic/death/undead-skeleton-deformed-red.webp////...so the only path to choose is twisted. Be the sole survivor of a TPK;;;23:::Necromancer////icons/commodities/bones/bones-dragon-grey.webp////Raise the dead.;;;24:::Lorax////https://c.tenor.com/BzpCcZbxOAIAAAAd/lorax-the-lorax.gif////Speak for the trees;;;",
         type: String,
     });
 	game.settings.register('farchievements', 'achievementdataNEW', {
@@ -530,6 +530,155 @@ Hooks.on('renderSceneNavigation', async function() {
 		var el = `<div id="Achievementbar" style="display: none;" class="Achievementbar"><div id="FoundryAchievements" class="FoundryAchievementsBanner" style="`+bannerstyle+`"><img id="AchievementIMG" class="AchievementIMG" src="modules/farchievements/standardIcon.PNG"></img><p class="AchievementText"><label class="AchievementTextLabel">${game.i18n.localize('Farchievements.NewAchievement')}</label> (${game.i18n.localize('Farchievements.Achievement')}) </p><i class="Shiny"></i></div></div>`;
 		document.getElementById("notifications").innerHTML = el;
 });
+
+Hooks.on('createChatMessage', (chatMessage) => {
+    if (!game.user.isGM) return;
+
+    // Check if the chat message contains roll data
+    if (chatMessage.rolls && chatMessage.rolls.length > 0) {
+        console.log("Farchievements | Checking rolls in chat message...");
+
+        let rollData = chatMessage.rolls[0];
+        let rolledValue = rollData.total;
+        let userId = chatMessage.user.id;
+
+        console.log(`Farchievements | Roll detected in chat message for user: ${userId}, roll total: ${rolledValue}`);
+
+        let achievementList = JSON.parse(game.settings.get('farchievements', 'achievementdataNEW'));
+        console.log(`Farchievements | Loaded achievement list:`, achievementList);
+
+        // Filter for achievements that have a progressType of 'dice' or 'diceChain'
+        let diceAchievements = achievementList.filter(ach => ach.progressType === 'dice' || ach.progressType === 'diceChain');
+        console.log(`Farchievements | Filtered dice achievements:`, diceAchievements);
+
+        let hasAchievementUpdated = false;
+
+        diceAchievements.forEach(achievementData => {
+            console.log(`Farchievements | Processing achievement: ${achievementData.name}`);
+            
+            let achievement = new Achievement(
+                achievementData.name,
+                achievementData.description,
+                achievementData.image,
+                achievementData.players,
+                achievementData.seenBy,
+                achievementData.playerDates,
+                achievementData.progressRequired,
+                achievementData.progressType,
+                achievementData.playerProgress,
+                achievementData.chainLength,
+                achievementData.diceType
+            );
+
+            // Check if the dice type matches the achievement's diceType requirement
+            if (rollData.formula.includes(achievement.diceType)) {
+                // Check if the achievement already applies to the player who rolled
+                if (achievement.players.includes(userId)) {
+                    console.log(`Farchievements | Player ${userId} already has achievement: ${achievement.name}`);
+                    return; // Skip if the player already has the achievement
+                }
+
+                console.log(`Farchievements | Rolled value: ${rolledValue}`);
+
+                if (achievement.progressType === 'dice') {
+                    console.log(`Farchievements | Handling [dice] achievement for: ${achievement.name}`);
+                    
+                    let condition = achievement.progressRequired;
+                    if (typeof condition === 'string') {
+                        let targetValue;
+                        console.log(`Farchievements | Condition is a string: ${condition}`);
+
+                        if (condition.startsWith('<')) {
+                            targetValue = parseInt(condition.substring(1).trim());
+                            console.log(`Farchievements | Target value is less than ${targetValue}`);
+                            if (rolledValue < targetValue) {
+                                achievement.addPlayer(userId);
+                                hasAchievementUpdated = true;
+                                console.log(`Farchievements | Achievement unlocked for player: ${userId} (rolled < ${targetValue})`);
+                            }
+                        } else if (condition.startsWith('>')) {
+                            targetValue = parseInt(condition.substring(1).trim());
+                            console.log(`Farchievements | Target value is greater than ${targetValue}`);
+                            if (rolledValue > targetValue) {
+                                achievement.addPlayer(userId);
+                                hasAchievementUpdated = true;
+                                console.log(`Farchievements | Achievement unlocked for player: ${userId} (rolled > ${targetValue})`);
+                            }
+                        } else {
+                            targetValue = parseInt(condition);
+                            console.log(`Farchievements | Target value is equal to ${targetValue}`);
+                            if (rolledValue === targetValue) {
+                                achievement.addPlayer(userId);
+                                hasAchievementUpdated = true;
+                                console.log(`Farchievements | Achievement unlocked for player: ${userId} (rolled == ${targetValue})`);
+                            }
+                        }
+                    }
+                } else if (achievement.progressType === 'diceChain') {
+                    console.log(`Farchievements | Handling [diceChain] achievement for: ${achievement.name}`);
+                    
+                    let condition = achievement.progressRequired;
+                    if (typeof condition === 'string') {
+                        let targetValue;
+                        console.log(`Farchievements | Condition is a string: ${condition}`);
+
+                        if (condition.startsWith('<')) {
+                            targetValue = parseInt(condition.substring(1).trim());
+                            console.log(`Farchievements | Target value is less than ${targetValue}`);
+                            if (rolledValue < targetValue) {
+                                achievement.addProgress(userId, true, true); // Increment chain
+                                console.log(`Farchievements | Successful roll for chain (rolled < ${targetValue})`);
+                            } else {
+                                // Reset the chain on failure
+                                achievement.addProgress(userId, false, true);
+                                console.log(`Farchievements | Chain reset for player ${userId}`);
+                            }
+                        } else if (condition.startsWith('>')) {
+                            targetValue = parseInt(condition.substring(1).trim());
+                            console.log(`Farchievements | Target value is greater than ${targetValue}`);
+                            if (rolledValue > targetValue) {
+                                achievement.addProgress(userId, true, true); // Increment chain
+                                console.log(`Farchievements | Successful roll for chain (rolled > ${targetValue})`);
+                            } else {
+                                // Reset the chain on failure
+                                achievement.addProgress(userId, false, true);
+                                console.log(`Farchievements | Chain reset for player ${userId}`);
+                            }
+                        } else {
+                            targetValue = parseInt(condition);
+                            console.log(`Farchievements | Target value is equal to ${targetValue}`);
+                            if (rolledValue === targetValue) {
+                                achievement.addProgress(userId, true, true); // Increment chain
+                                console.log(`Farchievements | Successful roll for chain (rolled == ${targetValue})`);
+                            } else {
+                                // Reset the chain on failure
+                                achievement.addProgress(userId, false, true);
+                                console.log(`Farchievements | Chain reset for player ${userId}`);
+                            }
+                        }
+                    }
+
+                    if (achievement.getProgress(userId) >= achievement.chainLength) {
+                        // Chain complete, award achievement
+                        console.log(`Farchievements | Chain complete, awarding achievement to player ${userId}`);
+                        achievement.addPlayer(userId);
+                        hasAchievementUpdated = true;
+                    }
+                }
+
+                // Update the achievement list in game settings
+                let updatedAchievementList = achievementList.map(a => (a.name === achievement.name ? achievement : a));
+                game.settings.set('farchievements', 'achievementdataNEW', JSON.stringify(updatedAchievementList));
+            }
+        });
+
+        // Only send the update message if any achievement was updated
+        if (hasAchievementUpdated) {
+            SendSyncMessage();
+        }
+    }
+});
+
 Hooks.on('ready', async function() {
 	//START MIGRATION
 	if(game.user.isGM && game.settings.get('farchievements', 'achievementdataNEW') == ""){
@@ -539,7 +688,6 @@ Hooks.on('ready', async function() {
 	if(!game.user.isGM)
 		AchievementSync.SyncAchievements(game.settings.get('farchievements', 'showAchOnStartup'), true);
 });
-
 Hooks.on('renderSettings', function() {
 	//ADD BUTTON TO SETTINGS
 	function refreshData(){
@@ -634,7 +782,6 @@ if(message.content.includes("Farchievements-SyncRequest")){
 	ui.notifications.notify('Achievements Synced');
 	AchievementSync.SyncAchievements();
 }});
-
 window.farchievements_DEBUG_Reset_EVERYTHING = async function resetSettings(){
 	if(!game.user.isGM) return;
 	await game.settings.set('farchievements', 'achievementdata', "1:::Mounted////systems/dnd5e/icons/items/inventory/horseshoe.jpg////Acquire a mount.;;;2:::Translator////systems/dnd5e/icons/items/inventory/note-scroll.jpg////Act as the party translator.;;;3:::Argumenter////systems/dnd5e/icons/items/inventory/monster-beak.jpg////Argue with the DM over a dice roll.;;;4:::Bitte, Bitte Papa////systems/dnd5e/icons/items/inventory/runestone-dwarven.jpg////Ask a deity for a favor.;;;5:::Hardmode////icons/skills/wounds/injury-eyes-blood-red-pink.webp////Be deaf and blind simultaneously.;;;6:::You have no power here////systems/dnd5e/icons/skills/blood_12.jpg////Be ignored by the DM when citing rules.;;;7:::Special////systems/dnd5e/icons/skills/green_27.jpg////Be the only person to roll 20 at a session;;;8:::Actor////systems/dnd5e/icons/skills/emerald_07.jpg////Beat a performance check while in disguise;;;9:::Deiety////systems/dnd5e/icons/skills/yellow_13.jpg////Become deified.;;;10:::Brute////icons/magic/earth/barrier-stone-brown-green.webp////Burst through a wall.;;;11:::Ouch////https://assets.forge-vtt.com/5fa2d7054f8a4cf1b34c8a38/Icons/spellbook_page1/SpellBook08_13.png////Reach 0 HP twice in 1 encounter.;;;12:::Amazing Roleplayer////icons/skills/social/diplomacy-peace-alliance.webp////Roleplay your character exceptionally.;;;13:::(Un)advantage////icons/magic/control/voodoo-doll-pain-damage-purple.webp////Roll 2 1’s on an advantaged roll.;;;14:::Lucky////icons/magic/light/projectile-flare-blue.webp////Roll 2 20’s in a row.;;;15:::Never tell me the odds////icons/magic/control/buff-luck-fortune-clover-green.webp////Roll 2 20’s on a disadvantaged roll.;;;16:::Strongest in the Land////icons/skills/melee/unarmed-punch-fist.webp////Have a strength score over 20.;;;17:::Fastest in the Land////icons/magic/lightning/bolt-strike-cloud-gray.webp////Have a dexterity score over 20.;;;18:::Toughest in the Land////icons/magic/earth/strike-fist-stone-light.webp////Have a constitution score over 20.;;;19:::Smartest in the Land////icons/magic/control/silhouette-hold-beam-blue.webp////Have a intelligence score over 20.;;;20:::Wisest in the Land////icons/magic/nature/tree-elm-roots-brown.webp////Have a wisdom score over 20.;;;21:::The most Charming in the Land////icons/magic/unholy/strike-body-explode-disintegrate.webp////Have a charisma score over 20.;;;22:::I've nothing left to lose...////icons/magic/death/undead-skeleton-deformed-red.webp////...so the only path to choose is twisted. Be the sole survivor of a TPK;;;23:::Necromancer////icons/commodities/bones/bones-dragon-grey.webp////Raise the dead.;;;24:::Lorax////https://c.tenor.com/BzpCcZbxOAIAAAAd/lorax-the-lorax.gif////Speak for the trees;;;");
@@ -648,7 +795,6 @@ window.farchievements_DEBUG_Reset_PlayerAchievements = async function resetPlaye
 	await game.settings.set('farchievements', 'clientdata', "");
 	location.reload();
 }
-
 //PUBLICLY ACCESSIBLE FUNCTIONS		
 window.Farchievements = class Farchievement{
 	static Open (){
@@ -679,28 +825,31 @@ window.Farchievements = class Farchievement{
 		}
 		addAchievementFromCommand(AchievementID, PlayerID);
 	}
-	static async RemoveAchievement(AchievementName, PlayerName){
-		if(!game.user.isGM) return;
-		console.log(AchievementName);
-		let data = game.settings.get('farchievements', 'achievementdata').split(';;;');
-		let AchievementID, PlayerID;
-		for(let i = 0; i < game.settings.get('farchievements', 'achievementdata').split(';;;').length; i++){
-			if(AchievementName == game.settings.get('farchievements', 'achievementdata').split(';;;')[i].split('////')[0].split(":::")[1]){
-				AchievementID = game.settings.get('farchievements', 'achievementdata').split(';;;')[i].split('////')[0].split(":::")[0] - 1;
-			}
-		}
-		PlayerID = game.users.getName(PlayerName).id;
-
-		if(PlayerID == null){
-			ui.notifications.warn("Farchievements | Is the player name right?")
+	static async RemoveAchievement(AchievementName, PlayerName) {
+		if (!game.user.isGM) return;
+	
+		let achievementList = JSON.parse(game.settings.get('farchievements', 'achievementdataNEW')); // Get the achievement list
+		let AchievementToRemove = achievementList.find(ach => ach.name === AchievementName); // Find the specific achievement
+		let PlayerID = game.users.getName(PlayerName).id; // Get the player ID
+	
+		if (PlayerID == null) {
+			ui.notifications.warn("Farchievements | Is the player name correct?");
 			return;
 		}
-		if(AchievementID == null){
-			ui.notifications.warn("Farchievements | Is the achievement name right?")
+	
+		if (AchievementToRemove == null) {
+			ui.notifications.warn("Farchievements | Is the achievement name correct?");
 			return;
 		}
-		removeAchievementFromCommand(AchievementID, PlayerID);
-	}
+	
+		// Call the removePlayer method to remove the player from the achievement
+		AchievementToRemove.removePlayer(PlayerID);
+	
+		// Save the updated achievement list back to the settings
+		game.settings.set('farchievements', 'achievementdataNEW', JSON.stringify(achievementList));
+	
+		ui.notifications.notify(`Achievement "${AchievementName}" removed from player "${PlayerName}".`);
+	}	
 	static async MigrateAchievements(){
 		await ui.notifications.notify("Farchievements | Beginning migration of old data...");
 		//console.log(game.settings.get('farchievements', 'achievementdataNEW'));
@@ -906,7 +1055,6 @@ async function removeAchievementFromCommand(achievementID, PID) {
 			else
 				window.loadAchievementsEditMode();
 }
-
 async function displayMyNewAchievementInChat(newAchievements){
 	if(!game.settings.get('farchievements', 'chatMessage')) return;
 	let AchievementList = JSON.parse(game.settings.get('farchievements', 'achievementdataNEW'));
@@ -957,11 +1105,106 @@ async function SendSyncMessage() {
 			document.getElementById('achsyncnormalmode').innerHTML = "";
 }
 
-class Achievement{
-	constructor(name, description, image, players){
-		this.name = name;
-		this.description = description;
-		this.image = image;
-		this.players = players;
+class Achievement {
+    constructor(
+        name, description, image, points = 1, glowing = false, color="#f7ff9e", players, seenBy = [], playerDates = {}, 
+        progressRequired = 0, progressType = "standard", playerProgress = {}, chainLength = 2, diceType = "d20"
+    ) {
+        this.name = name;
+        this.description = description;
+        this.image = image;
+		this.points = points;
+		this.glowing = glowing;
+		this.color = color;
+        this.players = players;
+        this.seenBy = seenBy;
+        this.playerDates = playerDates;
+        this.progressRequired = progressRequired;
+        this.progressType = progressType;
+        this.playerProgress = playerProgress; // Track player progress, used for both standard and chain
+		this.diceType = diceType;
+		this.chainLength = chainLength; //The Amount of times a player needs to roll the value required for a chain
+    }
+
+    // Method to add progress for a player
+    addProgress(playerId, progress, isChain = false) {
+        if (!this.playerProgress[playerId]) {
+            this.playerProgress[playerId] = 0; // Initialize player's progress if it doesn't exist
+        }
+
+        if (isChain) {
+            // Handle chain progress
+            if (progress) {
+                this.playerProgress[playerId] += 1; // Increment chain on success
+                console.log(`Farchievements | Chain progress for player ${playerId}: ${this.playerProgress[playerId]}`);
+                
+                if (this.playerProgress[playerId] >= this.progressRequired) {
+                    this.addPlayer(playerId); // Award achievement if chain is complete
+                    this.playerProgress[playerId] = 0; // Reset chain after achievement
+                }
+            } else {
+                this.playerProgress[playerId] = 0; // Reset chain on failure
+                console.log(`Farchievements | Chain reset for player ${playerId}`);
+            }
+        } else {
+            // Standard progress
+            this.playerProgress[playerId] = Math.max(0, Math.min(this.playerProgress[playerId] + progress, this.progressRequired));
+
+            // Check if the progress is equal to or greater than the required progress
+            if (this.playerProgress[playerId] >= this.progressRequired) {
+                this.addPlayer(playerId);
+				SendSyncMessage();
+            } else if (this.playerProgress[playerId] < this.progressRequired) {
+                // If the progress is below the required progress, remove the player from the achievement
+                this.removePlayer(playerId);
+            }
+
+            console.log(`Farchievements | Updated progress for player: ${playerId}, new progress: ${this.playerProgress[playerId]}`);
+        }
+    }
+
+    // Method to check progress for a player
+    getProgress(playerId) {
+        return this.playerProgress[playerId] || 0;
+    }
+
+    // Method to add a player to the achievement
+    addPlayer(playerId) {
+        let dateAchieved = new Date().toISOString();
+        if (!this.players.includes(playerId)) {
+            this.players.push(playerId);
+            this.playerDates[playerId] = dateAchieved; // Store the date the player obtained the achievement
+            console.log("Farchievements | Added Achievement to: " + playerId);
+			if(this.progressType == "diceChain")
+				this.playerProgress[playerId] = this.progressRequired;
+        }
+    }
+    // Method to remove a player from the achievement
+    removePlayer(playerId) {
+        const playerIndex = this.players.indexOf(playerId);
+        if (playerIndex > -1) {
+            this.players.splice(playerIndex, 1); // Remove the player from the players array
+            delete this.playerDates[playerId]; // Remove the associated date from playerDates
+            console.log("Farchievements | Removed Achievement from: " + playerId);
+        }
+
+        const seenByIndex = this.seenBy.indexOf(playerId);
+        if (seenByIndex > -1) {
+            this.seenBy.splice(seenByIndex, 1); // Remove the player from the seenBy array if present
+            console.log("Farchievements | Removed Achievement from: " + playerId);
+        }
+		if(this.progressType == "diceChain")
+			this.playerProgress[playerId] = 0;
+    }
+	// Method to mark that a player has seen the achievement animation
+	markSeen(playerId) {
+		if (!this.seenBy.includes(playerId)) {
+			this.seenBy.push(playerId); // Add player to seenBy array if they haven't seen it yet
+			console.log("Farchievements | Achievement was seen by: " + playerId);
+		}
 	}
 }
+
+
+
+

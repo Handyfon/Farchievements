@@ -170,6 +170,11 @@
 	"Farchievements.Html.ScoreText": "Wert",
     "Farchievements.Html.GlowText": "Leuchtend",
     "Farchievements.Html.LoadPerPage": "Achievements pro Seite",
+    "Farchievements.Html.AmountNeeded": "Benötigte Menge", 
+    "Farchievements.Html.ValuetoRoll": "Wert zum Würfeln", 
+    "Farchievements.Html.ProgressType": "Fortschrittstyp", 
+    "Farchievements.Html.DiceType": "Würfeltyp", 
+    "Farchievements.Html.ChainLength": "Kettenlänge"
 
     "Farchievements.Html.ImportExport":{
         "Title": "Farchievement Import/Export",
