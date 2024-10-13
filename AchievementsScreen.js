@@ -1170,15 +1170,21 @@ class Achievement {
 
     // Method to add a player to the achievement
     addPlayer(playerId) {
-        let dateAchieved = new Date().toISOString();
-        if (!this.players.includes(playerId)) {
-            this.players.push(playerId);
-            this.playerDates[playerId] = dateAchieved; // Store the date the player obtained the achievement
-            console.log("Farchievements | Added Achievement to: " + playerId);
-			if(this.progressType == "diceChain")
+		// Ensure the players array is defined
+		if (!Array.isArray(this.players)) {
+			this.players = [];
+		}
+	
+		let dateAchieved = new Date().toISOString();
+		if (!this.players.includes(playerId)) {
+			this.players.push(playerId);
+			this.playerDates[playerId] = dateAchieved; // Store the date the player obtained the achievement
+			console.log("Farchievements | Added Achievement to: " + playerId);
+			if (this.progressType === "diceChain") {
 				this.playerProgress[playerId] = this.progressRequired;
-        }
-    }
+			}
+		}
+	}
     // Method to remove a player from the achievement
     removePlayer(playerId) {
         const playerIndex = this.players.indexOf(playerId);

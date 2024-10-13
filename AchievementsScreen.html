@@ -210,7 +210,8 @@
 				if (!game.user.isGM) document.getElementById("hiddenforuser3").style = "display:none";
 				if (!game.user.isGM) document.getElementById("hiddenforuser4").style = "display:none";
 			}
-			console.log("Loading Achievements");
+			if(playerIDToLoadFrom)
+				console.log("Loading Achievements for " + game.users.get(playerIDToLoadFrom).name);
 			
 			//APPLY STYLING
 			document.getElementById('CustomAchievmentStyling').innerHTML = "";
@@ -241,6 +242,7 @@
 			if(playerIDToLoadFrom != "" && document.getElementById('AchSwitchInput').checked == false && game.settings.get('farchievements', 'HideUnknown')){
 				let cleanedAchList = [];
 				AchievementList.forEach (function (achievement, index) {
+
 					if(achievement.players.includes(playerIDToLoadFrom)){
 						cleanedAchList.push(achievement);
 					}
@@ -293,26 +295,33 @@
 				}
 				if (AchievementList[i].image != undefined) { icon = AchievementList[i].image } else { icon = game.settings.get('farchievements', 'standarticon') } //IF STANDARD ICON USE ICON DEFINED IN GAMESETTINGS
 				description = AchievementList[i].description;
-				if (!game.user.isGM || playerIDToLoadFrom != "") {//IF LOAD FOR PLAYER
-					if (AchievementList[i].players.includes(game.user.id)||AchievementList[i].players.includes(playerIDToLoadFrom)){
-						//ui.notifications.notify("User has access to " + i);
+				if (!game.user.isGM || playerIDToLoadFrom != "") { // IF LOAD FOR PLAYER
+				if ((Array.isArray(AchievementList[i].players) && AchievementList[i].players.includes(game.user.id)) ||
+					(Array.isArray(AchievementList[i].players) && AchievementList[i].players.includes(playerIDToLoadFrom))) 
+					{
+						// ui.notifications.notify("User has access to " + i);
 						known = "knownAch";
-					}
-					else {//user doesn't have access to
-						//ui.notifications.notify("user doesn't have access to " + i);
+					} else {
+						// user doesn't have access to
+						// ui.notifications.notify("user doesn't have access to " + i);
 						if (!game.settings.get('farchievements', 'OmniView') || !game.user.isGM) {
-							if (game.settings.get('farchievements', 'HideUnknown') && document.getElementById('AchSwitchInput').checked == false)//IF OPTION IS ENABLED DON'T RENDER ACHIEVEMENT AT ALL FOR THE PLAYER
-								displayOptions = "display:none;"
-							if (!game.settings.get('farchievements', 'AlwaysShowName') && document.getElementById('AchSwitchInput').checked == false)
+							if (game.settings.get('farchievements', 'HideUnknown') && document.getElementById('AchSwitchInput').checked == false) {
+								// IF OPTION IS ENABLED DON'T RENDER ACHIEVEMENT AT ALL FOR THE PLAYER
+								displayOptions = "display:none;";
+							}
+							if (!game.settings.get('farchievements', 'AlwaysShowName') && document.getElementById('AchSwitchInput').checked == false) {
 								name = game.settings.get('farchievements', 'UnknownName');
-							if (!game.settings.get('farchievements', 'AlwaysShowDes') && document.getElementById('AchSwitchInput').checked == false)
+							}
+							if (!game.settings.get('farchievements', 'AlwaysShowDes') && document.getElementById('AchSwitchInput').checked == false) {
 								description = game.settings.get('farchievements', 'UnknownDes');
+							}
 						}
-						if (!game.settings.get('farchievements', 'greyscale'))
+						if (!game.settings.get('farchievements', 'greyscale')) {
 							icon = game.settings.get('farchievements', 'mystery');
-						else
-							greyscale = "filter: grayscale(1) brightness(0.7);"
-					    known = "unknownAch";
+						} else {
+							greyscale = "filter: grayscale(1) brightness(0.7);";
+						}
+						known = "unknownAch";
 					}
 				}
 				let AchName = "";
@@ -491,7 +500,7 @@
 				let AchievementsCollection = '';
 
 				AchievementList.forEach(function (achievement) {
-					if (achievement.players.includes(user.id)) {
+					if (Array.isArray(achievement.players) && achievement.players.includes(user.id)) {
 						if (achievement.color == undefined) achievement.color = "#f7ff9e";
 						let secondaryColor = getColorChange(achievement.color);
 
@@ -628,10 +637,15 @@
 				let playerList = game.users.contents.filter(user => !user.isGM);
 				name = AchievementList[i].name;
 
-				for (let j = 0; j < playerList.length; j++) {//J = PLAYER_ID GENERATE CLICKABLE PLAYER LABELS
+				for (let j = 0; j < playerList.length; j++) { // J = PLAYER_ID GENERATE CLICKABLE PLAYER LABELS
 					let dataPlayerID = j;
-					if (AchievementList[i].players.includes(playerList[j].id)) {
-						labels += '<label class="AchEnableLabel playerHas" id="AchEnableXX' + i + '/' + dataPlayerID + '" onclick="setAchievement(`' + name + '`,`' + playerList[j].id + '`)">' + playerList[j].name + '</label>';
+
+					if (AchievementList[i] && Array.isArray(AchievementList[i].players)) {
+						if (AchievementList[i].players.includes(playerList[j].id)) {
+							labels += '<label class="AchEnableLabel playerHas" id="AchEnableXX' + i + '/' + dataPlayerID + '" onclick="setAchievement(`' + name + '`,`' + playerList[j].id + '`)">' + playerList[j].name + '</label>';
+						} else {
+							labels += '<label class="AchEnableLabel" id="AchEnableXX' + i + '/' + dataPlayerID + '" onclick="setAchievement(`' + name + '`,`' + playerList[j].id + '`)">' + playerList[j].name + '</label>';
+						}
 					} else {
 						labels += '<label class="AchEnableLabel" id="AchEnableXX' + i + '/' + dataPlayerID + '" onclick="setAchievement(`' + name + '`,`' + playerList[j].id + '`)">' + playerList[j].name + '</label>';
 					}
@@ -836,10 +850,15 @@
 			);
 
 			// Add or remove the player from this specific achievement
-			if (achievement.players.includes(playerID)) {
-				achievement.removePlayer(playerID);
+			if (achievement && Array.isArray(achievement.players)) {
+				if (achievement.players.includes(playerID)) {
+					achievement.removePlayer(playerID);
+				} else {
+					achievement.addPlayer(playerID);
+				}
 			} else {
 				achievement.addPlayer(playerID);
+				console.warn(`Achievement or players property is not properly defined for achievement: ${achievement ? achievement.name : 'undefined'}`);
 			}
 
 			// Update the achievement back into the AchievementData array
