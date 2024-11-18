@@ -711,7 +711,9 @@
 				document.getElementById('AchievementList').innerHTML += `
 					<div id="Achievement-${i}" class="far-grid-item">
 						<div class="DragAndDropHandler" draggable="true"><i class="fa-solid fa-up-down-left-right"></i></div>
-						<div class="achievementtools"><button class="deleteAchievement" type="button" onclick="deleteAchievement('${name}')"><i class="fas fa-trash-alt"></i></button></div>
+						<div class="achievementtools">
+							<button class="deleteAchievement" type="button" onclick="deleteAchievement('${i}')"><i class="fas fa-trash-alt"></i></button>
+						</div>
 						<div class="achEditName">
 							<input class="AchInputName" maxlength="40" type="text" id="achievementname${name}" onchange="updateAchievement(1, '${name}')" value="${name}">
 						</div>
@@ -894,14 +896,16 @@
 			await game.settings.set('farchievements', 'achievementdataNEW', JSON.stringify(AchievementData));
 			loadAchievementsEditMode();
 		}
-		async function deleteAchievement(name) {
+		async function deleteAchievement(achievementID) {
 			console.log("DeleteACH");
 			let AchievementData = JSON.parse(await game.settings.get('farchievements', 'achievementdataNEW'));
-			AchievementData.splice(AchievementData.indexOf(AchievementData.filter(x => x.name == name)[0]), 1);
+			let achievementIndex = +achievementID;
+			let data = AchievementData[achievementID];
+			AchievementData.splice(achievementIndex, 1);
 			await game.settings.set('farchievements', 'achievementdataNEW', JSON.stringify(AchievementData));
 			loadAchievementsEditMode();
 		}
-		async function setAchievementImg(achievementname) {
+				async function setAchievementImg(achievementname) {
 		if(!game.user.isGM)return;
 			//console.log(achievementname);
 			//console.log(document.getElementById("EditIcon"+achievementname));
@@ -983,8 +987,13 @@
 			let AchievementData = JSON.parse(await game.settings.get('farchievements', 'achievementdataNEW'));
 			let reload = false;
 
+			// Helper function to remove ' and " from strings
+			function sanitizeInput(input) {
+				return input.replace(/['"]/g, '');
+			}
+
 			if (updateType === 1) { // NAME
-				let newName = document.getElementById('achievementname' + achievementname).value;
+				let newName = sanitizeInput(document.getElementById('achievementname' + achievementname).value);
 				if (AchievementData.find(ach => ach.name == newName)) {
 					ui.notifications.warn("Farchievements | There is already an existing Achievement with the same name, added a number.");
 					var number = AchievementData.filter(ach => ach.name.includes(newName.split("(")[0])).length;
@@ -1000,7 +1009,8 @@
 			}
 
 			if (updateType === 3) { // DESCRIPTION
-				AchievementData.filter(x => x.name == achievementname)[0].description = document.getElementById('achievementdes' + achievementname).value;
+				let newDescription = sanitizeInput(document.getElementById('achievementdes' + achievementname).value);
+				AchievementData.filter(x => x.name == achievementname)[0].description = newDescription;
 			}
 
 			if (updateType === 4) { // POINTS
@@ -1027,15 +1037,18 @@
 			if (updateType === 9) { // DICE TYPE
 				AchievementData.filter(x => x.name == achievementname)[0].diceType = document.getElementById('achievementDiceType' + achievementname).value;
 			}
+
 			if (updateType === 10) { // CHAIN LENGTH
 				AchievementData.filter(x => x.name == achievementname)[0].chainLength = document.getElementById('achievementChainLength' + achievementname).value;
 			}
+
 			await game.settings.set('farchievements', 'achievementdataNEW', JSON.stringify(AchievementData));
 
 			if (reload) {
 				loadAchievementsEditMode(); // RELOAD ACHIEVEMENTS TO DISPLAY CHANGES
 			}
 		}
+
 
 		async function ChangeLoadPerPage(){
 			await game.settings.set('farchievements', 'loadPerPage',document.getElementById('toLoadNumber').value);
