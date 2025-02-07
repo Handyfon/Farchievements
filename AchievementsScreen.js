@@ -470,10 +470,9 @@ class AchievementSync{
 			let existingAchievements = game.settings.get('farchievements', 'clientdata');
 			let AchievementsToPlay = "";
 			
-			AchievementList.forEach (function (achievement, index) {
-				if(achievement.players.includes(game.userId)){
-					//ADD TO LIST
-					if(existingAchievements.includes(achievement.name))return;
+			AchievementList.forEach(function (achievement, index) {
+				if (achievement.players && achievement.players.includes(game.userId)) {
+					if (existingAchievements.includes(achievement.name)) return;
 					AchievementsToPlay += achievement.name + "||||%%%||||";
 				}
 			});
