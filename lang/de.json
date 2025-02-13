@@ -1,8 +1,17 @@
 {
+	"Farchievements.Settings.EnableAchievementPopup": {
+		"Text": "Erfolgspopups aktivieren",
+		"Hint": "Wenn aktiviert, erhalten Spieler ein Popup, wenn sie einen Erfolg freischalten."
+	},
+	"Farchievements.Settings.DisableAchievementBanner": {
+		"Text": "Erfolgsbanner deaktivieren",
+		"Hint": "Wenn aktiviert, wird die Animation des Erfolgsbanners deaktiviert."
+	},
     "Farchievements.Settings.EnableChatBarButton" : {
         "Text":"Aktiviere Chat Schaltfläche",
         "Hint": "Ermöglicht es, Farchivements aus dem Chat Protokoll zu öffnen."
     },
+	
     "Farchievements.Settings.EnableAchievementMessage" : {
         "Text": "Aktiviere Chat Nachricht",
         "Hint": "Sendet eine Nachricht in den Chat, wenn ein Spieler eine Errungenschaft erhält."
@@ -153,6 +162,7 @@
         "CopiedToClipboard": "Errungenschaften in die Zwischenablage kopiert."
     },
     
+	"Farchievements.Html.Secret": "Geheim",
     "Farchievements.Title": "Farchievements",
     "Farchievements.Achievement": "Errungenschaft",
     "Farchievements.Achievements": "Errungenschaften",

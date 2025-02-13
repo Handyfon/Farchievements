@@ -1,5 +1,8 @@
-.far-grid-item.listView{
-	height: 29px;
+.far-grid-item.listView {
+    height: 100%;
+}
+.far-grid-item.listView p.AchDescription:hover {
+    display: block;
 }
 .far-grid-item.listView:hover {
     margin-top: 0;
@@ -39,11 +42,14 @@ i.fas.fa-list.listViewSettings:active {
   }
 .far-grid-item.listView p.AchDescription {
     border: unset;
-    background: #663400 !important;
+    background: #1c1c1c !important;
     overflow: visible;
     max-height: min-content;
-	transition: 0s !important;
-	filter: drop-shadow(0px 10px 4px #0000009e);
+    transition: 0s !important;
+    filter: drop-shadow(0px 10px 4px #0000009e);
+    pointer-events: none;
+    width: 100%;
+    height: 100%;
 }
 .far-grid-item:hover .AchDescription, .far-grid-item.hover .AchDescription {
     margin-top: -5px !important;
@@ -101,6 +107,10 @@ div#AchPlayerNav {
     overflow: auto;
     display: flex;
     overflow-y: hidden;
+    background: linear-gradient(90deg, rgb(245 255 0 / 28%) 0%, rgba(255, 255, 255, 0) 100%);
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border-radius: 5px;
 }
 label#PlayerNavGMVIEW {
     min-width: 66px;
@@ -221,7 +231,7 @@ textarea.AchInputDes {
     height: fit-content;
     opacity: 0.9;
     font-weight: bold;
-    z-index: 10;
+    z-index: 1;
     border-radius: 10px;
     border: 1px solid;
     will-change: transform;
@@ -347,8 +357,9 @@ img.tinyAchImg {
     border-radius: 30px;
 }
 .achievementsscreen-window {
-    min-height: 500px;
-	max-height: 100vh;
+    min-height: 700px;
+    max-height: 100vh;
+    /* min-height: min-content; */
 }
 label.achScoreTextLabel {
     font-size: 10px;
@@ -456,11 +467,12 @@ div#FoundryAchievements {
     background-size: auto !important;
     background-position: center !important;
     width: 100%;
+    min-width: 700px;
 }
 .FoundryAchievementsBanner {
-    background: url(modules/farchievements/achievementbanner.jpg) !important;
+    background: url(modules/farchievements/farchievementsbannerGold.png) !important;
     background-position: center !important;
-    box-shadow: 0px -4px 6px black;
+    box-shadow: 0px 3px 6px black;
 }
 div#Achievementbar {
     width: 100%;
@@ -485,6 +497,7 @@ img#AchievementIMG {
     filter: drop-shadow(2px 4px 6px black);
     outline: 1px solid black;
     background: black;
+    margin-top: -5px;
 }
 p.AchievementText {
     align-self: center;
@@ -568,7 +581,7 @@ input#achievementChainLength {
     bottom: -2px;
     width: 100%;
     background: #000000bf;
-    z-index: 1;
+    z-index: 2;
     margin-left: -8px;
     height: 40px;
 }
@@ -797,6 +810,7 @@ input#toLoadNumber {
     display: flex;
     align-items: center;
     border: 1px solid;
+    background: #0000001f;
 }
 .AchievementChatDisplay b {
     flex: 1;
@@ -861,4 +875,63 @@ margin: 0;
     height: 100px;
     margin: 2px auto;
     display: block;
+}
+p.farchievements-popup-description {
+    background: #000000bf;
+}
+.farchievements-popup {
+    text-align: center;
+    padding: 10px;
+    color: white;
+    border-radius: 10px;
+}
+h2.farchievements-popup-title {
+    background: #000000bd;
+    margin-bottom: -5px;
+    font-weight: bold;
+}
+p.farchievements-popup-description {
+    background: #000000bf;
+    padding: 10px 0px;
+}
+
+.ach-search-toggle {
+    font-size: 16px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    width: 50px;
+}
+button.ach-filter-button {
+    width: fit-content;
+    color: white;
+}
+
+div#achievementsToolbar {
+    background: rgb(2,0,36);
+    background: linear-gradient(90deg, rgba(2,0,36,0) 0%, rgba(0,0,0,0.7987570028011204) 100%);
+    text-align: -webkit-right;
+    padding-bottom: 4px;
+    margin-bottom: -5px;
+    border-radius: 5px;
+}
+input#viewModeSearchBar {
+    padding-left: 10px;
+    text-align: left;
+    width: 300px;
+    color: white;
+    right: 20px;
+    margin-top: 4px;
+    background: #000000a1;
+    border: unset;
+}
+select#sortAchievementsDropdown {
+    background: #000000a1;
+    color: white;
+    border: unset;
+    margin-right: 5px;
+}
+.achSortOption{
+    background: #000000a1;
+    color: white;
 }

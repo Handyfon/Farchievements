@@ -2,7 +2,7 @@
 	"id": "farchievements",
 	"title": "Foundry Achievements",
 	"description": "Achievements for FoundryVTT",
-	"version": "12.1.5",
+	"version": "13.0",
 	"author": "Handyfon",
 	"esmodules": ["AchievementsScreen.js"],
 	"styles": ["AchievementsScreen.css"],
@@ -25,6 +25,6 @@
     "download": "https://raw.githubusercontent.com/Handyfon/Farchievements/master/farchievements.zip",
 	"compatibility": {
 		"minimum": "11",
-		"verified": "12"
+		"verified": "13"
 	}
 }

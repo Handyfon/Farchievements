@@ -1,4 +1,12 @@
 {
+	"Farchievements.Settings.EnableAchievementPopup": {
+		"Text": "Enable Achievement Popups",
+		"Hint": "If enabled, players will receive a popup when they unlock an achievement."
+	},
+	"Farchievements.Settings.DisableAchievementBanner": {
+		"Text": "Disable Achievement Banner",
+		"Hint": "If enabled, the achievement banner animation will be disabled."
+	},
     "Farchievements.Settings.EnableChatBarButton" : {
         "Text":"Enable Chatbar Button",
         "Hint": "Allows to access Farchivements from the chat bar."
@@ -7,6 +15,7 @@
         "Text": "Enable Chatmessage",
         "Hint": "Posts a message when a player gained an achievement."
     },
+
     "Farchievements.Settings.EnableScoreboard" : {
         "Text": "Enable Scoreboard",
         "Hint": "Enables Scoreboard for players."
@@ -157,7 +166,8 @@
         "Overwritten": "This World's Achievements have been overwritten.",
         "CopiedToClipboard": "Achievements copied to clipboard."
     },
-    
+	
+    "Farchievements.Html.Secret": "Secret",
     "Farchievements.Title": "Farchievements",
     "Farchievements.Achievement": "Achievement",
     "Farchievements.Achievements": "Achievements",

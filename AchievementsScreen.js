@@ -1,5 +1,22 @@
 Hooks.once('init', function() {
 	const debouncedReload = debounce(() => window.location.reload(), 100);
+	game.settings.register('farchievements', 'EnableAchievementPopup', {
+        name: game.i18n.localize('Farchievements.Settings.EnableAchievementPopup.Text'),
+        hint: game.i18n.localize('Farchievements.Settings.EnableAchievementPopup.Hint'),
+        scope: 'world',
+        config: true,
+        default: true,
+        type: Boolean,
+    });
+    // New setting: Disable achievement banner
+    game.settings.register('farchievements', 'DisableAchievementBanner', {
+        name: game.i18n.localize('Farchievements.Settings.DisableAchievementBanner.Text'),
+        hint: game.i18n.localize('Farchievements.Settings.DisableAchievementBanner.Hint'),
+        scope: 'world',
+        config: true,
+        default: false,
+        type: Boolean,
+    });
 	game.settings.register('farchievements', 'showAchOnStartup', {
         name: game.i18n.localize('Farchievements.Settings.showAchOnStartup.Text'),
         hint: game.i18n.localize('Farchievements.Settings.showAchOnStartup.Hint'),
@@ -316,6 +333,24 @@ Hooks.once('init', function() {
         default: "",
         type: String,
     });
+	game.settings.register('farchievements', 'lastSearchTerm', {
+		name: 'Farchievements.Settings.lastSearchTerm.Text',
+		hint: 'this will hold the last searched term for the search functionality, this will reset when the screen is opened',
+		scope: 'client',
+		config: false,
+		default: "",
+		type: String,
+	});
+	
+	game.settings.register('farchievements', 'lastSortType', {
+		name: 'Farchievements.Settings.lastSortType.Text',
+		hint: 'this will hold the sort type for the sort functionality',
+		scope: 'client',
+		config: false,
+		default: "nameAsc",
+		type: String,
+	});	
+
 	console.log("Initialised Farchievements");
 });
 class Achievements {
@@ -390,68 +425,66 @@ class AchievementSync{
 	static sleep(ms){
 	  return new Promise(resolve => setTimeout(resolve, ms));
 	}
-	static async PlayAnimation(achievementsGainedList){
+	static async PlayAnimation(achievementsGainedList) {
 		await game.settings.set('farchievements', 'clientdata', game.settings.get('farchievements', 'clientdata') + achievementsGainedList);
+		
 		let AchievementList = JSON.parse(game.settings.get('farchievements', 'achievementdataNEW'));
 		let achievementsToGain = achievementsGainedList.split("||||%%%||||");
-		let data;
-		let name,icon;
-		let toGain;
-		let anim = game.settings.get('farchievements', 'bannerAnimation');
+	
+		let showPopup = game.settings.get('farchievements', 'EnableAchievementPopup');
+		let disableBanner = game.settings.get('farchievements', 'DisableAchievementBanner');
 		
-		for(let i = 0; i <= achievementsToGain.length; i++){
+		for (let i = 0; i < achievementsToGain.length; i++) {
 			await AchievementSync.sleep(100);
-			
-			//LOAD ACHIEVEMENT WITH NAME
+	
 			let AchievementToGain = AchievementList.find(ach => ach.name == achievementsToGain[i]);
-			if(AchievementToGain == null) return;
-			name = AchievementToGain.name;
-			icon = AchievementToGain.image;
-			if(icon == "icon"){icon = game.settings.get('farchievements', 'standarticon')} //IF STANDARD ICON USE ICON DEFINED IN GAMESETTINGS
+			if (AchievementToGain == null) return;
+	
 			displayMyNewAchievementInChat(AchievementToGain.name);
-			//SET HTML
-			document.getElementsByClassName("AchievementText")[0].innerHTML = '<label class="AchievementTextLabel">'+game.settings.get("farchievements", "achpretext")+'</label>' + name;
+	
+			// Show Popup if enabled
+			if (showPopup) {
+				Farchievements.DisplayAchievementPopup(AchievementToGain.name);
+			}
+	
+			// Skip banner if disabled
+			if (disableBanner) continue;
+	
+			// Banner animation logic
+			let name = AchievementToGain.name;
+			let icon = AchievementToGain.image || game.settings.get('farchievements', 'standarticon');
+			let anim = game.settings.get('farchievements', 'bannerAnimation');
+			let dur = (anim == "fadeOut") ? 5 : 13;
+	
+			document.getElementsByClassName("AchievementText")[0].innerHTML = `<label class="AchievementTextLabel">${game.settings.get("farchievements", "achpretext")}</label>` + name;
 			document.getElementById("AchievementIMG").src = icon;
-			
-			//SET GLOW
-			if(AchievementToGain.glowing)
+	
+			if (AchievementToGain.glowing)
 				document.getElementById("FoundryAchievements").classList.add('glowingAch');
 			else
 				document.getElementById("FoundryAchievements").classList.remove('glowingAch');
-			
-			//SET ANIMATION
-
-			let dur = 13;
-			if(anim == "fadeOut") 
-				dur = 5;
-				
-			let durText = ""+dur+"s";
+	
 			document.getElementById("Achievementbar").style.setProperty("animation-name", anim);
-			document.getElementById("Achievementbar").style.setProperty("animation-duration", durText);
+			document.getElementById("Achievementbar").style.setProperty("animation-duration", `${dur}s`);
 			
-			//PLAY DIFFERENT AUDIO BASED ON ANIM
-			if(anim == "fadeOut")
-				await AudioHelper.play({ src: game.settings.get('farchievements', 'achievementSound'), volume: game.settings.get('farchievements', 'achievementSoundVolume'), autoplay: true, loop: false}, false);
-			else
-				await AudioHelper.play({ src: game.settings.get('farchievements', 'achievementStinger'), volume: game.settings.get('farchievements', 'achievementStingerVolume'), autoplay: true, loop: false}, false);
-			
-			if(anim == "slidein")
-				await AchievementSync.sleep(1800);
-			document.getElementById("Achievementbar").style.setProperty("display", "flex");//ENABLE ACHIEVEMENT
-			
-			//?CONFETTI MODULE
-			if (game.modules.get('confetti')?.active === true && game.settings.get('farchievements', 'EnableConfettiSupport')){
-				for(let c = 0; c <3; c++){
+			let sound = (anim == "fadeOut") ? 'achievementSound' : 'achievementStinger';
+			let volume = (anim == "fadeOut") ? 'achievementSoundVolume' : 'achievementStingerVolume';
+			await AudioHelper.play({ src: game.settings.get('farchievements', sound), volume: game.settings.get('farchievements', volume), autoplay: true, loop: false }, false);
+	
+			if (anim == "slidein") await AchievementSync.sleep(1800);
+			document.getElementById("Achievementbar").style.setProperty("display", "flex");
+	
+			if (game.modules.get('confetti')?.active === true && game.settings.get('farchievements', 'EnableConfettiSupport')) {
+				for (let c = 0; c < 3; c++) {
 					await AchievementSync.sleep(500);
 					const strength = window.confetti.confettiStrength.high;
 					const shootConfettiProps = window.confetti.getShootConfettiProps(strength);
 					window.confetti.handleShootConfetti(shootConfettiProps);
 				}
+			} else {
+				await AchievementSync.sleep(dur * 1000);
 			}
-			else
-			await AchievementSync.sleep(dur*1000);
 			document.getElementById("Achievementbar").style.setProperty("display", "none");
-			//game.settings.set('farchievements', 'clientdata', game.settings.get('farchievements', 'clientdata') + "," +name);
 		}
 	}
 	static SyncAchievements(skip = null, start = false){
@@ -498,7 +531,6 @@ class AchievementSync{
 								label: `${game.i18n.localize('Farchievements.Html.SanitySaver.ButtonSkip')}`,
 								callback: () => {
 									game.settings.set('farchievements', 'clientdata', game.settings.get('farchievements', 'clientdata') + AchievementsToPlay);
-									displayMyNewAchievementInChat(AchievementsToPlay.split("||||%%%||||")); // Call the function to display achievements in chat
 								}
 							}
 						}
@@ -898,6 +930,93 @@ window.Farchievements = class Farchievement{
 		return JSON.parse(game.settings.get('farchievements', 'achievementdataNEW'));
 	}
 }
+window.Farchievements.DisplayAchievementPopup = function (achievementName, playerId = "") {
+    let achievementList = JSON.parse(game.settings.get('farchievements', 'achievementdataNEW'));
+    let achievement = achievementList.find(ach => ach.name === achievementName);
+    
+    if (!achievement) {
+        ui.notifications.warn(`Farchievements | Achievement '${achievementName}' not found.`);
+        return;
+    }
+
+    // If a playerId is provided, check if they are in the achievement's players list
+    let player = playerId ? game.users.get(playerId) : game.user;
+    if (!player) {
+        ui.notifications.warn(`Farchievements | Player with ID '${playerId}' not found.`);
+        return;
+    }
+
+    // Ensure the player is actually in the achievement's players list
+    if (!achievement.players && !game.user.isGM && !achievement.players.includes(player.id) ) {
+        ui.notifications.warn(`Farchievements | Player '${player.name}' does not have this achievement.`);
+        return;
+    }
+
+    let receivedDate = achievement.playerDates?.[player.id] ? new Date(achievement.playerDates[player.id]) : null;
+    let formattedDate = receivedDate
+        ? receivedDate.toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' })
+        : null;
+
+    let popupContent = `
+        <div class="farchievements-popup" style="
+            position: relative; 
+            text-align: center; 
+            padding: 20px; 
+            border-radius: 10px;
+            background: url('${achievement.image}') center/cover no-repeat;
+            border: 3px solid ${achievement.color};
+        ">
+            <div style="
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgb(0 0 0 / 84%);
+                backdrop-filter: blur(15px);
+                border-radius: 10px;
+            "></div>
+            <img class="farchievements-popup-img" src="${achievement.image}" alt="${achievement.name}" style="
+                width: 100px; 
+                height: 100px; 
+                display: block; 
+                margin: auto; 
+                border-radius: 10px; 
+                border: 1px solid ${achievement.color};
+                position: relative;
+            ">
+            <h2 class="farchievements-popup-title" style="
+                margin-top: 10px; 
+                color: ${achievement.color};
+                position: relative;
+            ">${achievement.name}</h2>
+            <p class="farchievements-popup-description" style="
+                margin-top: 5px; 
+                color: white;
+                position: relative;
+            ">${achievement.description}</p>
+            ${formattedDate ? `
+            <p class="farchievements-popup-date" style="
+                margin-top: 10px; 
+                color: white;
+                font-size: 0.9em;
+                position: relative;
+            "><b>Received:</b> ${formattedDate}</p>` : ""}
+        </div>
+    `;
+
+    new Dialog({
+        title: "Achievement Unlocked!",
+        content: popupContent,
+        buttons: {
+            close: {
+                label: "Close",
+                callback: () => {}
+            }
+        }
+    }).render(true);
+};
+
 
 async function addAchievementFromCommand(achievementID, PID) {
 			let cleanPlayerID = game.users.contents.indexOf(game.users.get(PID)) - 1;

@@ -1,0 +1,230 @@
+{
+	"Farchievements.Settings.EnableAchievementPopup": {
+		"Text": "実績ポップアップを有効化",
+		"Hint": "有効にすると、プレイヤーが実績を解除した際にポップアップが表示されます。"
+	},
+	"Farchievements.Settings.DisableAchievementBanner": {
+		"Text": "実績バナーを無効化",
+		"Hint": "有効にすると、実績バナーのアニメーションが無効になります。"
+	},
+    "Farchievements.Settings.EnableChatBarButton" : {
+        "Text":"チャットバーボタンを有効化する",
+        "Hint": "チャットバーからFarchivementsにアクセスできるようになります。"
+    },
+    "Farchievements.Settings.EnableAchievementMessage" : {
+        "Text": "チャットメッセージを有効化する",
+        "Hint": "プレイヤーがアチーブメントを獲得した際に、メッセージを投稿します。"
+    },
+    "Farchievements.Settings.EnableScoreboard" : {
+        "Text": "スコアボードを有効化する",
+        "Hint": "プレイヤーにスコアボードを提供します。"
+    },
+    "Farchievements.Settings.EnableConfettiSupport" : {
+        "Text": "Confettiモジュールを有効化する",
+        "Hint": "Confettiモジュールのサポートを有効にします。"
+    },
+    "Farchievements.Settings.EnableContextButton" : {
+        "Text": "プレイヤーリストのコンテキストメニューのボタンを有効化する",
+        "Hint": "プレイヤーリストのコンテキストメニューのボタンを有効化します。"
+    },
+    "Farchievements.Settings.OmniView" : {
+        "Text": "オムニビュー",
+        "Hint": "オムニビュー"
+    },
+    "Farchievements.Settings.GameSettingsButton" : {
+        "Text": "「ゲーム設定」ボタンを有効化する",
+        "Hint": "「ゲーム設定」タブ内のボタンを有効化します。"
+    },
+    "Farchievements.Settings.AchievementWindowTitle" : {
+        "Text": "タイトル",
+        "Hint": "アチーブメントウィンドウのタイトルを設定します。"
+    },
+    "Farchievements.Settings.PlayerBackColor" : {
+        "Text": "プレイヤーの背景色",
+        "Hint": "アチーブメントスクリーンの背景色としてプレイヤーカラーを使用します。"
+    },
+    "Farchievements.Settings.HideUnknown" : {
+        "Text": "不明なアチーブメントを隠す",
+        "Hint": "不明なアチーブメントをプレイヤーから完全に隠します。"
+    },
+    "Farchievements.Settings.UnknownName" : {
+        "Text": "不明なアチーブメント",
+        "Hint": "不明なアチーブメントの標準名を設定します(空白にすると無効になります)。"
+    },
+    "Farchievements.Settings.AlwaysShowName" : {
+        "Text": "常に名前を表示する",
+        "Hint": "常にアチーブメントの名前を表示する。"
+    },
+    "Farchievements.Settings.UnknownDes" : {
+        "Text": "不明な説明文",
+        "Hint": "不明なアチーブメントの標準的な説明文を設定します(空白にすると無効になります)。"
+    },
+    "Farchievements.Settings.AlwaysShowDes" : {
+        "Text": "常に説明文を表示する",
+        "Hint": "アチーブメントの説明を常に表示します。"
+    },
+    "Farchievements.Settings.DescriptionOnHover" : {
+        "Text": "カーソルを合わせたときに説明文を表示する",
+        "Hint": "アチーブメントにカーソルを合わせた時のみ、説明文を表示します。"
+    },
+
+    "Farchievements.Settings.achamount" : {
+        "Text": "アチーブメントの量",
+        "Hint": ""
+    },
+    "Farchievements.Settings.standarticon" : {
+        "Text": "デフォルトのアチーブメントアイコン",
+        "Hint": "デフォルトのアイコンを設定します。"
+    },
+    "Farchievements.Settings.bannerBackground" : {
+        "Text": "バナーの背景",
+        "Hint": "アチーブメントバナーの背景を設定します（2000×180px）。"
+    },
+    "Farchievements.Settings.achievementStinger" : {
+        "Text": "アチーブメントスティンガー",
+        "Hint": "アニメーション中に再生する音声を設定します。"
+    },
+    "Farchievements.Settings.achievementStingerVolume" : {
+        "Text": "アチーブメントスティンガ―の音量",
+        "Hint": "これはすべてのスティンガーが再生される音量を設定することができますが、小さめにしておくことをお勧めします。"
+    },
+    "Farchievements.Settings.achpretext" : {
+        "Text": "新しいアチーブメントを獲得した時の接頭辞",
+        "Hint": "バナー内のアチーブメント名の前に付く接頭辞を設定します。"
+    },
+    "Farchievements.Settings.greyscale" : {
+        "Text": "不明なアチーブメントをグレイスケールにする",
+        "Hint": "アチーブメントアイコンを表示しますが、謎のアイコンの代わりにグレースケールで表示します。"
+    },
+    "Farchievements.Settings.mystery" : {
+        "Text": "ミステリーアイコン",
+        "Hint": "不明なアチーブメントの標準的なアイコンを設定します。"
+    },
+
+    "Farchievements.Settings.AchievementData" : {
+        "Text": "アチーブメントデータ (触るな！)",
+        "Hint": "アチーブメントのデータは、ここに保存されています。 !!DONT TOUCH!!"
+    },
+    "Farchievements.Settings.ClientDataList" : {
+        "Text": "クライアントデータリスト (触るな！)",
+        "Hint": "クライアント間で同期します。 !!DONT TOUCH!!"
+    },
+    "Farchievements.Settings.ClientData" : {
+        "Text": "クライアントデータ (触るな！)",
+        "Hint": "あなたのクライアントのアチーブメント。 !!DONT TOUCH!!"
+    },
+    "Farchievements.Settings.loadSettingsForPlayer" : {
+        "Text": "loadSettingsForPlayer (触るな！)",
+        "Hint": "loadSettingsForPlayer !!DONT TOUCH!!"
+    },
+
+    "Farchievements.Notification":{
+        "Prefix": "アチーブメント | ",
+        "PlayerIdChanged": "プレイヤーIDが変更され、パージされたIDを持つプレイヤー: ",
+        "UserDoesNotExist": "このユーザーは存在しません。",
+        "NoAchievements": "このユーザーにはアチーブメントがありません。",
+        "OverwriteWithNothing": "何もない状態でデータを上書きしてはいけません。",
+        "InvalidData": "このデータは無効なようです。正しいデータをコピーしてください。",
+        "NoChange": "データに変化はありませんでした。",
+        "Overwritten": "このワールドのアチーブメントは上書きされました。",
+        "CopiedToClipboard": "アチーブメントがクリップボードにコピーされました。"
+    },
+
+	"Farchievements.Html.Secret": "シークレット",
+
+    "Farchievements.Title": "Farchievements",
+    "Farchievements.Achievement": "アチーブメント",
+    "Farchievements.Achievements": "アチーブメントリスト",
+    "Farchievements.ViewAchievements": "アチーブメントリストを確認する",
+    "Farchievements.NewAchievement": "新しいアチーブメント:",
+    "Farchievements.AchievementsSynced": "アチーブメント同期",
+    "Farchievements.GainedAchivement": "獲得しました",
+
+    "Farchievements.Html.SeeEverything": "全てを見る",
+    "Farchievements.Html.Scoreboard": "スコアボード",
+    "Farchievements.Html.GMView": "GMビュー",
+    "Farchievements.Html.YourAchievements": "あなたのアチーブメント",
+    "Farchievements.Html.MyAchievements": "自分のアチーブメント",
+    "Farchievements.Html.PlayersAchievements": "のアチーブメント",
+    "Farchievements.Html.PushChangesNow": "クリックすると、今すぐ変更を反映します。",
+
+    "Farchievements.Html.ImportExport":{
+        "Title": "Farchievementsのインポート/エクスポート",
+        "Body": "これは、アチーブメントのインポートとエクスポートを行うための小さなツールです。 <b>競合の問題を考える前に、必ず全てをバックアップしてください!!</b>",
+        "ClipboardOverwrite": "クリップボードからの上書き保存",
+        "CopyToClipboard": "クリップボードへコピーする"
+    }
+    "Farchievements.Settings.ListView" : {
+        "Text": "リストモード",
+        "Hint": "リストモードを切り替える"
+    },
+    "Farchievements.Settings.ChatMessage" : {
+        "Text": "チャットメッセージ",
+        "Hint": "プレイヤーがアチーブメントを獲得するたびにチャットにメッセージを送信します。"
+    },
+    "Farchievements.Settings.loadPerPage" : {
+        "Text": "ページごとの読み込み数",
+        "Hint": "一度に読み込むアチーブメントの数を設定します。"
+    },
+    "Farchievements.Settings.standardBackground" : {
+        "Text": "アチーブメントビューアの標準背景",
+        "Hint": "アチーブメントリストの背景を設定します。"
+    },
+    "Farchievements.Settings.showAchOnStartup" : {
+        "Text": "開始時にアチーブメントを表示しない",
+        "Hint": "ユーザーがワールドにロードした際にアチーブメントを表示しなくなります。"
+    },
+    "Farchievements.Settings.bannerAnimation" : {
+        "Text": "バナーアニメーション",
+        "Hint": "バナーのアニメーションとサウンドタイプを選択します。"
+    },
+    "Farchievements.Settings.achievementSound" : {
+        "Text": "アチーブメントサウンド",
+        "Hint": "特定のアニメーション中に再生される短い音声。"
+    },
+    "Farchievements.Settings.achievementSoundVolume" : {
+        "Text": "アチーブメントサウンドの音量",
+        "Hint": "この音量でサウンドが再生されます。低めに設定することをお勧めします。"
+    },
+    "Farchievements.Html.ScoreText": {
+        "Text": "スコア",
+        "Hint": "スコアの表示"
+    },
+    "Farchievements.Html.GlowText": {
+        "Text": "光彩",
+        "Hint": "光彩の設定"
+    },
+    "Farchievements.Html.LoadPerPage": {
+        "Text": "ページごとの読み込み数",
+        "Hint": "ページごとに読み込むアチーブメントの数"
+    },
+    "Farchievements.Html.AmountNeeded": {
+        "Text": "必要な量",
+        "Hint": "目標達成に必要な数値"
+    },
+    "Farchievements.Html.ValuetoRoll": {
+        "Text": "ロールする値",
+        "Hint": "サイコロを振るための値"
+    },
+    "Farchievements.Html.ProgressType": {
+        "Text": "進行タイプ",
+        "Hint": "アチーブメントの進行方法を設定"
+    },
+    "Farchievements.Html.DiceType": {
+        "Text": "サイコロの種類",
+        "Hint": "使用するサイコロの種類"
+    },
+    "Farchievements.Html.ChainLength": {
+        "Text": "チェインの長さ",
+        "Hint": "連続達成の長さ"
+    },
+    "Farchievements.Html.SanitySaver":{
+        "Title": "Farchievements | サニティセーバー",
+        "Body1": "<p>新しい<b>",
+        "Body2": "件</b>のアチーブメントがあります。アニメーションをスキップしますか、それともすべて見ますか？</p>",
+        "ButtonSeeAll": "すべてのアニメーションを見る",
+        "ButtonSkip": "スキップ"
+    }
+}
+
+}
