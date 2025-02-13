@@ -355,20 +355,40 @@ Hooks.once('init', function() {
 });
 class Achievements {
     static addChatControl() {
-		if(!game.settings.get('farchievements', 'EnableChatBarButton'))
-			return;
-        const chatControlLeft = document.getElementsByClassName("chat-control-icon")[0];
-        let tableNode = document.getElementById("achievements-button");
+		if(game.version < 13){
+			if(!game.settings.get('farchievements', 'EnableChatBarButton'))
+				return;
+			let chatControlLeft = document.getElementsByClassName("chat-control-icon")[0];
+			let tableNode = document.getElementById("achievements-button");
 
-        if (chatControlLeft && !tableNode) {
-            const chatControlLeftNode = chatControlLeft.firstElementChild;
-            const number = 3;
-            tableNode = document.createElement("label");
-			tableNode.className = "AchievmentButtonLabel";
-            tableNode.innerHTML = `<i id="achievements-button" class="fas fa-medal achievements-button" style="text-shadow: 0 0 1px black;"></i>`;
-            tableNode.onclick = Achievements.initializeAchievements;
-            chatControlLeft.insertBefore(tableNode, chatControlLeftNode);
-        }
+			if (chatControlLeft && !tableNode) {
+				const chatControlLeftNode = chatControlLeft.firstElementChild;
+				const number = 3;
+				tableNode = document.createElement("label");
+				tableNode.className = "AchievmentButtonLabel";
+				tableNode.innerHTML = `<i id="achievements-button" class="fas fa-medal achievements-button" style="text-shadow: 0 0 1px black;"></i>`;
+				tableNode.onclick = Achievements.initializeAchievements;
+				chatControlLeft.insertBefore(tableNode, chatControlLeftNode);
+				return;
+			}
+		}
+		else{
+			// V13
+			let tabsFlexcol = document.getElementsByClassName("tabs")[0]?.getElementsByClassName("flexcol")[0];
+
+			if (tabsFlexcol) {
+				console.log("Farchievements | V13 Support");
+
+				// Check if the button already exists
+				if (!document.getElementById("achievements-button")) {
+					let tableNode = document.createElement("button");
+					tableNode.className = "AchievmentButtonLabelV13 ui-control plain icon";
+					tableNode.innerHTML = `<i id="achievements-button" class="fas fa-medal achievements-button" style="text-shadow: 0 0 1px black;"></i>`;
+					tableNode.onclick = Achievements.initializeAchievements;
+					tabsFlexcol.append(tableNode);
+				}
+			}
+		}
 	}
     static initializeAchievements() {
         if (this.AchievementsScreen === undefined) {
@@ -723,7 +743,6 @@ Hooks.on('renderSettings', function() {
 	//ADD BUTTON TO SETTINGS
 	function refreshData(){
 		let x = 0.1;  // 0.1 seconds
-		
 		if(document.getElementById("FarchievementsSettings") == null && game.settings.get('farchievements', 'GameSettingsButton')){
 			$('#settings-game').append(`<div id="FarchievementsSettings" style="margin:0;"><h4>Farchievements</h4><button id="SettingsAchievementsButton" data-action="Achievements"><i class="fas fa-medal achievements-button"></i>${game.i18n.localize('Farchievements.Achievements')}</button></div>`);
 			let AchievementsButton = document.getElementById("SettingsAchievementsButton");
@@ -745,9 +764,9 @@ Hooks.on('renderSettings', function() {
 				}
 			}
 		}
-	
 		setTimeout(refreshData, x*1000);
 	}
+
 	if(game.user.isGM){
 		function WaitForReady(){
 			let x = 0.1;  // 0.1 seconds
@@ -760,8 +779,10 @@ Hooks.on('renderSettings', function() {
 		}
 		WaitForReady();
 	}
-	
-	refreshData();
+
+	if(game.version < 13) //IF < Version 13 use search algorithm
+		refreshData();
+	//else look onReady
 });
 Hooks.on("createChatMessage", async function (message){
 	if(message.content.includes('Achievements Synced'))
@@ -1209,6 +1230,69 @@ Hooks.on("renderChatMessage", (chatMessage, html, data) => {
         html.addClass("achievementChatDisplayMessage");
     }
 });
+
+Hooks.once('ready', () => {
+	if(game.version < 13) return;
+    function addSettingsButton() {
+		console.log("FArchievementsADDSETTINGSBUTTON");
+        if (!document.getElementById("FarchievementsSettings") && game.settings.get('farchievements', 'GameSettingsButton')) {
+            let settingsContainer = document.getElementsByClassName("settings flexcol")[0];
+
+            if (settingsContainer) {
+                let settingsDiv = document.createElement("div");
+                settingsDiv.id = "FarchievementsSettings";
+                settingsDiv.style.margin = "0";
+                settingsDiv.innerHTML = `<h4>Farchievements</h4>
+                    <button id="SettingsAchievementsButton" data-action="Achievements">
+                        <i class="fas fa-medal achievements-button"></i> ${game.i18n.localize('Farchievements.Achievements')}
+                    </button>`;
+
+                settingsContainer.appendChild(settingsDiv);
+
+                let AchievementsButton = document.getElementById("SettingsAchievementsButton");
+                if (AchievementsButton) {
+                    AchievementsButton.onclick = Achievements.initializeAchievements;
+                }
+            }
+        }
+    }
+
+    function addContextButton() {
+        let contextMenu = document.getElementsByClassName("context-items")[0];
+
+        if (contextMenu && !document.getElementById("contextAchievement")) {
+            let playerElement = contextMenu.closest('.player');
+
+            if (playerElement) {
+                let id = playerElement.getAttribute("data-user-id");
+
+                if (id !== game.user.id && game.user.isGM) { // Ensure it's not the user's own achievements
+                    let contextItem = document.createElement("li");
+                    contextItem.className = "context-item";
+                    contextItem.id = "contextAchievement";
+                    contextItem.innerHTML = `<i class="fas fa-medal"></i> ${game.i18n.localize('Farchievements.ViewAchievements')}`;
+
+                    contextItem.onclick = () => {
+                        game.settings.set('farchievements', 'loadSettingsForPlayer', id);
+                        Achievements.initializeAchievements();
+                    };
+
+                    contextMenu.appendChild(contextItem);
+                }
+            }
+        }
+    }
+
+    function refreshData() {
+        addContextButton();
+        setTimeout(refreshData, 100); // Runs every 0.1 seconds
+    }
+
+    addSettingsButton(); // Runs once
+    refreshData(); // Starts periodic execution for context menu updates
+});
+
+
 
 async function SendSyncMessage() {
 	ChatMessage.create({
