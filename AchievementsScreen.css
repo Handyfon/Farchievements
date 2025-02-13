@@ -293,7 +293,7 @@ i.fas.fa-sync.achievementsettings {
     text-align-last: center;
 }
 .editmodebar {
-    z-index: 1;
+    z-index: 3;
 }
 .achievementtools {
 	height: 0px;
