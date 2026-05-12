@@ -817,11 +817,40 @@ input#toLoadNumber:focus {
 	--holo-x: 50%;
 	--holo-y: 50%;
 	--holo-angle: 210deg;
+	--holo-glare: 0.34;
+	--holo-glare-soft: 0.06;
+	--holo-sheen: 0.24;
+	--holo-sheen-soft: 0.07;
+	--holo-sat: 1.08;
+	--holo-img-hue: 0deg;
+	--holo-img-sat: 1.02;
+	--holo-img-bright: 1;
+	--holo-h1: 340deg;
+	--holo-h2: 38deg;
+	--holo-h3: 128deg;
+	--holo-h4: 205deg;
+	--holo-h5: 285deg;
 	background:
-		radial-gradient(circle at var(--holo-x) var(--holo-y), rgba(255, 255, 255, 0.42) 0%, rgba(255, 255, 255, 0.12) 16%, transparent 42%),
-		conic-gradient(from var(--holo-angle) at var(--holo-x) var(--holo-y), rgba(255, 97, 136, 0.42), rgba(255, 219, 88, 0.28), rgba(94, 224, 176, 0.32), rgba(99, 177, 255, 0.42), rgba(205, 122, 255, 0.38), rgba(255, 97, 136, 0.42)),
+		radial-gradient(circle at var(--holo-x) var(--holo-y), rgba(255, 255, 255, var(--holo-glare)) 0%, rgba(255, 255, 255, 0.14) 18%, transparent 48%),
+		linear-gradient(var(--holo-angle), rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, var(--holo-sheen)) 46%, rgba(255, 255, 255, 0) 58%),
+		conic-gradient(from var(--holo-angle) at var(--holo-x) var(--holo-y), hsl(var(--holo-h1) 100% 66% / 0.68), hsl(var(--holo-h2) 100% 62% / 0.5), hsl(var(--holo-h3) 100% 64% / 0.54), hsl(var(--holo-h4) 100% 65% / 0.66), hsl(var(--holo-h5) 100% 68% / 0.6), hsl(var(--holo-h1) 100% 66% / 0.68)),
 		linear-gradient(155deg, #11131f 0%, #080a11 100%) !important;
-	background-blend-mode: screen, screen, normal;
+	background-blend-mode: screen, color-dodge, screen, normal;
+	filter: saturate(var(--holo-sat));
+}
+.far-grid-item.achievement-card-holographic::before {
+	top: 44px;
+	bottom: 0;
+	background:
+		radial-gradient(circle at var(--holo-x) var(--holo-y), rgba(255, 255, 255, var(--holo-glare-soft)) 0%, transparent 36%),
+		linear-gradient(var(--holo-angle), transparent 0%, rgba(255, 255, 255, var(--holo-sheen-soft)) 48%, transparent 62%),
+		conic-gradient(from var(--holo-angle) at var(--holo-x) var(--holo-y), hsl(var(--holo-h4) 100% 65% / 0.08), hsl(var(--holo-h5) 100% 68% / 0.06), hsl(var(--holo-h1) 100% 66% / 0.07), hsl(var(--holo-h2) 100% 62% / 0.05), hsl(var(--holo-h3) 100% 64% / 0.06), hsl(var(--holo-h4) 100% 65% / 0.08));
+	mix-blend-mode: soft-light;
+	opacity: 0.12;
+	z-index: 2;
+}
+.far-grid-item.achievement-card-holographic img.AchIcon {
+	filter: hue-rotate(var(--holo-img-hue)) saturate(var(--holo-img-sat)) brightness(var(--holo-img-bright)) contrast(1.02);
 }
 
 /* ----- EDIT MODE -------------------------------------------------------- */

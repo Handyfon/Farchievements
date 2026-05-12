@@ -1514,9 +1514,52 @@ Hooks.on("renderChatMessage", (chatMessage, html, data) => {
     }
 });
 
+function getFarchievementsUserIdFromContextTarget(target) {
+	const element = target instanceof HTMLElement
+		? target
+		: target?.[0] instanceof HTMLElement
+			? target[0]
+			: target?.currentTarget instanceof HTMLElement
+				? target.currentTarget
+				: null;
+	if (!element) return null;
+	return element.dataset?.userId
+		?? element.getAttribute?.("data-user-id")
+		?? element.closest?.(".player")?.dataset?.userId
+		?? null;
+}
+
+async function openFarchievementsForUser(userId) {
+	if (!game.user.isGM || !userId || userId === game.user.id || !game.users.get(userId)) return;
+	await game.settings.set('farchievements', 'loadSettingsForPlayer', userId);
+	Achievements.initializeAchievements();
+}
+
+Hooks.on("getUserContextOptions", (...args) => {
+	const options = args.find(Array.isArray);
+	if (!options || options.some(option => option.id === "farchievements-view-achievements")) return;
+	options.push({
+		id: "farchievements-view-achievements",
+		label: "Farchievements.ViewAchievements",
+		name: game.i18n.localize('Farchievements.ViewAchievements'),
+		icon: '<i class="fas fa-medal"></i>',
+		visible: li => {
+			const userId = getFarchievementsUserIdFromContextTarget(li);
+			return Achievements.getSetting('EnableContextButton', true) && game.user.isGM && !!userId && userId !== game.user.id;
+		},
+		condition: li => {
+			const userId = getFarchievementsUserIdFromContextTarget(li);
+			return Achievements.getSetting('EnableContextButton', true) && game.user.isGM && !!userId && userId !== game.user.id;
+		},
+		onClick: (event, li) => openFarchievementsForUser(getFarchievementsUserIdFromContextTarget(li ?? event)),
+		callback: li => openFarchievementsForUser(getFarchievementsUserIdFromContextTarget(li))
+	});
+});
+
 Hooks.once('ready', () => {
 	Achievements.registerSettingsMenu();
 	if(game.version < 13) return;
+	const useUserContextHook = Number.parseInt(game.version) >= 14;
     function addContextButton() {
 		if (!Achievements.getSetting('EnableContextButton', true)) return;
         let contextMenu = document.getElementsByClassName("context-items")[0];
@@ -1547,7 +1590,7 @@ Hooks.once('ready', () => {
     function refreshData() {
 		Achievements.addChatControl();
 		Achievements.addSettingsButton();
-        addContextButton();
+        if (!useUserContextHook) addContextButton();
         setTimeout(refreshData, 100); // Runs every 0.1 seconds
     }
 

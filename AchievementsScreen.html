@@ -56,6 +56,53 @@
 			const style = normalizeAchievementCardStyle(achievement?.cardStyle);
 			return FARCH_CARD_STYLES.has(style) ? `achievement-card-${style}` : "";
 		}
+		function setHolographicHoverVars(card, relativeX, relativeY) {
+			if (!card.classList.contains('achievement-card-holographic')) return;
+			const centerDistance = Math.min(1, Math.hypot(relativeX - 0.5, relativeY - 0.5) * 1.9);
+			const diagonal = Math.max(0, Math.min(1, (relativeX * 0.65) + ((1 - relativeY) * 0.35)));
+			const hue = Math.round((relativeX * 260 + (1 - relativeY) * 150 + centerDistance * 90 + 210) % 360);
+			const colors = [0, 58, 128, 205, 285].map(offset => (hue + offset) % 360);
+			const glare = 0.34 + centerDistance * 0.34;
+			const sheen = 0.2 + diagonal * 0.42;
+			const imageHue = (hue - 180) * 0.18;
+			card.style.setProperty('--holo-glare', glare.toFixed(3));
+			card.style.setProperty('--holo-glare-soft', (glare * 0.18).toFixed(3));
+			card.style.setProperty('--holo-sheen', sheen.toFixed(3));
+			card.style.setProperty('--holo-sheen-soft', (sheen * 0.28).toFixed(3));
+			card.style.setProperty('--holo-sat', (1.08 + centerDistance * 0.42).toFixed(3));
+			card.style.setProperty('--holo-img-hue', `${imageHue.toFixed(1)}deg`);
+			card.style.setProperty('--holo-img-sat', (1.02 + diagonal * 0.18).toFixed(3));
+			card.style.setProperty('--holo-img-bright', (1 + centerDistance * 0.04).toFixed(3));
+			colors.forEach((color, index) => card.style.setProperty(`--holo-h${index + 1}`, `${color}deg`));
+			const name = card.querySelector('p.AchName');
+			if (name) {
+				const projection = (relativeX + relativeY) / 2;
+				const targetShift = 0.5 + (0.5 - projection) * 0.46;
+				const currentShift = Number.parseFloat(card.dataset.holoTitleShift ?? "0.5");
+				const titleShift = currentShift + (targetShift - currentShift) * 0.22;
+				card.dataset.holoTitleShift = titleShift.toFixed(4);
+				const hueOffset = (titleShift - 0.5) * 72;
+				const titleHue1 = 318 + hueOffset;
+				const titleHue2 = 218 - hueOffset * 0.72;
+				const titleHue3 = 155 + hueOffset * 0.48;
+				name.style.setProperty('background',
+					`linear-gradient(90deg, hsla(${titleHue1.toFixed(1)}, 46%, 34%, 0.92), hsla(${titleHue2.toFixed(1)}, 48%, 31%, 0.92), hsla(${titleHue3.toFixed(1)}, 42%, 30%, 0.92))`,
+					'important');
+			}
+			card.style.setProperty('background',
+				`radial-gradient(circle at ${relativeX * 100}% ${relativeY * 100}%, rgba(255,255,255,${glare.toFixed(3)}) 0%, rgba(255,255,255,0.12) 18%, transparent 48%), ` +
+				`linear-gradient(${Math.round(Math.atan2(relativeY - 0.5, relativeX - 0.5) * 180 / Math.PI + 180)}deg, rgba(255,255,255,0) 0%, rgba(255,255,255,${sheen.toFixed(3)}) 46%, rgba(255,255,255,0) 58%), ` +
+				`conic-gradient(from ${Math.round((hue + relativeX * 180) % 360)}deg at ${relativeX * 100}% ${relativeY * 100}%, hsla(${colors[0]},100%,66%,0.68), hsla(${colors[1]},100%,62%,0.5), hsla(${colors[2]},100%,64%,0.54), hsla(${colors[3]},100%,65%,0.66), hsla(${colors[4]},100%,68%,0.6), hsla(${colors[0]},100%,66%,0.68)), ` +
+				`linear-gradient(155deg, #11131f 0%, #080a11 100%)`,
+				'important');
+		}
+		function clearHolographicHoverVars(card) {
+			['--holo-x', '--holo-y', '--holo-angle', '--holo-glare', '--holo-glare-soft', '--holo-sheen', '--holo-sheen-soft', '--holo-sat', '--holo-img-hue', '--holo-img-sat', '--holo-img-bright', '--holo-h1', '--holo-h2', '--holo-h3', '--holo-h4', '--holo-h5']
+				.forEach(prop => card.style.removeProperty(prop));
+			delete card.dataset.holoTitleShift;
+			card.style.removeProperty('background');
+			card.querySelector('p.AchName')?.style.removeProperty('background');
+		}
 		document.getElementById('AchievementList').addEventListener('click', function (event) {
 			let iconElement = event.target.closest('.AchIcon'); // Ensure click is on AchIcon
 			if (!iconElement) return;
@@ -766,7 +813,7 @@
 						shine.className = 'cardShine';
 						card.appendChild(shine);
 					}
-					if (!isTypedCard && !card.querySelector('.cardGlassShine')) {
+					if (!card.querySelector('.cardGlassShine')) {
 						const glass = document.createElement('span');
 						glass.className = 'cardGlassShine';
 						card.appendChild(glass);
@@ -787,6 +834,7 @@
 						card.style.setProperty('--holo-x', `${holoX}%`);
 						card.style.setProperty('--holo-y', `${holoY}%`);
 						card.style.setProperty('--holo-angle', `${holoAngle}deg`);
+						setHolographicHoverVars(card, relativeX, relativeY);
 
 						const minBrightness = 0.8, maxBrightness = 1.5;
 						const minContrast = 1, maxContrast = 1.2;
@@ -796,7 +844,9 @@
 						card.style.transition = 'transform 0s';
 						card.style.transform = `perspective(800px) rotateY(${xAxis}deg) rotateX(${yAxis}deg) scale(1.2)`;
 						card.style.zIndex = '10000';
-						card.style.filter = `brightness(${brightness}) contrast(${contrast})`;
+						card.style.filter = card.classList.contains('achievement-card-holographic')
+							? `brightness(${brightness}) contrast(${contrast}) saturate(var(--holo-sat))`
+							: `brightness(${brightness}) contrast(${contrast})`;
 
 						const shine = isTypedCard ? null : card.querySelector('.cardShine');
 						if (shine) {
@@ -814,7 +864,7 @@
 								` rgba(255,255,255,0) 65%)`;
 						}
 
-						const glass = isTypedCard ? null : card.querySelector('.cardGlassShine');
+						const glass = card.querySelector('.cardGlassShine');
 						if (glass) {
 							// Glassy band oriented top-right → bottom-left. Reflection physics:
 							// it moves OPPOSITE the cursor's diagonal projection and travels in
@@ -836,10 +886,9 @@
 						card.style.transform = 'perspective(800px) rotateX(0deg) rotateY(0deg) scale(1)';
 						card.style.zIndex = '1';
 						card.style.transition = 'transform 0.2s';
-						card.style.filter = 'brightness(1)';
-						card.style.removeProperty('--holo-x');
-						card.style.removeProperty('--holo-y');
-						card.style.removeProperty('--holo-angle');
+						if (card.classList.contains('achievement-card-holographic')) card.style.removeProperty('filter');
+						else card.style.filter = 'brightness(1)';
+						clearHolographicHoverVars(card);
 						const shine = card.querySelector('.cardShine');
 						if (shine) shine.style.opacity = '0';
 						const glass = card.querySelector('.cardGlassShine');
@@ -858,22 +907,24 @@
 							card.style.setProperty('--holo-x', `${holoX}%`);
 							card.style.setProperty('--holo-y', `${holoY}%`);
 							card.style.setProperty('--holo-angle', `${holoAngle}deg`);
+							setHolographicHoverVars(card, relativeX, relativeY);
 						});
 					}
 					card.addEventListener('mouseenter', () => {
 						card.style.transition = 'transform 0.18s cubic-bezier(0.4, 0, 0.2, 1), filter 0.18s ease';
 						card.style.transform = 'translate3d(0,-4px,0)';
 						card.style.zIndex = '10';
-						card.style.filter = 'brightness(1.08) drop-shadow(0 10px 22px rgba(0,0,0,0.55))';
+						card.style.filter = card.classList.contains('achievement-card-holographic')
+							? 'brightness(1.08) saturate(var(--holo-sat)) drop-shadow(0 10px 22px rgba(0,0,0,0.55))'
+							: 'brightness(1.08) drop-shadow(0 10px 22px rgba(0,0,0,0.55))';
 					});
 					card.addEventListener('mouseleave', () => {
 						card.style.transform = 'translate3d(0,0,0)';
 						card.style.zIndex = '1';
 						card.style.transition = 'transform 0.22s cubic-bezier(0.4, 0, 0.2, 1), filter 0.22s ease';
-						card.style.filter = 'brightness(1)';
-						card.style.removeProperty('--holo-x');
-						card.style.removeProperty('--holo-y');
-						card.style.removeProperty('--holo-angle');
+						if (card.classList.contains('achievement-card-holographic')) card.style.removeProperty('filter');
+						else card.style.filter = 'brightness(1)';
+						clearHolographicHoverVars(card);
 					});
 				}
 			});
