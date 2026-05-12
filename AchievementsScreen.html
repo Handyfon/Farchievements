@@ -400,6 +400,12 @@
 			newHexColor = shadeHexColor(color, newVal);
 			return newHexColor;
 		}
+		function toInlineTemplateString(value) {
+			return String(value ?? "")
+				.replace(/\\/g, "\\\\")
+				.replace(/`/g, "\\`")
+				.replace(/\$\{/g, "\\${");
+		}
 		async function loadSearchAndSortAchievements() {
 			let AchievementData;
 			try {
@@ -1283,7 +1289,7 @@
 					<div id="Achievement-${i}" class="far-grid-item ${getAchievementCardStyleClass(AchievementList[i])}">
 						<div class="DragAndDropHandler" draggable="true"><i class="fa-solid fa-up-down-left-right"></i></div>
 						<div class="achievementtools">
-							<button class="deleteAchievement" type="button" onclick="deleteAchievement('${i}')"><i class="fas fa-trash-alt"></i></button>
+							<button class="deleteAchievement" type="button" onclick="deleteAchievement(\`${toInlineTemplateString(name)}\`)"><i class="fas fa-trash-alt"></i></button>
 						</div>
 						<div class="achEditName">
 							<input class="AchInputName" maxlength="40" type="text" id="achievementname${name}" onchange="updateAchievement(1, '${name}')" value="${name}">
@@ -1504,11 +1510,14 @@
 			await game.settings.set('farchievements', 'achievementdataNEW', JSON.stringify(AchievementData));
 			loadAchievementsEditMode();
 		}
-		async function deleteAchievement(achievementID) {
+		async function deleteAchievement(achievementName) {
 			console.log("DeleteACH");
 			let AchievementData = JSON.parse(await game.settings.get('farchievements', 'achievementdataNEW'));
-			let achievementIndex = +achievementID;
-			let data = AchievementData[achievementID];
+			let achievementIndex = AchievementData.findIndex(achievement => achievement.name === achievementName);
+			if (achievementIndex === -1) {
+				ui.notifications.warn("Farchievements | Achievement not found: " + achievementName);
+				return;
+			}
 			AchievementData.splice(achievementIndex, 1);
 			await game.settings.set('farchievements', 'achievementdataNEW', JSON.stringify(AchievementData));
 			loadAchievementsEditMode();
