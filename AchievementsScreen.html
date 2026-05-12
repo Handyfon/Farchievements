@@ -1,8 +1,27 @@
 <!DOCTYPE html>
 <html id="AchievementsScreen">
 <div class="OmniView" id="hiddenforuser3">
-	<label class="AchSwitch" style="display: flex;align-items: center;" onclick="toggleOmniView()">
-		{{localize 'Farchievements.Html.SeeEverything'}}<input id="AchSwitchInput" type="checkbox" style="align-items: center;">
+	<label class="AchSwitch">
+		{{localize 'Farchievements.Html.SeeEverything'}}<input id="AchSwitchInput" type="checkbox" onchange="toggleOmniView()">
+	</label>
+</div>
+<div class="SimulateBanner" id="hiddenforuser5" style="display: none;">
+	<label class="AchSwitch SimulateBannerSwitch" title="Right-click an achievement to play its unlock banner on your screen (GM only).">
+		Simulate Banner<input id="SimulateBannerInput" type="checkbox" onchange="toggleSimulateBanner()">
+	</label>
+</div>
+<div class="BannerStylePicker" id="hiddenforuser6" style="display: none;">
+	<label class="AchSwitch BannerStyleSwitch" title="Default banner animation. Per-achievement overrides set in edit mode take priority.">
+		<span class="bannerStyleLabel">Style</span>
+		<select id="BannerStylePickerSelect" onchange="setDefaultBannerAnimation()">
+			<option value="slidein">Drop &amp; Hold</option>
+			<option value="fadeOut">Soft Fade</option>
+			<option value="xboxPop">Corner Snap</option>
+			<option value="psTrophy">Glass Slide</option>
+			<option value="darkSouls">Ominous Reveal</option>
+			<option value="cyberpunkGlitch">Neon Glitch</option>
+			<option value="skyrimReveal">Carved Bloom</option>
+		</select>
 	</label>
 </div>
 <div class="Achievementssettings" id="hiddenforuser" style="text-align: -webkit-right; z-index:2;"><i class="fas fa-cogs achievementsettings" onclick="enterEditMode()"></i></div>
@@ -20,6 +39,23 @@
 
 		document.getElementById('CustomAchievmentBackgroundStyling').innerHTML = '<style>.achievementsscreen-window .window-content{background: #262626;}</style>';
 		document.getElementById('toLoadNumber').value = game.settings.get('farchievements', 'loadPerPage');
+		const FARCH_CARD_STYLES = new Set(["gold", "silver", "bronze", "green", "red", "purple", "holographic"]);
+		const FARCH_CARD_STYLE_ALIASES = {
+			ornate: "gold",
+			cursed: "red",
+			frostglass: "silver",
+			verdant: "green",
+			royal: "purple",
+			obsidian: "purple",
+			prismatic: "holographic"
+		};
+		function normalizeAchievementCardStyle(style) {
+			return FARCH_CARD_STYLE_ALIASES[style] ?? style;
+		}
+		function getAchievementCardStyleClass(achievement) {
+			const style = normalizeAchievementCardStyle(achievement?.cardStyle);
+			return FARCH_CARD_STYLES.has(style) ? `achievement-card-${style}` : "";
+		}
 		document.getElementById('AchievementList').addEventListener('click', function (event) {
 			let iconElement = event.target.closest('.AchIcon'); // Ensure click is on AchIcon
 			if (!iconElement) return;
@@ -42,6 +78,8 @@
 		//CHECK FOR OMNIVIEW
 		if (game.settings.get('farchievements', 'OmniView')) document.getElementById('AchSwitchInput').checked = true;
 		else document.getElementById('AchSwitchInput').checked = false;
+
+		updateSimulateBannerControls();
 		
 		function loadPageNav(AchievementList){
 			//console.log("Loading Page NAV");
@@ -158,6 +196,105 @@
 			//console.log(game.settings.get('farchievements', 'OmniView'));
 			game.settings.set('farchievements', 'currentPage',1);
 			reloadAchievements();
+		}
+		function toggleSimulateBanner() {
+			if (!isGMViewActive()) return;
+			const cb = document.getElementById('SimulateBannerInput');
+			const on = !!cb.checked;
+			game.settings.set('farchievements', 'SimulateBanner', on);
+			updateSimulateBannerControls();
+		}
+		function setDefaultBannerAnimation() {
+			const sel = document.getElementById('BannerStylePickerSelect');
+			if (sel) game.settings.set('farchievements', 'bannerAnimation', sel.value);
+		}
+		function isGMViewActive() {
+			if (!game.user.isGM) return false;
+			const activeNav = $('.PlayerNavButton.active')[0];
+			if (activeNav) return activeNav.getAttribute('value') === 'GMVIEW';
+			return game.settings.get('farchievements', 'loadSettingsForPlayer') === "";
+		}
+		function updateSimulateBannerControls() {
+			const controls = document.getElementById('hiddenforuser5');
+			const picker = document.getElementById('hiddenforuser6');
+			const input = document.getElementById('SimulateBannerInput');
+			const select = document.getElementById('BannerStylePickerSelect');
+			const inGMView = isGMViewActive();
+			const simOn = inGMView && !!game.settings.get('farchievements', 'SimulateBanner');
+			if (controls) controls.style.display = inGMView ? '' : 'none';
+			if (input) input.checked = simOn;
+			if (picker) picker.style.display = simOn ? '' : 'none';
+			if (select) select.value = game.settings.get('farchievements', 'bannerAnimation') || 'slidein';
+		}
+		function ensureBannerElements() {
+			let bar = document.getElementById('Achievementbar');
+			let banner = document.getElementById('FoundryAchievements');
+			if (bar && banner) return { bar, banner };
+			const bannerStyle = 'top: -200px; background-position: center!important; display: flex; background-size: 100% 100% !important;';
+			bar = document.createElement('div');
+			bar.id = 'Achievementbar';
+			bar.className = 'Achievementbar';
+			bar.style.display = 'none';
+			bar.innerHTML = `<div id="FoundryAchievements" class="FoundryAchievementsBanner" style="${bannerStyle}"><img id="AchievementIMG" class="AchievementIMG" src="modules/farchievements/standardIcon.PNG"></img><p class="AchievementText"><label class="AchievementTextLabel">${game.i18n.localize('Farchievements.NewAchievement')}</label> (${game.i18n.localize('Farchievements.Achievement')}) </p><i class="Shiny"></i></div>`;
+			document.body.appendChild(bar);
+			return { bar, banner: document.getElementById('FoundryAchievements') };
+		}
+		async function simulateBannerFor(achievementName) {
+			try {
+				const data = JSON.parse(game.settings.get('farchievements', 'achievementdataNEW'));
+				const ach = data.find(a => a.name === achievementName);
+				if (!ach) {
+					ui.notifications.warn("Farchievements | Achievement not found: " + achievementName);
+					return;
+				}
+				const { bar, banner } = ensureBannerElements();
+				if (!bar || !banner) {
+					ui.notifications.warn("Farchievements | Banner element missing — open a session with a player or wait for ready.");
+					return;
+				}
+				const anim = ach.bannerAnimation || game.settings.get('farchievements', 'bannerAnimation');
+				const meta = (window.Farchievements && window.Farchievements.getBannerAnimMeta)
+					? window.Farchievements.getBannerAnimMeta(anim)
+					: { dur: 13, preDelay: anim === 'slidein' ? 1800 : 0, sound: anim === 'fadeOut' ? 'sound' : 'stinger' };
+				const dur  = meta.dur;
+				const icon = ach.image || game.settings.get('farchievements', 'standarticon');
+				const preText = game.settings.get('farchievements', 'achpretext') || '';
+
+				document.getElementsByClassName('AchievementText')[0].innerHTML =
+					`<label class="AchievementTextLabel">${preText}</label>` + ach.name;
+				document.getElementById('AchievementIMG').src = icon;
+				banner.classList.toggle('glowingAch', !!ach.glowing);
+
+				// Swap per-animation style variant on the banner
+				banner.classList.forEach(c => { if (c.startsWith('banner-style-')) banner.classList.remove(c); });
+				banner.classList.forEach(c => { if (c.startsWith('banner-card-')) banner.classList.remove(c); });
+				banner.classList.add('banner-style-' + anim);
+
+				bar.style.setProperty('animation-name', anim);
+				bar.style.setProperty('animation-duration', `${dur}s`);
+
+				// Optional audio (skip silently on failure / older Foundry shims)
+				try {
+					const _audio = foundry?.audio?.AudioHelper ?? globalThis.AudioHelper;
+					const soundKey  = (meta.sound === 'sound') ? 'achievementSound' : 'achievementStinger';
+					const volumeKey = (meta.sound === 'sound') ? 'achievementSoundVolume' : 'achievementStingerVolume';
+					if (_audio?.play) {
+						_audio.play({
+							src: game.settings.get('farchievements', soundKey),
+							volume: game.settings.get('farchievements', volumeKey),
+							autoplay: true, loop: false
+						}, false);
+					}
+				} catch (e) { console.warn("Farchievements | Simulate banner audio skipped:", e); }
+
+				if (meta.preDelay) await new Promise(r => setTimeout(r, meta.preDelay));
+				bar.style.setProperty('display', 'flex');
+				await new Promise(r => setTimeout(r, dur * 1000));
+				bar.style.setProperty('display', 'none');
+			} catch (err) {
+				console.error("Farchievements | simulateBannerFor failed:", err);
+				ui.notifications.error("Farchievements | Simulate banner failed: " + err.message);
+			}
 		}
 		function getActivePlayer() {
 			let activeButton = $('.PlayerNavButton.active');
@@ -336,6 +473,7 @@
 			let playerIDToLoadFrom = game.settings.get('farchievements', 'loadSettingsForPlayer'); //RESET PLAYER ID
 			document.getElementById('CustomAchievmentBackgroundStyling').innerHTML = '<style>.achievementsscreen-window .window-content{background: #232323;}</style>';
 			loadPlayerNav(false);
+			updateSimulateBannerControls();
 			
 			if (!document.getElementById("achievementsToolbar")) {
 				let toolbar = document.createElement('div');
@@ -399,16 +537,9 @@
 			
 			//APPLY STYLING
 			document.getElementById('CustomAchievmentStyling').innerHTML = "";
-			document.getElementById('CustomAchievmentStyling').innerHTML = "<style>.far-grid-item:hover {transform: scale(1.2);filter: drop-shadow(0px 5px 6px black)}.achievementsscreen-window {background: black;}</style>";
+			document.getElementById('CustomAchievmentStyling').innerHTML = "<style>.far-grid-item:hover {transform: translate3d(0,-4px,0); filter: drop-shadow(0 8px 18px rgba(0,0,0,0.5));}</style>";
 
-			//DESCRIPTION STYLE
-			let alwaysShowInsert = "display: none;";
-			
-			// DESCRIPTION ON HOVER
-			if (game.settings.get('farchievements', 'DescriptionOnHover')){
-				alwaysShowInsert = "display:none;max-height: 60px"
-				document.getElementById('CustomAchievmentStyling').innerHTML += "<style>.far-grid-item:hover .AchDescription, .far-grid-item.hover .AchDescription {margin-top: -5px !important;transition: 0.3s !important; opacity:1;}p.AchDescription {"+alwaysShowInsert+"position: absolute;}</style>";
-			}
+			//DESCRIPTION STYLE — handled entirely by AchievementsScreen.css for sleek hover reveal
 			document.getElementById('AchievementList').innerHTML = "";
 			let name = "";
 			let originname = ""
@@ -480,10 +611,14 @@
 				}
 				if (AchievementList[i].image != undefined) { icon = AchievementList[i].image } else { icon = game.settings.get('farchievements', 'standarticon') } //IF STANDARD ICON USE ICON DEFINED IN GAMESETTINGS
 				description = AchievementList[i].description;
-				if (!game.user.isGM || playerIDToLoadFrom != "") { // IF LOAD FOR PLAYER
+				if (game.user.isGM && playerIDToLoadFrom == "") {
+					greyscale = "filter: blur(0px);";
+					displayOptions = "";
+					known = "knownAch";
+				} else { // IF LOAD FOR PLAYER
 					if ((Array.isArray(AchievementList[i].players) && AchievementList[i].players.includes(game.user.id)) ||
 						(Array.isArray(AchievementList[i].players) && AchievementList[i].players.includes(playerIDToLoadFrom))) {
-						
+
 						known = "knownAch"; // Mark as known
 
 					} else {
@@ -518,7 +653,10 @@
 									description = game.settings.get('farchievements', 'UnknownDes');
 								}
 							}
-							if (!game.settings.get('farchievements', 'greyscale')) {
+							// With "See Everything" enabled, GMs see the real artwork in black & white.
+							if (game.settings.get('farchievements', 'OmniView') && game.user.isGM) {
+								greyscale = "filter: grayscale(1) brightness(0.85);";
+							} else if (!game.settings.get('farchievements', 'greyscale')) {
 								icon = game.settings.get('farchievements', 'mystery');
 							} else {
 								greyscale = "filter: grayscale(1) brightness(0.7);";
@@ -582,59 +720,162 @@
 				}
 			}
 
-				if (playerIDToLoadFrom != "" && AchievementList[i].progressType!="count") onClickFunction = 'oncontextmenu="setAchievement(`' + originname + '`,' + '\'' + playerIDToLoadFrom + '\')"';
+				if (isGMViewActive() && game.settings.get('farchievements', 'SimulateBanner')) {
+					onClickFunction = 'oncontextmenu="event.preventDefault(); simulateBannerFor(`' + originname + '`); return false;"';
+				} else if (playerIDToLoadFrom != "" && AchievementList[i].progressType!="count") {
+					onClickFunction = 'oncontextmenu="setAchievement(`' + originname + '`,' + '\'' + playerIDToLoadFrom + '\')"';
+				}
+				let cardStyleClass = (known !== "unknownAch" || game.user.isGM) ? getAchievementCardStyleClass(AchievementList[i]) : "";
 				document.getElementById('AchievementList').innerHTML += `
-				<div ${onClickFunction} id="Achievement-${i}" class="far-grid-item ${listView} ${known}" style="${greyscale} ${displayOptions} ${colorOptions} background:${color}; ${glowstyle}">
+				<div ${onClickFunction} id="Achievement-${i}" class="far-grid-item ${listView} ${known} ${cardStyleClass}" style="${greyscale} ${displayOptions} ${colorOptions} background:${color}; ${glowstyle}">
 					${AchName}
 					<img class="AchIcon" src="${icon}"></img>
 					<p class="AchDescription" style="color:${color}; background:${getColorChange(color)};">${description}</p>
 					${progressBarHTML} <!-- Insert the progress bar here -->
 					${glowStyleContainer}
 				</div>`;			}
-			document.getElementById("AchievementList").style = "grid-template-rows: repeat(" + Math.round(loadAm / 6) + ", 1fr);"
+			document.getElementById("AchievementList").style.gridTemplateRows = "repeat(" + Math.round(loadAm / 6) + ", 1fr)";
 
-			// NEW CODE FOR THE TILT EFFECT
+			// FIRST-OPEN SPAWN ANIMATION — plays once per page reload.
+			if (!window.farchievementsSpawnPlayed) {
+				window.farchievementsSpawnPlayed = true;
+				const list = document.getElementById('AchievementList');
+				if (list) {
+					list.classList.add('farch-spawning');
+					const cards = list.querySelectorAll('.far-grid-item');
+					cards.forEach((card, idx) => {
+						card.style.setProperty('--farch-spawn-delay', (idx * 35) + 'ms');
+					});
+					const total = 550 + cards.length * 35 + 100;
+					setTimeout(() => list.classList.remove('farch-spawning'), total);
+				}
+			}
+
+			// HOVER — branches on CardMode setting
+			const cardMode = game.settings.get('farchievements', 'CardMode');
 			const achievementCards = document.querySelectorAll('.far-grid-item');
+			const list = document.getElementById('AchievementList');
+			if (list) list.classList.toggle('card-mode-fancy', !!cardMode);
 
-			achievementCards.forEach((card, index) => {
-				card.addEventListener('mousemove', (e) => {
-				const cardRect = card.getBoundingClientRect();
-				const cardCenterX = cardRect.left + cardRect.width / 2;
-				const cardCenterY = cardRect.top + cardRect.height / 2;
-				const xAxis = (e.clientX - cardCenterX) / 5; // Decrease the division factor for more tilt
-				const yAxis = (e.clientY - cardCenterY) / 5; // Decrease the division factor for more tilt
-				
-				// Calculate relative Y-position of cursor within the card
-				const relativeY = (e.clientY - cardRect.top) / cardRect.height;
+			achievementCards.forEach((card) => {
+				if (cardMode) {
+					const isTypedCard = Array.from(card.classList).some(c => c.startsWith('achievement-card-'));
+					// Inject overlays (one per card, only once)
+					if (!isTypedCard && !card.querySelector('.cardShine')) {
+						const shine = document.createElement('span');
+						shine.className = 'cardShine';
+						card.appendChild(shine);
+					}
+					if (!isTypedCard && !card.querySelector('.cardGlassShine')) {
+						const glass = document.createElement('span');
+						glass.className = 'cardGlassShine';
+						card.appendChild(glass);
+					}
+					// Original holo-card tilt: strong tilt, big brightness/contrast sweep, scale 1.2,
+					// plus a very subtle angle-driven shine overlay.
+					card.addEventListener('mousemove', (e) => {
+						const rect = card.getBoundingClientRect();
+						const cx = rect.left + rect.width / 2;
+						const cy = rect.top + rect.height / 2;
+						const xAxis = (e.clientX - cx) / 5;
+						const yAxis = (e.clientY - cy) / 5;
+						const relativeX = (e.clientX - rect.left) / rect.width;
+						const relativeY = (e.clientY - rect.top) / rect.height;
+						const holoX = Math.max(0, Math.min(100, relativeX * 100));
+						const holoY = Math.max(0, Math.min(100, relativeY * 100));
+						const holoAngle = Math.round(Math.atan2(relativeY - 0.5, relativeX - 0.5) * 180 / Math.PI + 180);
+						card.style.setProperty('--holo-x', `${holoX}%`);
+						card.style.setProperty('--holo-y', `${holoY}%`);
+						card.style.setProperty('--holo-angle', `${holoAngle}deg`);
 
-				// Calculate brightness based on relative Y for a 3d effect
-				const minBrightness = 0.8;
-				const maxBrightness = 1.5;
+						const minBrightness = 0.8, maxBrightness = 1.5;
+						const minContrast = 1, maxContrast = 1.2;
+						const brightness = minBrightness + (maxBrightness - minBrightness) * relativeY;
+						const contrast = minContrast + (maxContrast - minContrast) * relativeY;
 
-				// Calculate contrast based on relative Y for a holo effect
-				const minContrast = 1;
-				const maxContrast = 1.2;
+						card.style.transition = 'transform 0s';
+						card.style.transform = `perspective(800px) rotateY(${xAxis}deg) rotateX(${yAxis}deg) scale(1.2)`;
+						card.style.zIndex = '10000';
+						card.style.filter = `brightness(${brightness}) contrast(${contrast})`;
 
-				let contrast = minContrast + (maxContrast - minContrast) * relativeY;
+						const shine = isTypedCard ? null : card.querySelector('.cardShine');
+						if (shine) {
+							// Fixed top-left light source. Intensity is encoded directly in the
+							// gradient's RGBA stops so the change is instant — opacity stays at 1.
+							const distFromTopLeft = Math.hypot(relativeX, relativeY); // 0 at top-left → ~1.41 at bottom-right
+							const k = Math.max(0, 1 - distFromTopLeft / 1.2);          // 1 near top-left → 0 far away
+							const peak = (0.10 + k * 0.45).toFixed(3);
+							const mid  = (0.04 + k * 0.14).toFixed(3);
+							shine.style.opacity = '1';
+							shine.style.background =
+								`linear-gradient(135deg,` +
+								` rgba(255,255,255,${peak}) 0%,` +
+								` rgba(255,255,255,${mid}) 30%,` +
+								` rgba(255,255,255,0) 65%)`;
+						}
 
-				brightness = minBrightness + (maxBrightness - minBrightness) * relativeY;
+						const glass = isTypedCard ? null : card.querySelector('.cardGlassShine');
+						if (glass) {
+							// Glassy band oriented top-right → bottom-left. Reflection physics:
+							// it moves OPPOSITE the cursor's diagonal projection and travels in
+							// a smaller range than the cursor, so it feels weighty and natural.
+							const projection = (relativeX + relativeY) / 2;     // 0 (top-left) → 1 (bottom-right)
+							const pos = 50 + (0.5 - projection) * 40;           // inverted, ±20% from center
+							glass.style.opacity = '1';
+							glass.style.background =
+								`linear-gradient(135deg,` +
+								` rgba(255,255,255,0) ${Math.max(pos - 22, 0)}%,` +
+								` rgba(255,255,255,0.05) ${Math.max(pos - 8, 0)}%,` +
+								` rgba(255,255,255,0.40) ${pos}%,` +
+								` rgba(255,255,255,0.05) ${Math.min(pos + 8, 100)}%,` +
+								` rgba(255,255,255,0) ${Math.min(pos + 22, 100)}%)`;
+						}
+					});
 
-
-				// Apply the increased tilt effect, scaling, and glint to the card with a very fast transition
-				card.style.transition = 'transform 0s'; // Very fast transition
-				card.style.transform = `perspective(800px) rotateY(${xAxis}deg) rotateX(${yAxis}deg) scale(1.2)`;
-				card.style.zIndex = '10000';
-				card.style.filter = `brightness(${brightness}) contrast(${contrast})`;
-				// Update the glint position based on the cursor
-				});
-
-				card.addEventListener('mouseleave', () => {
-				// Reset the card's transform, transition, and glint position when the cursor leaves
-				card.style.transform = 'perspective(800px) rotateX(0deg) rotateY(0deg) scale(1)';
-				card.style.zIndex = '1';
-				card.style.transition = 'transform 0.2s'; 
-				card.style.filter = `brightness(1)`;
-				});
+					card.addEventListener('mouseleave', () => {
+						card.style.transform = 'perspective(800px) rotateX(0deg) rotateY(0deg) scale(1)';
+						card.style.zIndex = '1';
+						card.style.transition = 'transform 0.2s';
+						card.style.filter = 'brightness(1)';
+						card.style.removeProperty('--holo-x');
+						card.style.removeProperty('--holo-y');
+						card.style.removeProperty('--holo-angle');
+						const shine = card.querySelector('.cardShine');
+						if (shine) shine.style.opacity = '0';
+						const glass = card.querySelector('.cardGlassShine');
+						if (glass) glass.style.opacity = '0';
+					});
+				} else {
+					// Simple flat hover — crisp text, just a clean lift
+					if (card.classList.contains('achievement-card-holographic')) {
+						card.addEventListener('mousemove', (e) => {
+							const rect = card.getBoundingClientRect();
+							const relativeX = (e.clientX - rect.left) / rect.width;
+							const relativeY = (e.clientY - rect.top) / rect.height;
+							const holoX = Math.max(0, Math.min(100, relativeX * 100));
+							const holoY = Math.max(0, Math.min(100, relativeY * 100));
+							const holoAngle = Math.round(Math.atan2(relativeY - 0.5, relativeX - 0.5) * 180 / Math.PI + 180);
+							card.style.setProperty('--holo-x', `${holoX}%`);
+							card.style.setProperty('--holo-y', `${holoY}%`);
+							card.style.setProperty('--holo-angle', `${holoAngle}deg`);
+						});
+					}
+					card.addEventListener('mouseenter', () => {
+						card.style.transition = 'transform 0.18s cubic-bezier(0.4, 0, 0.2, 1), filter 0.18s ease';
+						card.style.transform = 'translate3d(0,-4px,0)';
+						card.style.zIndex = '10';
+						card.style.filter = 'brightness(1.08) drop-shadow(0 10px 22px rgba(0,0,0,0.55))';
+					});
+					card.addEventListener('mouseleave', () => {
+						card.style.transform = 'translate3d(0,0,0)';
+						card.style.zIndex = '1';
+						card.style.transition = 'transform 0.22s cubic-bezier(0.4, 0, 0.2, 1), filter 0.22s ease';
+						card.style.filter = 'brightness(1)';
+						card.style.removeProperty('--holo-x');
+						card.style.removeProperty('--holo-y');
+						card.style.removeProperty('--holo-angle');
+					});
+				}
 			});
 			// Load stored values from settings
 			document.getElementById('sortAchievementsDropdown').value = game.settings.get('farchievements', 'lastSortType');
@@ -666,6 +907,7 @@
 			let loadingFromPlayer = false;
 			let playerIDToLoadFrom = ""; //RESET PLAYER ID
 			loadPlayerNav(true);
+			updateSimulateBannerControls();
 			
 			//game.users.find(user => user.id == "T41gRCS1vIdM00bD")
 			if (!game.user.isGM) document.getElementById("hiddenforuser").style = "display:none";
@@ -674,11 +916,9 @@
 			//console.log("Loading Achievements");
 			//APPLY STYLING
 			document.getElementById('CustomAchievmentStyling').innerHTML = "";
-			document.getElementById('CustomAchievmentStyling').innerHTML = "<style>.far-grid-item:hover {transform: scale(1.2);transition: 0.2s;filter: drop-shadow(0px 5px 6px black)}.achievementsscreen-window {background: black;}</style>";
+			document.getElementById('CustomAchievmentStyling').innerHTML = "<style>.far-grid-item:hover {transform: translate3d(0,-4px,0); transition: 0.2s; filter: drop-shadow(0 8px 18px rgba(0,0,0,0.5));}</style>";
 
-			// DESCRIPTION
-			if (game.settings.get('farchievements', 'DescriptionOnHover'))
-				document.getElementById('CustomAchievmentStyling').innerHTML += "<style>.far-grid-item:hover .AchDescription, .far-grid-item.hover .AchDescription {margin-top: -5px !important;transition: 0.3s !important; opacity:1;}p.AchDescription {margin-top: -25px;transition: 0.1s !important;opacity: 0;}</style>";
+			// DESCRIPTION handling delegated to AchievementsScreen.css
 
 			const data = game.settings.get('farchievements', 'achievementdata').split(';;;');
 			document.getElementById('AchievementList').innerHTML = "";
@@ -811,6 +1051,14 @@
 			let langDiceType = game.i18n.localize('Farchievements.Html.DiceType');
 			let langChainLength = game.i18n.localize('Farchievements.Html.ChainLength');
 			let langSecret = game.i18n.localize('Farchievements.Html.Secret');
+			let langBannerStyle = game.i18n.localize('Farchievements.Html.BannerStyle');
+			if (langBannerStyle === 'Farchievements.Html.BannerStyle') langBannerStyle = 'Banner';
+			let langBannerDefault = game.i18n.localize('Farchievements.Html.BannerDefault');
+			if (langBannerDefault === 'Farchievements.Html.BannerDefault') langBannerDefault = 'Default (global setting)';
+			let langCardStyle = game.i18n.localize('Farchievements.Html.CardStyle');
+			if (langCardStyle === 'Farchievements.Html.CardStyle') langCardStyle = 'Card Type';
+			let langCardStyleDefault = game.i18n.localize('Farchievements.Html.CardStyleDefault');
+			if (langCardStyleDefault === 'Farchievements.Html.CardStyleDefault') langCardStyleDefault = 'Standard';
 
 			
 			if (currentpage <= 1) {
@@ -886,20 +1134,54 @@
 				description = AchievementList[i].description;
 				let AchievementIconHTML = '<img class="EditModeIcon" id="EditIcon' + name + '" src="' + icon + '" onclick="setAchievementImg(`' + name + '`)"></img>';
 
+				let bannerHTML = `<div class="achEditBanner achEditProgress">
+										<div class="achEditProgressField fullWidth">
+											<label>${langBannerStyle}:</label>
+											<select class="AchBannerStyleSelect" id="achievementBanner${name}" onchange="updateAchievement(12, '${name}')">
+												<option value="" ${!AchievementList[i].bannerAnimation ? 'selected' : ''}>${langBannerDefault}</option>
+												<option value="slidein"         ${AchievementList[i].bannerAnimation === 'slidein'         ? 'selected' : ''}>Drop &amp; Hold</option>
+												<option value="fadeOut"         ${AchievementList[i].bannerAnimation === 'fadeOut'         ? 'selected' : ''}>Soft Fade</option>
+												<option value="xboxPop"         ${AchievementList[i].bannerAnimation === 'xboxPop'         ? 'selected' : ''}>Corner Snap</option>
+												<option value="psTrophy"        ${AchievementList[i].bannerAnimation === 'psTrophy'        ? 'selected' : ''}>Glass Slide</option>
+												<option value="darkSouls"       ${AchievementList[i].bannerAnimation === 'darkSouls'       ? 'selected' : ''}>Ominous Reveal</option>
+												<option value="cyberpunkGlitch" ${AchievementList[i].bannerAnimation === 'cyberpunkGlitch' ? 'selected' : ''}>Neon Glitch</option>
+												<option value="skyrimReveal"    ${AchievementList[i].bannerAnimation === 'skyrimReveal'    ? 'selected' : ''}>Carved Bloom</option>
+											</select>
+										</div>
+									</div>`;
+				const selectedCardStyle = normalizeAchievementCardStyle(AchievementList[i].cardStyle);
+				let cardStyleHTML = `<div class="achEditCardStyle achEditProgress">
+										<div class="achEditProgressField fullWidth">
+											<label>${langCardStyle}:</label>
+											<select class="AchCardStyleSelect" id="achievementCardStyle${name}" onchange="updateAchievement(13, '${name}')">
+												<option value="" ${!selectedCardStyle ? 'selected' : ''}>${langCardStyleDefault}</option>
+												<option value="gold"        ${selectedCardStyle === 'gold'        ? 'selected' : ''}>Gold</option>
+												<option value="silver"      ${selectedCardStyle === 'silver'      ? 'selected' : ''}>Silver</option>
+												<option value="bronze"      ${selectedCardStyle === 'bronze'      ? 'selected' : ''}>Bronze</option>
+												<option value="green"       ${selectedCardStyle === 'green'       ? 'selected' : ''}>Green</option>
+												<option value="red"         ${selectedCardStyle === 'red'         ? 'selected' : ''}>Red</option>
+												<option value="purple"      ${selectedCardStyle === 'purple'      ? 'selected' : ''}>Purple</option>
+												<option value="holographic" ${selectedCardStyle === 'holographic' ? 'selected' : ''}>Holographic</option>
+											</select>
+										</div>
+									</div>`;
+
 				// Create progress input fields for editing mode
 				let progressHTML = `<div class="achEditProgress">
-										<label>${langProgressType}:</label>
-										<select id="achievementProgressType${name}" onchange="updateAchievement(8, '${name}')">
-											<option value="standard" ${progressType === 'standard' ? 'selected' : ''}>Standard</option>
-											<option value="count" ${progressType === 'count' ? 'selected' : ''}>Counter</option>
-											<option value="dice" ${progressType === 'dice' ? 'selected' : ''}>Dice</option>
-											<option value="diceChain" ${progressType === 'diceChain' ? 'selected' : ''}>DiceChain</option>
-										</select>`;
+										<div class="achEditProgressField fullWidth">
+											<label>${langProgressType}:</label>
+											<select id="achievementProgressType${name}" onchange="updateAchievement(8, '${name}')">
+												<option value="standard" ${progressType === 'standard' ? 'selected' : ''}>Standard</option>
+												<option value="count" ${progressType === 'count' ? 'selected' : ''}>Counter</option>
+												<option value="dice" ${progressType === 'dice' ? 'selected' : ''}>Dice</option>
+												<option value="diceChain" ${progressType === 'diceChain' ? 'selected' : ''}>DiceChain</option>
+											</select>
+										</div>`;
 
-				
-				// Only display diceType dropdown if progressType is 'dice' or 'diceChain'
+				// Pair Dice Type + Value-to-Roll/Chain Length on a single row when both apply
 				if (progressType === 'dice' || progressType === 'diceChain') {
-					progressHTML += `<label>${langDiceType}:</label>
+					progressHTML += `<div class="achEditProgressField half">
+										<label>${langDiceType}:</label>
 										<select class="AchDiceTypeSelect" id="achievementDiceType${name}" onchange="updateAchievement(9, '${name}')">
 											<option value="d4" ${diceType === 'd4' ? 'selected' : ''}>d4</option>
 											<option value="d6" ${diceType === 'd6' ? 'selected' : ''}>d6</option>
@@ -908,31 +1190,35 @@
 											<option value="d12" ${diceType === 'd12' ? 'selected' : ''}>d12</option>
 											<option value="d20" ${diceType === 'd20' ? 'selected' : ''}>d20</option>
 											<option value="d100" ${diceType === 'd100' ? 'selected' : ''}>d100</option>
-										</select><br>`;
+										</select>
+									</div>`;
 				}
 
-				// Only display progressRequired if progressType is not 'standard'
 				if (progressType !== 'standard') {
-					if(AchievementList[i].progressType == 'count'){
-						progressHTML += `<label>${langProgressRequired}:</label>
-										<input class="AchInputProgress" type="number" id="achievementProgressRequired${name}" value="${progressRequired}" onchange="updateAchievement(7, '${name}')"><br>`;
-					}
-					else{
-						progressHTML += `<label>${langValueRequired}:</label>
-										<input class="AchInputProgress" style="margin-left: 20px;" type="text" id="achievementProgressRequired${name}" value="${progressRequired}" onchange="updateAchievement(7, '${name}')"><br>`;
+					if (AchievementList[i].progressType == 'count') {
+						progressHTML += `<div class="achEditProgressField half">
+											<label>${langProgressRequired}:</label>
+											<input class="AchInputProgress" type="number" id="achievementProgressRequired${name}" value="${progressRequired}" onchange="updateAchievement(7, '${name}')">
+										</div>`;
+					} else {
+						progressHTML += `<div class="achEditProgressField half">
+											<label>${langValueRequired}:</label>
+											<input class="AchInputProgress" type="text" id="achievementProgressRequired${name}" value="${progressRequired}" onchange="updateAchievement(7, '${name}')">
+										</div>`;
 					}
 				}
 
-				// Display "Chain Length" input if progressType is "diceChain"
 				if (progressType === 'diceChain') {
-					progressHTML += `<label>${langChainLength}:</label>
-										<input class="AchInputChainLength" type="number" id="achievementChainLength${name}" value="${chainLength}" onchange="updateAchievement(10, '${name}')"><br>`;
+					progressHTML += `<div class="achEditProgressField half">
+										<label>${langChainLength}:</label>
+										<input class="AchInputChainLength" type="number" id="achievementChainLength${name}" value="${chainLength}" onchange="updateAchievement(10, '${name}')">
+									</div>`;
 				}
 
 				progressHTML += `</div>`; // End progressHTML
 
 				document.getElementById('AchievementList').innerHTML += `
-					<div id="Achievement-${i}" class="far-grid-item">
+					<div id="Achievement-${i}" class="far-grid-item ${getAchievementCardStyleClass(AchievementList[i])}">
 						<div class="DragAndDropHandler" draggable="true"><i class="fa-solid fa-up-down-left-right"></i></div>
 						<div class="achievementtools">
 							<button class="deleteAchievement" type="button" onclick="deleteAchievement('${i}')"><i class="fas fa-trash-alt"></i></button>
@@ -959,7 +1245,9 @@
 						<div class="achSecretToggle">
 							${secretHTML}
 						</div>
-						${progressHTML} 
+						${cardStyleHTML}
+						${bannerHTML}
+						${progressHTML}
 
 					</div>`;
 			}
@@ -975,7 +1263,8 @@
 				item.addEventListener('drop', handleDrop);
 			});
 
-			document.getElementById("AchievementList").style = "grid-template-rows: repeat(" + Math.round(loadAm / 6) + ", 1fr);";
+			document.getElementById("AchievementList").style.gridTemplateRows = "repeat(" + Math.round(loadAm / 6) + ", 1fr)";
+			applyEditmodeColumns();
 		}
 
 
@@ -1036,18 +1325,44 @@
 			this.classList.remove('over');
 		}
 		function enterEditMode() {
-			if (document.getElementsByClassName('editmodebar')[0].style.cssText === "text-align: -webkit-right; display: block;") {
+			const bar = document.getElementsByClassName('editmodebar')[0];
+			const isEditing = bar.classList.contains('editmodebar-open');
+			bar.style.removeProperty('display');
+			if (isEditing) {
 				loadAchievements();
-				document.getElementsByClassName('editmodebar')[0].style.cssText = "display:none;"
+				bar.classList.remove('editmodebar-open');
 				document.getElementById('AchPlayerNav').className = "AchPlayerNav";
 				document.getElementById('AchievementList').classList.remove("editmodeList");
 			}
 			else {
 				loadAchievementsEditMode();
 				document.getElementById('AchPlayerNav').className += " hidden";
-				document.getElementsByClassName('editmodebar')[0].style.cssText = "text-align: -webkit-right; display: block;"
+				bar.classList.add('editmodebar-open');
 				document.getElementById('AchievementList').classList.add("editmodeList");
+				applyEditmodeColumns();
 			}
+		}
+
+		function applyEditmodeColumns() {
+			const saved = parseInt(localStorage.getItem('farch_editmodeColumns')) || 3;
+			const clamped = Math.min(8, Math.max(2, saved));
+			const slider = document.getElementById('editmodeColumnsRange');
+			const valLabel = document.getElementById('editmodeColumnsValue');
+			if (slider) slider.value = clamped;
+			if (valLabel) valLabel.innerText = clamped;
+			const list = document.getElementById('AchievementList');
+			if (list) list.style.setProperty('--fa-edit-columns', clamped);
+		}
+
+		function updateEditmodeColumns() {
+			const slider = document.getElementById('editmodeColumnsRange');
+			if (!slider) return;
+			const val = parseInt(slider.value) || 3;
+			const valLabel = document.getElementById('editmodeColumnsValue');
+			if (valLabel) valLabel.innerText = val;
+			const list = document.getElementById('AchievementList');
+			if (list) list.style.setProperty('--fa-edit-columns', val);
+			localStorage.setItem('farch_editmodeColumns', val);
 		}
 
 		async function setAchievement(achievementname, playerID) {
@@ -1076,7 +1391,10 @@
 				AchievementData[achievementIndex].progressType,
 				AchievementData[achievementIndex].playerProgress,
 				AchievementData[achievementIndex].chainLength,
-				AchievementData[achievementIndex].diceType
+				AchievementData[achievementIndex].diceType,
+				AchievementData[achievementIndex].secret,
+				AchievementData[achievementIndex].bannerAnimation,
+				AchievementData[achievementIndex].cardStyle
 			);
 
 			// Add or remove the player from this specific achievement
@@ -1272,6 +1590,21 @@
 			if (updateType === 11) { // SECRET TOGGLE
 				AchievementData.filter(x => x.name == achievementname)[0].secret = document.getElementById('achievementSecret' + achievementname).checked;
 			}
+			if (updateType === 12) { // BANNER ANIMATION OVERRIDE
+				const value = document.getElementById('achievementBanner' + achievementname).value;
+				AchievementData.filter(x => x.name == achievementname)[0].bannerAnimation = value || undefined;
+			}
+			if (updateType === 13) { // CARD STYLE
+				const value = document.getElementById('achievementCardStyle' + achievementname).value;
+				const achievement = AchievementData.filter(x => x.name == achievementname)[0];
+				achievement.cardStyle = value || undefined;
+				const card = document.getElementById('achievementCardStyle' + achievementname)?.closest('.far-grid-item');
+				if (card) {
+					card.classList.remove(...Array.from(card.classList).filter(c => c.startsWith('achievement-card-')));
+					const className = getAchievementCardStyleClass(achievement);
+					if (className) card.classList.add(className);
+				}
+			}
 			await game.settings.set('farchievements', 'achievementdataNEW', JSON.stringify(AchievementData));
 
 			if (reload) {
@@ -1319,7 +1652,15 @@
 	<div id="AchPlayerNav" class="AchPlayerNav"></div>
 	<div id="AchievementList" onSync="loadAchievements()" class="far-grid-container" style="grid-template-rows: repeat(7, 1fr);"></div>
 	<div class="pageNav"><label id="lastPageLabel" onclick="onClickPrevPage()">Page 1</label>{{localize 'Farchievements.Html.LoadPerPage'}}:<input type="number" id="toLoadNumber" value="" onchange="ChangeLoadPerPage()"></input><label id="nextPageLabel" onclick="onClickNextPage()">Page 2</label></div>
-	<div style="display:none;" class="editmodebar" style="text-align: -webkit-right;"><i class="fas fa-plus-square achievementsettings" onclick="addAchievement()"></i><i id="SyncAch" onclick="SendSyncMessage()" class="fas fa-sync achievementsettings" title="{{localize 'Farchievements.Html.PushChangesNow'}}"></i></div>
+	<div style="display:none;" class="editmodebar">
+		<label class="editmodeColumnsControl" title="Achievements per row in editor">
+			<span class="columnsLabel">Columns</span>
+			<input type="range" id="editmodeColumnsRange" min="2" max="8" step="1" value="3" oninput="updateEditmodeColumns()">
+			<span class="columnsValue" id="editmodeColumnsValue">3</span>
+		</label>
+		<i class="fas fa-plus-square achievementsettings" onclick="addAchievement()" title="Add achievement"></i>
+		<i id="SyncAch" onclick="SendSyncMessage()" class="fas fa-sync achievementsettings" title="{{localize 'Farchievements.Html.PushChangesNow'}}"></i>
+	</div>
 	<!-- <i class="fas fa-minus-square achievementsettings" onclick="removeAchievement()"></i> -->
 	<div id="achsyncnormalmode"></div>
 </form>

@@ -1,6 +1,10 @@
 Hooks.once('init', function() {
 	const debounceFn = globalThis.debounce ?? foundry?.utils?.debounce ?? ((fn) => fn);
 	const debouncedReload = debounceFn(() => window.location.reload(), 100);
+	const localizeOr = (key, fallback) => {
+		const value = game.i18n.localize(key);
+		return value === key ? fallback : value;
+	};
 	game.settings.register('farchievements', 'EnableAchievementPopup', {
         name: game.i18n.localize('Farchievements.Settings.EnableAchievementPopup.Text'),
         hint: game.i18n.localize('Farchievements.Settings.EnableAchievementPopup.Hint'),
@@ -26,12 +30,12 @@ Hooks.once('init', function() {
         default: false,
         type: Boolean,
     });
-	game.settings.register('farchievements', 'EnableChatBarButton', {
-        name: game.i18n.localize('Farchievements.Settings.EnableChatBarButton.Text'),
-        hint: game.i18n.localize('Farchievements.Settings.EnableChatBarButton.Hint'),
+	game.settings.register('farchievements', 'EnableSidebarButton', {
+        name: localizeOr('Farchievements.Settings.EnableSidebarButton.Text', 'Enable Right Sidebar Button'),
+        hint: localizeOr('Farchievements.Settings.EnableSidebarButton.Hint', 'Shows the Farchievements button in the right sidebar.'),
         scope: 'world',
         config: true,
-        default: false,
+        default: true,
         type: Boolean,
 		onChange: debouncedReload,
 	});
@@ -72,6 +76,22 @@ Hooks.once('init', function() {
         name: game.i18n.localize('Farchievements.Settings.ListView.Text'),
         hint: game.i18n.localize('Farchievements.Settings.ListView.Hint'),
         scope: 'world',
+        config: true,
+		default: false,
+		type: Boolean,
+    });
+	game.settings.register('farchievements', 'CardMode', {
+        name: 'Fancy Card Mode',
+        hint: 'When enabled, achievement tiles react to your cursor with a Steam-style 3D tilt, a holo shine sweep, and dynamic brightness. Disable for a calmer flat-card experience.',
+        scope: 'client',
+        config: true,
+		default: true,
+		type: Boolean,
+    });
+	game.settings.register('farchievements', 'SimulateBanner', {
+        name: 'Simulate Banner (GM)',
+        hint: 'When enabled, right-clicking an achievement plays the unlock banner animation on your screen for preview — without granting it to a player.',
+        scope: 'client',
         config: true,
 		default: false,
 		type: Boolean,
@@ -221,8 +241,13 @@ Hooks.once('init', function() {
         default: "slidein",
         type: String,
 		choices: {
-			"slidein": "sliding banner (SFX: stinger)",
-			"fadeOut": "fade out (SFX: sound)",
+			"slidein": "Drop & Hold — slides down, lingers, retracts (stinger SFX)",
+			"fadeOut": "Soft Fade — gentle fade in and out (sound SFX)",
+			"xboxPop": "Corner Snap — simple top-right achievement box (sound SFX)",
+			"psTrophy": "Glass Slide — sleek glassy slide from the top (sound SFX)",
+			"darkSouls": "Ominous Reveal — centered, dramatic, slow swell (stinger SFX)",
+			"cyberpunkGlitch": "Neon Glitch — RGB-split jitter that locks in (stinger SFX)",
+			"skyrimReveal": "Carved Bloom — scale-up with a warm glow (stinger SFX)",
 		},
     });
 	game.settings.register('farchievements', 'achievementStinger', {
@@ -352,6 +377,58 @@ Hooks.once('init', function() {
 		type: String,
 	});	
 
+	const orderedSettings = [
+		"AchievementWindowTitle",
+		"GameSettingsButton",
+		"EnableSidebarButton",
+		"EnableContextButton",
+		"ListView",
+		"CardMode",
+		"loadPerPage",
+		"PlayerBackColor",
+		"EnableScoreboard",
+		"HideUnknown",
+		"UnknownName",
+		"AlwaysShowName",
+		"UnknownDes",
+		"AlwaysShowDes",
+		"DescriptionOnHover",
+		"greyscale",
+		"mystery",
+		"standarticon",
+		"standardBackground",
+		"EnableAchievementPopup",
+		"DisableAchievementBanner",
+		"showAchOnStartup",
+		"chatMessage",
+		"EnableConfettiSupport",
+		"SimulateBanner",
+		"bannerAnimation",
+		"achpretext",
+		"bannerBackground",
+		"achievementSound",
+		"achievementSoundVolume",
+		"achievementStinger",
+		"achievementStingerVolume",
+		"achievementdataNEW",
+		"OmniView",
+		"currentPage",
+		"achamount",
+		"achievementdata",
+		"clientdataSYNC",
+		"clientdata",
+		"loadSettingsForPlayer",
+		"lastSearchTerm",
+		"lastSortType",
+	];
+	for (const key of orderedSettings) {
+		const id = `farchievements.${key}`;
+		const setting = game.settings.settings.get(id);
+		if (!setting) continue;
+		game.settings.settings.delete(id);
+		game.settings.settings.set(id, setting);
+	}
+
 	console.log("Initialised Farchievements");
 });
 const FarchievementsApplication = globalThis.Application ?? globalThis.foundry?.appv1?.api?.Application;
@@ -403,61 +480,48 @@ class Achievements {
 	}
 
     static addChatControl() {
-		if(game.version < 13){
-			if(!game.settings.get('farchievements', 'EnableChatBarButton'))
-				return;
-			let chatControlLeft = document.getElementsByClassName("chat-control-icon")[0];
-			let tableNode = document.getElementById("achievements-button");
-
-			if (chatControlLeft && !tableNode) {
-				const chatControlLeftNode = chatControlLeft.firstElementChild;
-				const number = 3;
-				tableNode = document.createElement("label");
-				tableNode.className = "AchievmentButtonLabel";
-				tableNode.innerHTML = `<i id="achievements-button" class="fas fa-medal achievements-button" style="text-shadow: 0 0 1px black;"></i>`;
-				tableNode.onclick = Achievements.initializeAchievements;
-				chatControlLeft.insertBefore(tableNode, chatControlLeftNode);
-				return;
-			}
+		const existing = document.getElementById("farchievements-sidebar-button") ?? document.getElementById("achievements-button")?.closest("button,label,a");
+		if (!Achievements.getSetting('EnableSidebarButton', true)) {
+			existing?.closest("#farchievements-sidebar-item")?.remove();
+			existing?.remove?.();
+			return;
 		}
-		else{
-			const existing = document.getElementById("farchievements-sidebar-button") ?? document.getElementById("achievements-button")?.closest("button,label,a");
-			if (existing) {
-				Achievements.bindOpenButton(existing);
-				return;
-			}
 
-			const sidebar = Achievements.getRootElement(ui?.sidebar);
-			const tabsFlexcol = sidebar.querySelector(".tabs .flexcol")
-				?? sidebar.querySelector(".tabs.flexcol")
-				?? sidebar.querySelector("#sidebar-tabs")
-				?? sidebar.querySelector("nav#sidebar-tabs")
-				?? sidebar.querySelector("nav.tabs")
-				?? sidebar.querySelector(".tabs")
-				?? document.querySelector("#sidebar .tabs .flexcol")
-				?? document.querySelector("#sidebar .tabs")
-				?? document.querySelector("#sidebar-tabs")
-				?? document.querySelector("#ui-right .tabs .flexcol")
-				?? document.querySelector("#ui-right .tabs");
-
-			if (!tabsFlexcol) return;
-
-			const tableWrapper = document.createElement("li");
-			tableWrapper.id = "farchievements-sidebar-item";
-			let tableNode = document.createElement("button");
-			tableNode.id = "farchievements-sidebar-button";
-			tableNode.type = "button";
-			tableNode.className = "AchievmentButtonLabelV13 ui-control plain icon fas fa-medal achievements-button";
-			tableNode.title = game.i18n.localize('Farchievements.Achievements');
-			tableNode.setAttribute("aria-label", game.i18n.localize('Farchievements.Achievements'));
-			tableNode.dataset.tooltip = game.i18n.localize('Farchievements.Achievements');
-			tableNode.innerHTML = `<i id="achievements-button" class="fas fa-medal achievements-button" style="display:none;"></i>`;
-			Achievements.bindOpenButton(tableNode);
-			tableWrapper.append(tableNode);
-			const collapseItem = tabsFlexcol.querySelector(".collapse")?.closest("li");
-			if (collapseItem) tabsFlexcol.insertBefore(tableWrapper, collapseItem);
-			else tabsFlexcol.append(tableWrapper);
+		if (existing) {
+			Achievements.bindOpenButton(existing);
+			return;
 		}
+
+		const sidebar = Achievements.getRootElement(ui?.sidebar);
+		const tabsFlexcol = sidebar.querySelector(".tabs .flexcol")
+			?? sidebar.querySelector(".tabs.flexcol")
+			?? sidebar.querySelector("#sidebar-tabs")
+			?? sidebar.querySelector("nav#sidebar-tabs")
+			?? sidebar.querySelector("nav.tabs")
+			?? sidebar.querySelector(".tabs")
+			?? document.querySelector("#sidebar .tabs .flexcol")
+			?? document.querySelector("#sidebar .tabs")
+			?? document.querySelector("#sidebar-tabs")
+			?? document.querySelector("#ui-right .tabs .flexcol")
+			?? document.querySelector("#ui-right .tabs");
+
+		if (!tabsFlexcol) return;
+
+		const tableWrapper = document.createElement("li");
+		tableWrapper.id = "farchievements-sidebar-item";
+		let tableNode = document.createElement("button");
+		tableNode.id = "farchievements-sidebar-button";
+		tableNode.type = "button";
+		tableNode.className = "AchievmentButtonLabelV13 ui-control plain icon fas fa-medal achievements-button";
+		tableNode.title = game.i18n.localize('Farchievements.Achievements');
+		tableNode.setAttribute("aria-label", game.i18n.localize('Farchievements.Achievements'));
+		tableNode.dataset.tooltip = game.i18n.localize('Farchievements.Achievements');
+		tableNode.innerHTML = `<i id="achievements-button" class="fas fa-medal achievements-button" style="display:none;"></i>`;
+		Achievements.bindOpenButton(tableNode);
+		tableWrapper.append(tableNode);
+		const collapseItem = tabsFlexcol.querySelector(".collapse")?.closest("li");
+		if (collapseItem) tabsFlexcol.insertBefore(tableWrapper, collapseItem);
+		else tabsFlexcol.append(tableWrapper);
 	}
 	static addSettingsButton(html) {
 		if (!Achievements.getSetting('GameSettingsButton', true)) return;
@@ -570,10 +634,75 @@ class FarchievementsSettingsMenu extends FarchievementsFormApplication {
 }
 globalThis.FarchievementsSettingsMenu = FarchievementsSettingsMenu;
 class AchievementSync{
+	static animationRunId = 0;
+	static activeSound = null;
+
 	static sleep(ms){
 	  return new Promise(resolve => setTimeout(resolve, ms));
 	}
+
+	static stopSound(sound) {
+		if (!sound) return;
+		if (typeof sound.then === "function") {
+			sound.then(s => AchievementSync.stopSound(s)).catch(() => {});
+			return;
+		}
+
+		try {
+			sound.stop?.({ fade: 0, delay: 0, volume: 0 });
+		} catch (error) {
+			console.warn("Farchievements | Audio stop failed:", error);
+		}
+
+		const element = sound.element ?? sound.sound?.element;
+		if (element) {
+			element.pause?.();
+			element.currentTime = 0;
+			element.src = "";
+			element.load?.();
+		}
+	}
+
+	static stopActiveBanner() {
+		if (AchievementSync.activeSound) {
+			AchievementSync.stopSound(AchievementSync.activeSound);
+			AchievementSync.activeSound = null;
+		}
+
+		const banner = document.getElementById("FoundryAchievements");
+		if (banner) {
+			banner.classList.forEach(c => { if (c.startsWith('banner-card-')) banner.classList.remove(c); });
+		}
+
+		const bar = document.getElementById("Achievementbar");
+		if (bar) {
+			bar.style.setProperty("display", "none");
+			bar.style.setProperty("animation-name", "none");
+			bar.style.removeProperty("animation-duration");
+			bar.classList.forEach(c => { if (c.startsWith('banner-anim-')) bar.classList.remove(c); });
+			void bar.offsetWidth;
+		}
+	}
+
+	static ensureBannerElements() {
+		let bar = document.getElementById("Achievementbar");
+		let banner = document.getElementById("FoundryAchievements");
+		if (bar && banner) return { bar, banner };
+
+		const bannerStyle = 'top: -200px; background-position: center!important; display: flex; background-size: 100% 100% !important;';
+		bar = document.createElement("div");
+		bar.id = "Achievementbar";
+		bar.className = "Achievementbar";
+		bar.style.display = "none";
+		bar.innerHTML = `<div id="FoundryAchievements" class="FoundryAchievementsBanner" style="${bannerStyle}"><img id="AchievementIMG" class="AchievementIMG" src="modules/farchievements/standardIcon.PNG"></img><p class="AchievementText"><label class="AchievementTextLabel">${game.i18n.localize('Farchievements.NewAchievement')}</label> (${game.i18n.localize('Farchievements.Achievement')}) </p><i class="Shiny"></i></div>`;
+		document.body.appendChild(bar);
+		return { bar, banner: document.getElementById("FoundryAchievements") };
+	}
+
 	static async PlayAnimation(achievementsGainedList) {
+		const runId = ++AchievementSync.animationRunId;
+		AchievementSync.stopActiveBanner();
+
 		await game.settings.set('farchievements', 'clientdata', game.settings.get('farchievements', 'clientdata') + achievementsGainedList);
 		
 		let AchievementList = JSON.parse(game.settings.get('farchievements', 'achievementdataNEW'));
@@ -584,6 +713,7 @@ class AchievementSync{
 		
 		for (let i = 0; i < achievementsToGain.length; i++) {
 			await AchievementSync.sleep(100);
+			if (runId !== AchievementSync.animationRunId) return;
 	
 			let AchievementToGain = AchievementList.find(ach => ach.name == achievementsToGain[i]);
 			if (AchievementToGain == null) return;
@@ -597,42 +727,70 @@ class AchievementSync{
 	
 			// Skip banner if disabled
 			if (disableBanner) continue;
+			AchievementSync.stopActiveBanner();
+			const { bar: achievementBar, banner: achievementBanner } = AchievementSync.ensureBannerElements();
 	
-			// Banner animation logic
+			// Banner animation logic — prefer per-achievement override, fallback to global default.
 			let name = AchievementToGain.name;
 			let icon = AchievementToGain.image || game.settings.get('farchievements', 'standarticon');
-			let anim = game.settings.get('farchievements', 'bannerAnimation');
-			let dur = (anim == "fadeOut") ? 5 : 13;
+			let anim = AchievementToGain.bannerAnimation || game.settings.get('farchievements', 'bannerAnimation');
+			const _animMeta = (Farchievements && Farchievements.getBannerAnimMeta)
+				? Farchievements.getBannerAnimMeta(anim)
+				: { dur: 13, preDelay: 0, sound: 'stinger' };
+			let dur = _animMeta.dur;
 	
-			document.getElementsByClassName("AchievementText")[0].innerHTML = `<label class="AchievementTextLabel">${game.settings.get("farchievements", "achpretext")}</label>` + name;
-			document.getElementById("AchievementIMG").src = icon;
+			achievementBanner.querySelector(".AchievementText").innerHTML = `<label class="AchievementTextLabel">${game.settings.get("farchievements", "achpretext")}</label>` + name;
+			achievementBanner.querySelector("#AchievementIMG").src = icon;
 	
 			if (AchievementToGain.glowing)
-				document.getElementById("FoundryAchievements").classList.add('glowingAch');
+				achievementBanner.classList.add('glowingAch');
 			else
-				document.getElementById("FoundryAchievements").classList.remove('glowingAch');
+				achievementBanner.classList.remove('glowingAch');
 	
-			document.getElementById("Achievementbar").style.setProperty("animation-name", anim);
-			document.getElementById("Achievementbar").style.setProperty("animation-duration", `${dur}s`);
+			// Swap per-animation style variant on the banner
+			achievementBanner.classList.forEach(c => { if (c.startsWith('banner-style-') || c.startsWith('banner-card-')) achievementBanner.classList.remove(c); });
+			achievementBanner.classList.add('banner-style-' + anim);
+			achievementBar.classList.forEach(c => { if (c.startsWith('banner-anim-')) achievementBar.classList.remove(c); });
+			achievementBar.classList.add('banner-anim-' + anim);
+
+			achievementBar.style.setProperty("animation-name", anim);
+			achievementBar.style.setProperty("animation-duration", `${dur}s`);
 			
-			let sound = (anim == "fadeOut") ? 'achievementSound' : 'achievementStinger';
-			let volume = (anim == "fadeOut") ? 'achievementSoundVolume' : 'achievementStingerVolume';
-			await AudioHelper.play({ src: game.settings.get('farchievements', sound), volume: game.settings.get('farchievements', volume), autoplay: true, loop: false }, false);
+			let sound = (_animMeta.sound === 'sound') ? 'achievementSound' : 'achievementStinger';
+			let volume = (_animMeta.sound === 'sound') ? 'achievementSoundVolume' : 'achievementStingerVolume';
+			const _audio = foundry?.audio?.AudioHelper ?? globalThis.AudioHelper;
+			try {
+				const soundResult = _audio?.play?.({ src: game.settings.get('farchievements', sound), volume: game.settings.get('farchievements', volume), autoplay: true, loop: false }, false);
+				AchievementSync.activeSound = soundResult;
+				Promise.resolve(soundResult).then(playedSound => {
+					if (runId !== AchievementSync.animationRunId) {
+						AchievementSync.stopSound(playedSound);
+						return;
+					}
+					AchievementSync.activeSound = playedSound;
+				}).catch(err => console.warn("Farchievements | Audio playback failed:", err));
+			} catch (err) {
+				console.warn("Farchievements | Audio playback failed:", err);
+			}
 	
-			if (anim == "slidein") await AchievementSync.sleep(1800);
-			document.getElementById("Achievementbar").style.setProperty("display", "flex");
+			if (_animMeta.preDelay) await AchievementSync.sleep(_animMeta.preDelay);
+			if (runId !== AchievementSync.animationRunId) return;
+			achievementBar.style.setProperty("display", "flex");
 	
 			if (game.modules.get('confetti')?.active === true && game.settings.get('farchievements', 'EnableConfettiSupport')) {
 				for (let c = 0; c < 3; c++) {
 					await AchievementSync.sleep(500);
+					if (runId !== AchievementSync.animationRunId) return;
 					const strength = window.confetti.confettiStrength.high;
 					const shootConfettiProps = window.confetti.getShootConfettiProps(strength);
 					window.confetti.handleShootConfetti(shootConfettiProps);
 				}
 			} else {
 				await AchievementSync.sleep(dur * 1000);
+				if (runId !== AchievementSync.animationRunId) return;
 			}
-			document.getElementById("Achievementbar").style.setProperty("display", "none");
+			achievementBar.style.setProperty("display", "none");
+			AchievementSync.activeSound = null;
 		}
 	}
 	static SyncAchievements(skip = null, start = false){
@@ -1060,6 +1218,20 @@ window.Farchievements = class Farchievement{
 		return JSON.parse(game.settings.get('farchievements', 'achievementdataNEW'));
 	}
 }
+// Per-animation timing & sound preference (dur in seconds, preDelay in ms).
+window.Farchievements.getBannerAnimMeta = function (anim) {
+    const table = {
+        slidein:         { dur: 13, preDelay: 1800, sound: 'stinger' },
+        fadeOut:         { dur: 5,  preDelay: 0,    sound: 'sound'   },
+        xboxPop:         { dur: 4.8, preDelay: 0,   sound: 'sound'   },
+        psTrophy:        { dur: 6,  preDelay: 0,    sound: 'sound'   },
+        darkSouls:       { dur: 9,  preDelay: 400,  sound: 'stinger' },
+        cyberpunkGlitch: { dur: 6,  preDelay: 0,    sound: 'stinger' },
+        skyrimReveal:    { dur: 7,  preDelay: 0,    sound: 'stinger' },
+    };
+    return table[anim] || table.slidein;
+};
+
 window.Farchievements.DisplayAchievementPopup = function (achievementName, playerId = "") {
     let achievementList = JSON.parse(game.settings.get('farchievements', 'achievementdataNEW'));
     let achievement = achievementList.find(ach => ach.name === achievementName);
@@ -1400,7 +1572,8 @@ async function SendSyncMessage() {
 class Achievement {
     constructor(
         name, description, image, points = 1, glowing = false, color="#f7ff9e", players, seenBy = [], playerDates = {}, 
-        progressRequired = 0, progressType = "standard", playerProgress = {}, chainLength = 2, diceType = "d20"
+        progressRequired = 0, progressType = "standard", playerProgress = {}, chainLength = 2, diceType = "d20",
+		secret = false, bannerAnimation = undefined, cardStyle = undefined
     ) {
         this.name = name;
         this.description = description;
@@ -1416,6 +1589,9 @@ class Achievement {
         this.playerProgress = playerProgress; // Track player progress, used for both standard and chain
 		this.diceType = diceType;
 		this.chainLength = chainLength; //The Amount of times a player needs to roll the value required for a chain
+		this.secret = secret;
+		this.bannerAnimation = bannerAnimation;
+		this.cardStyle = cardStyle;
     }
 
     // Method to add progress for a player

@@ -2,7 +2,7 @@
   "id": "farchievements",
   "title": "Foundry Achievements",
   "description": "Achievements for FoundryVTT",
-  "version": "14.0",
+  "version": "14.1",
   "authors": [
     {
       "name": "Handyfon",
@@ -35,8 +35,8 @@
     }
   ],
   "url": "https://github.com/Handyfon/Farchievements",
-  "manifest": "https://github.com/Handyfon/Farchievements/releases/download/v14.0/module.json",
-  "download": "https://github.com/Handyfon/Farchievements/releases/download/v14.0/module.zip",
+  "manifest": "https://github.com/Handyfon/Farchievements/releases/download/v14.1/module.json",
+  "download": "https://github.com/Handyfon/Farchievements/releases/download/v14.1/module.zip",
   "compatibility": {
     "minimum": "13",
     "verified": "14"

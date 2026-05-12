@@ -7,9 +7,9 @@
 		"Text": "Disable Achievement Banner",
 		"Hint": "If enabled, the achievement banner animation will be disabled."
 	},
-    "Farchievements.Settings.EnableChatBarButton" : {
-        "Text":"Enable Chatbar Button",
-        "Hint": "Allows to access Farchivements from the chat bar."
+    "Farchievements.Settings.EnableSidebarButton" : {
+        "Text":"Enable Right Sidebar Button",
+        "Hint": "Shows the Farchievements button in the right sidebar."
     },
     "Farchievements.Settings.EnableAchievementMessage" : {
         "Text": "Enable Chatmessage",
@@ -191,6 +191,10 @@
     "Farchievements.Html.ProgressType": "Progress Type",
     "Farchievements.Html.DiceType": "Dice Type",
     "Farchievements.Html.ChainLength": "Chain Length",
+    "Farchievements.Html.BannerStyle": "Banner",
+    "Farchievements.Html.BannerDefault": "Default (global setting)",
+    "Farchievements.Html.CardStyle": "Card Type",
+    "Farchievements.Html.CardStyleDefault": "Standard",
 	
 
     "Farchievements.Html.ImportExport":{
