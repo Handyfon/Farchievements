@@ -7,7 +7,30 @@ on:
       - main
       - master
     paths:
+      - ".github/workflows/build-module-release.yml"
+      - "AchievementsScreen.css"
+      - "AchievementsScreen.html"
+      - "AchievementsScreen.js"
+      - "achievementbanner.jpg"
+      - "farchievementsbanner2.png"
+      - "farchievementsbannerGalaxy.png"
+      - "farchievementsbannerGold.png"
+      - "farchievementsbannerWooden.png"
+      - "farchievementslogo.png"
+      - "lang/**"
+      - "mixkit-tile-game-reveal-960.mp3"
       - "module.json"
+      - "mystery.jpg"
+      - "omniview.gif"
+      - "README.md"
+      - "standardIcon.PNG"
+      - "standardIcon_bronze.webp"
+      - "standardIcon_glowing_gold.webp"
+      - "standardIcon_glowing_purple.webp"
+      - "standardIcon_gold.webp"
+      - "standardIcon_iron.webp"
+      - "standardIcon_silver.webp"
+      - "standardStinger_by_JFarenheit.mp3"
 
 permissions:
   contents: write
@@ -78,3 +101,4 @@ jobs:
             dist/module.json
             dist/module.zip
           fail_on_unmatched_files: true
+          overwrite_files: true
