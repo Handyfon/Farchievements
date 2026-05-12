@@ -1,5 +1,6 @@
 Hooks.once('init', function() {
-	const debouncedReload = debounce(() => window.location.reload(), 100);
+	const debounceFn = globalThis.debounce ?? foundry?.utils?.debounce ?? ((fn) => fn);
+	const debouncedReload = debounceFn(() => window.location.reload(), 100);
 	game.settings.register('farchievements', 'EnableAchievementPopup', {
         name: game.i18n.localize('Farchievements.Settings.EnableAchievementPopup.Text'),
         hint: game.i18n.localize('Farchievements.Settings.EnableAchievementPopup.Hint'),
@@ -353,7 +354,54 @@ Hooks.once('init', function() {
 
 	console.log("Initialised Farchievements");
 });
+const FarchievementsApplication = globalThis.Application ?? globalThis.foundry?.appv1?.api?.Application;
+const FarchievementsFormApplication = globalThis.FormApplication ?? globalThis.foundry?.appv1?.api?.FormApplication;
 class Achievements {
+	static getSetting(key, fallback) {
+		try {
+			return game.settings.get('farchievements', key);
+		} catch (error) {
+			return fallback;
+		}
+	}
+
+	static registerSettingsMenu() {
+		if (game.settings.menus.has("farchievements.openAchievements")) return true;
+		try {
+			game.settings.registerMenu('farchievements', 'openAchievements', {
+				name: game.i18n.localize('Farchievements.Achievements'),
+				label: game.i18n.localize('Farchievements.Achievements'),
+				hint: game.i18n.localize('Farchievements.Settings.GameSettingsButton.Hint'),
+				icon: 'fas fa-medal',
+				type: FarchievementsSettingsMenu,
+				restricted: false,
+			});
+			return true;
+		} catch (error) {
+			console.error("Farchievements | Failed to register settings menu", error);
+			return false;
+		}
+	}
+
+	static getDialogClass() {
+		return globalThis.Dialog ?? globalThis.foundry?.appv1?.api?.Dialog;
+	}
+
+	static getRootElement(html) {
+		if (html instanceof HTMLElement) return html;
+		if (html?.[0] instanceof HTMLElement) return html[0];
+		if (html?.element instanceof HTMLElement) return html.element;
+		if (html?.element?.[0] instanceof HTMLElement) return html.element[0];
+		if (html?.window?.content instanceof HTMLElement) return html.window.content;
+		return document;
+	}
+
+	static bindOpenButton(button) {
+		if (!button || button.dataset.farchievementsBound === "true") return;
+		button.dataset.farchievementsBound = "true";
+		button.addEventListener("click", Achievements.initializeAchievements);
+	}
+
     static addChatControl() {
 		if(game.version < 13){
 			if(!game.settings.get('farchievements', 'EnableChatBarButton'))
@@ -373,31 +421,93 @@ class Achievements {
 			}
 		}
 		else{
-			// V13
-			let tabsFlexcol = document.getElementsByClassName("tabs")[0]?.getElementsByClassName("flexcol")[0];
-
-			if (tabsFlexcol) {
-				console.log("Farchievements | V13 Support");
-
-				// Check if the button already exists
-				if (!document.getElementById("achievements-button")) {
-					let tableNode = document.createElement("button");
-					tableNode.className = "AchievmentButtonLabelV13 ui-control plain icon";
-					tableNode.innerHTML = `<i id="achievements-button" class="fas fa-medal achievements-button" style="text-shadow: 0 0 1px black;"></i>`;
-					tableNode.onclick = Achievements.initializeAchievements;
-					tabsFlexcol.append(tableNode);
-				}
+			const existing = document.getElementById("farchievements-sidebar-button") ?? document.getElementById("achievements-button")?.closest("button,label,a");
+			if (existing) {
+				Achievements.bindOpenButton(existing);
+				return;
 			}
+
+			const sidebar = Achievements.getRootElement(ui?.sidebar);
+			const tabsFlexcol = sidebar.querySelector(".tabs .flexcol")
+				?? sidebar.querySelector(".tabs.flexcol")
+				?? sidebar.querySelector("#sidebar-tabs")
+				?? sidebar.querySelector("nav#sidebar-tabs")
+				?? sidebar.querySelector("nav.tabs")
+				?? sidebar.querySelector(".tabs")
+				?? document.querySelector("#sidebar .tabs .flexcol")
+				?? document.querySelector("#sidebar .tabs")
+				?? document.querySelector("#sidebar-tabs")
+				?? document.querySelector("#ui-right .tabs .flexcol")
+				?? document.querySelector("#ui-right .tabs");
+
+			if (!tabsFlexcol) return;
+
+			const tableWrapper = document.createElement("li");
+			tableWrapper.id = "farchievements-sidebar-item";
+			let tableNode = document.createElement("button");
+			tableNode.id = "farchievements-sidebar-button";
+			tableNode.type = "button";
+			tableNode.className = "AchievmentButtonLabelV13 ui-control plain icon fas fa-medal achievements-button";
+			tableNode.title = game.i18n.localize('Farchievements.Achievements');
+			tableNode.setAttribute("aria-label", game.i18n.localize('Farchievements.Achievements'));
+			tableNode.dataset.tooltip = game.i18n.localize('Farchievements.Achievements');
+			tableNode.innerHTML = `<i id="achievements-button" class="fas fa-medal achievements-button" style="display:none;"></i>`;
+			Achievements.bindOpenButton(tableNode);
+			tableWrapper.append(tableNode);
+			const collapseItem = tabsFlexcol.querySelector(".collapse")?.closest("li");
+			if (collapseItem) tabsFlexcol.insertBefore(tableWrapper, collapseItem);
+			else tabsFlexcol.append(tableWrapper);
 		}
 	}
-    static initializeAchievements() {
-        if (this.AchievementsScreen === undefined) {
-            this.AchievementsScreen = new AchievementsScreen();
+	static addSettingsButton(html) {
+		if (!Achievements.getSetting('GameSettingsButton', true)) return;
+
+		const root = Achievements.getRootElement(html);
+		const settingsContainer = root.querySelector("#settings-game")
+			?? root.querySelector(".settings.flexcol")
+			?? root.querySelector("#settings")
+			?? root.querySelector("[data-tab='settings']")
+			?? root.querySelector("[data-application-part='settings']")
+			?? root.querySelector(".settings")
+			?? document.querySelector("#settings-game")
+			?? document.querySelector(".settings.flexcol")
+			?? document.querySelector("#settings")
+			?? document.querySelector("[data-tab='settings']")
+			?? document.querySelector("[data-application-part='settings']")
+			?? document.querySelector(".settings")
+			?? Achievements.getRootElement(ui?.sidebar?.children?.get?.("settings"));
+
+		if (!settingsContainer) return;
+
+		const existing = settingsContainer.querySelector(".farchievements-open-button");
+		if (existing) {
+			Achievements.bindOpenButton(existing);
+			return;
+		}
+
+		const buttonId = document.getElementById("SettingsAchievementsButton") ? "" : ' id="SettingsAchievementsButton"';
+		const wrapperId = document.getElementById("FarchievementsSettings") ? "" : ' id="FarchievementsSettings"';
+		const settingsDiv = document.createElement("div");
+		settingsDiv.className = "farchievements-settings-button";
+		settingsDiv.style.margin = "0";
+		settingsDiv.innerHTML = `<div${wrapperId}><h4>Farchievements</h4>
+			<button${buttonId} class="farchievements-open-button" type="button" data-action="farchievements">
+				<i class="fas fa-medal achievements-button"></i> ${game.i18n.localize('Farchievements.Achievements')}
+			</button></div>`;
+
+		settingsContainer.appendChild(settingsDiv);
+		Achievements.bindOpenButton(settingsDiv.querySelector(".farchievements-open-button"));
+	}
+    static initializeAchievements(event) {
+		event?.preventDefault?.();
+		event?.stopPropagation?.();
+        if (Achievements.AchievementsScreen === undefined) {
+            Achievements.AchievementsScreen = new AchievementsScreen();
         }
-        this.AchievementsScreen.openDialog();
+        return Achievements.AchievementsScreen.openDialog();
     } 
 }
-class AchievementsScreen extends Application {
+class AchievementsScreen extends FarchievementsApplication {
 	activateListeners(html) {
         super.activateListeners(html);
 		html.find('.SyncAch').click(event => {
@@ -407,20 +517,25 @@ class AchievementsScreen extends Application {
 	}
     openDialog() {
         //LOAD TEMPLATE DATA
-        let $dialog = $('.achievementsscreen-window');
-        if ($dialog.length > 0) {
-            $dialog.remove();
-            //return;
-        }
-        const templateData = {
-            data: []
-        };
-        templateData.data = super.getData();
-        templateData.title = "Farchievements";
-		
-        const templatePath = "modules/farchievements/AchievementsScreen.html";
-		if(document.getElementsByClassName("achievementsscreen-window").length > 0){}
-        AchievementsScreen.renderMenu(templatePath, templateData);
+		try {
+			let $dialog = $('.achievementsscreen-window');
+			if ($dialog.length > 0) {
+				$dialog.remove();
+				//return;
+			}
+			const templateData = {
+				data: []
+			};
+			templateData.data = super.getData();
+			templateData.title = "Farchievements";
+			
+			const templatePath = "modules/farchievements/AchievementsScreen.html";
+			if(document.getElementsByClassName("achievementsscreen-window").length > 0){}
+			return AchievementsScreen.renderMenu(templatePath, templateData);
+		} catch (error) {
+			console.error("Farchievements | Failed to open achievements window", error);
+			ui.notifications.error("Farchievements | Failed to open achievements window. Check the console for details.");
+		}
 
     }
     static renderMenu(path, data) {
@@ -432,15 +547,31 @@ class AchievementsScreen extends Application {
             classes: ['achievementsscreen-window resizable']
         };
 		dialogOptions.resizable = true;
-        renderTemplate(path, data).then(dlg => {
-            new Dialog({
-                title: game.settings.get('farchievements', 'AchievementWindowTitle'),
+        return renderTemplate(path, data).then(dlg => {
+			const DialogClass = Achievements.getDialogClass();
+			if (!DialogClass) {
+				ui.notifications.error("Farchievements | Could not open the achievements window because the Foundry Dialog API was not found.");
+				return;
+			}
+            new DialogClass({
+                title: Achievements.getSetting('AchievementWindowTitle', 'Your Achievements'),
                 content: dlg,
                 buttons: {}
             }, dialogOptions).render(true);
+        }).catch(error => {
+			console.error("Farchievements | Failed to render achievements template", error);
+			ui.notifications.error("Farchievements | Failed to render achievements template. Check the console for details.");
         });
     }
 }
+class FarchievementsSettingsMenu extends FarchievementsFormApplication {
+	render(force, options) {
+		Achievements.initializeAchievements();
+		game.settings.sheet?.close?.();
+		return this;
+	}
+}
+globalThis.FarchievementsSettingsMenu = FarchievementsSettingsMenu;
 class AchievementSync{
 	static sleep(ms){
 	  return new Promise(resolve => setTimeout(resolve, ms));
@@ -537,7 +668,12 @@ class AchievementSync{
 					return;
 				}
 				if(start && amount > 0){
-					let d = new Dialog({
+					const DialogClass = Achievements.getDialogClass();
+					if (!DialogClass) {
+						AchievementSync.PlayAnimation(AchievementsToPlay);
+						return;
+					}
+					let d = new DialogClass({
 						title: `${game.i18n.localize('Farchievements.Html.SanitySaver.Title')}`,
 						content: `${game.i18n.localize('Farchievements.Html.SanitySaver.Body1')} ` + amount + `${game.i18n.localize('Farchievements.Html.SanitySaver.Body2')}`,
 						buttons: {
@@ -580,6 +716,9 @@ Hooks.on('renderSceneNavigation', async function() {
 		let bannerstyle = 'top: -200px; '+banner+' background-position: center!important; display: flex;  background-size: 100% 100% !important;';
 		var el = `<div id="Achievementbar" style="display: none;" class="Achievementbar"><div id="FoundryAchievements" class="FoundryAchievementsBanner" style="`+bannerstyle+`"><img id="AchievementIMG" class="AchievementIMG" src="modules/farchievements/standardIcon.PNG"></img><p class="AchievementText"><label class="AchievementTextLabel">${game.i18n.localize('Farchievements.NewAchievement')}</label> (${game.i18n.localize('Farchievements.Achievement')}) </p><i class="Shiny"></i></div></div>`;
 		document.getElementById("notifications").innerHTML = el;
+});
+Hooks.on('renderSidebar', function() {
+	Achievements.addChatControl();
 });
 
 Hooks.on('createChatMessage', (chatMessage) => {
@@ -739,34 +878,8 @@ Hooks.on('ready', async function() {
 	if(!game.user.isGM)
 		AchievementSync.SyncAchievements(game.settings.get('farchievements', 'showAchOnStartup'), true);
 });
-Hooks.on('renderSettings', function() {
-	//ADD BUTTON TO SETTINGS
-	function refreshData(){
-		let x = 0.1;  // 0.1 seconds
-		if(document.getElementById("FarchievementsSettings") == null && game.settings.get('farchievements', 'GameSettingsButton')){
-			$('#settings-game').append(`<div id="FarchievementsSettings" style="margin:0;"><h4>Farchievements</h4><button id="SettingsAchievementsButton" data-action="Achievements"><i class="fas fa-medal achievements-button"></i>${game.i18n.localize('Farchievements.Achievements')}</button></div>`);
-			let AchievementsButton = document.getElementById("SettingsAchievementsButton");
-			if(AchievementsButton != null)
-			AchievementsButton.onclick = Achievements.initializeAchievements;
-		}
-		// Do your thing here
-		//ui.notifications.notify("Test");
-		if(document.getElementsByClassName("context-items")[0] != null){
-			if(document.getElementById("contextAchievement") == null){
-				if(document.getElementsByClassName("context-items")[0].closest('.player') != null){
-					let id = document.getElementsByClassName("context-items")[0].closest('.player').getAttribute("data-user-id");
-					if(id != game.user.id && game.user.isGM){//You can't open your own achievements
-						$(".context-items").append(`<li class="context-item" id="contextAchievement"><i class="fas fa-medal"></i> ${game.i18n.localize('Farchievements.ViewAchievements')}</li>`);
-						let AchievmentContextButton = document.getElementById("contextAchievement");
-						game.settings.set('farchievements', 'loadSettingsForPlayer', id);
-						AchievmentContextButton.onclick = Achievements.initializeAchievements;
-					}
-				}
-			}
-		}
-		setTimeout(refreshData, x*1000);
-	}
-
+Hooks.on('renderSettings', function(app, html) {
+	Achievements.addSettingsButton(html);
 	if(game.user.isGM){
 		function WaitForReady(){
 			let x = 0.1;  // 0.1 seconds
@@ -779,10 +892,9 @@ Hooks.on('renderSettings', function() {
 		}
 		WaitForReady();
 	}
-
-	if(game.version < 13) //IF < Version 13 use search algorithm
-		refreshData();
-	//else look onReady
+});
+Hooks.on('renderSettingsConfig', function(app, html) {
+	Achievements.addSettingsButton(html);
 });
 Hooks.on("createChatMessage", async function (message){
 	if(message.content.includes('Achievements Synced'))
@@ -1026,7 +1138,9 @@ window.Farchievements.DisplayAchievementPopup = function (achievementName, playe
         </div>
     `;
 
-    new Dialog({
+	const DialogClass = Achievements.getDialogClass();
+	if (!DialogClass) return;
+    new DialogClass({
         title: "Achievement Unlocked!",
         content: popupContent,
         buttons: {
@@ -1232,32 +1346,10 @@ Hooks.on("renderChatMessage", (chatMessage, html, data) => {
 });
 
 Hooks.once('ready', () => {
+	Achievements.registerSettingsMenu();
 	if(game.version < 13) return;
-    function addSettingsButton() {
-		console.log("FArchievementsADDSETTINGSBUTTON");
-        if (!document.getElementById("FarchievementsSettings") && game.settings.get('farchievements', 'GameSettingsButton')) {
-            let settingsContainer = document.getElementsByClassName("settings flexcol")[0];
-
-            if (settingsContainer) {
-                let settingsDiv = document.createElement("div");
-                settingsDiv.id = "FarchievementsSettings";
-                settingsDiv.style.margin = "0";
-                settingsDiv.innerHTML = `<h4>Farchievements</h4>
-                    <button id="SettingsAchievementsButton" data-action="Achievements">
-                        <i class="fas fa-medal achievements-button"></i> ${game.i18n.localize('Farchievements.Achievements')}
-                    </button>`;
-
-                settingsContainer.appendChild(settingsDiv);
-
-                let AchievementsButton = document.getElementById("SettingsAchievementsButton");
-                if (AchievementsButton) {
-                    AchievementsButton.onclick = Achievements.initializeAchievements;
-                }
-            }
-        }
-    }
-
     function addContextButton() {
+		if (!Achievements.getSetting('EnableContextButton', true)) return;
         let contextMenu = document.getElementsByClassName("context-items")[0];
 
         if (contextMenu && !document.getElementById("contextAchievement")) {
@@ -1284,11 +1376,12 @@ Hooks.once('ready', () => {
     }
 
     function refreshData() {
+		Achievements.addChatControl();
+		Achievements.addSettingsButton();
         addContextButton();
         setTimeout(refreshData, 100); // Runs every 0.1 seconds
     }
 
-    addSettingsButton(); // Runs once
     refreshData(); // Starts periodic execution for context menu updates
 });
 

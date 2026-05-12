@@ -1,10 +1,10 @@
 # Farchievements
 
-![Latest Release Download Count](https://img.shields.io/github/downloads/Handyfon/Farchievements/farchievementsV1.1.zip?color=2b82fc&label=DOWNLOADS&style=for-the-badge)
+![Latest Release Download Count](https://img.shields.io/github/downloads/Handyfon/Farchievements/v14.0/module.zip?color=2b82fc&label=DOWNLOADS&style=for-the-badge)
 
 [![Forge Installs](https://img.shields.io/badge/dynamic/json?label=Forge%20Installs&query=package.installs&suffix=%25&url=https%3A%2F%2Fforge-vtt.com%2Fapi%2Fbazaar%2Fpackage%2Ffarchievements&colorB=006400&style=for-the-badge)](https://forge-vtt.com/bazaar#package=farchievements)
 
-![Foundry Core Compatible Version](https://img.shields.io/badge/dynamic/json.svg?url=https%3A%2F%2Fraw.githubusercontent.com%2Fp4535992%2Ffoundryvtt-farchievements%2Fmaster%2Fsrc%2Fmodule.json&label=Foundry%20Version&query=$.compatibility.verified&colorB=orange&style=for-the-badge)
+![Foundry Core Compatible Version](https://img.shields.io/badge/dynamic/json.svg?url=https%3A%2F%2Fraw.githubusercontent.com%2FHandyfon%2FFarchievements%2Fmaster%2Fmodule.json&label=Foundry%20Version&query=$.compatibility.verified&colorB=orange&style=for-the-badge)
 
 ![Latest Version](https://img.shields.io/badge/dynamic/json.svg?url=https%3A%2F%2Fraw.githubusercontent.com%2FHandyfon%2FFarchievements%2Fmaster%2Fmodule.json&label=Latest%20Release&prefix=v&query=$.version&colorB=red&style=for-the-badge)
 
@@ -14,7 +14,7 @@
 
 <b>Create and reward players with achievements:</b>
 
-![omniview](./wiki/omniview.gif)
+![omniview](./omniview.gif)
 
 ## Installation
 
@@ -24,7 +24,7 @@ To install this module manually:
 1.  Inside the Foundry "Configuration and Setup" screen, click "Add-on Modules"
 2.  Click "Install Module"
 3.  In the "Manifest URL" field, paste the following url:
-`https://raw.githubusercontent.com/p4535992/foundryvtt-farchievements/master/src/module.json`
+`https://github.com/Handyfon/Farchievements/releases/latest/download/module.json`
 4.  Click 'Install' and wait for installation to complete
 5.  Don't forget to enable the module in game using the "Manage Module" button
 
@@ -50,7 +50,7 @@ GM VIEW Edit mode
 
 ## Issues
 
-Any issues, bugs, or feature requests are always welcome to be reported directly to the [Issue Tracker](https://github.com/p4535992/foundryvtt-farchievements/issues ), or using the [Bug Reporter Module](https://foundryvtt.com/packages/bug-reporter/).
+Any issues, bugs, or feature requests are always welcome to be reported directly to the [Issue Tracker](https://github.com/Handyfon/Farchievements/issues), or using the [Bug Reporter Module](https://foundryvtt.com/packages/bug-reporter/).
 
 ## License
 

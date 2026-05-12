@@ -1,0 +1,80 @@
+name: Build Module Release
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - "module.json"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Build zip and GitHub release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Read module version
+        id: version
+        run: |
+          version="$(jq -r '.version' module.json)"
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
+          echo "tag=v${version}" >> "$GITHUB_OUTPUT"
+
+      - name: Build release manifest
+        run: |
+          mkdir -p dist
+          base_url="https://github.com/${GITHUB_REPOSITORY}/releases/download/v${{ steps.version.outputs.version }}"
+          jq \
+            --arg manifest "${base_url}/module.json" \
+            --arg download "${base_url}/module.zip" \
+            '.manifest = $manifest | .download = $download' \
+            module.json > dist/module.json
+
+      - name: Build module zip
+        run: |
+          mkdir -p dist/package
+          cp -R \
+            AchievementsScreen.css \
+            AchievementsScreen.html \
+            AchievementsScreen.js \
+            achievementbanner.jpg \
+            farchievementsbanner2.png \
+            farchievementsbannerGalaxy.png \
+            farchievementsbannerGold.png \
+            farchievementsbannerWooden.png \
+            farchievementslogo.png \
+            lang \
+            mixkit-tile-game-reveal-960.mp3 \
+            mystery.jpg \
+            omniview.gif \
+            README.md \
+            standardIcon.PNG \
+            standardIcon_bronze.webp \
+            standardIcon_glowing_gold.webp \
+            standardIcon_glowing_purple.webp \
+            standardIcon_gold.webp \
+            standardIcon_iron.webp \
+            standardIcon_silver.webp \
+            standardStinger_by_JFarenheit.mp3 \
+            dist/package/
+          cp dist/module.json dist/package/module.json
+          cd dist/package
+          zip -r ../module.zip .
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: Farchievements ${{ steps.version.outputs.version }}
+          files: |
+            dist/module.json
+            dist/module.zip
+          fail_on_unmatched_files: true
