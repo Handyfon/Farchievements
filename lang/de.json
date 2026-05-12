@@ -184,13 +184,23 @@
     "Farchievements.Html.ValuetoRoll": "Wert zum Würfeln", 
     "Farchievements.Html.ProgressType": "Fortschrittstyp", 
     "Farchievements.Html.DiceType": "Würfeltyp", 
-    "Farchievements.Html.ChainLength": "Kettenlänge"
+    "Farchievements.Html.ChainLength": "Kettenlänge",
 
     "Farchievements.Html.ImportExport":{
         "Title": "Farchievement Import/Export",
         "Body": "Ein kleines Werkzeug um deine Errungenschaften zu importieren und zu exportieren. <br><b>Bitte erstelle ein Backup, bevor du daran denkst, überschreiben zu drücken!</b>",
         "ClipboardOverwrite": "Aus Zwischenablage überschreiben",
-        "CopyToClipboard": "In Zwischenablage kopieren"
+        "CopyToClipboard": "In Zwischenablage kopieren",
+        "DataLabel": "Errungenschaften JSON",
+        "Download": "JSON herunterladen",
+        "ExportTitle": "Export",
+        "Format": "Formatieren",
+        "Import": "Importieren / Überschreiben",
+        "ImportPlaceholder": "Errungenschaften-JSON hier einfügen",
+        "ImportTitle": "Import",
+        "LoadFile": "Datei laden",
+        "NoImportData": "Keine Importdaten",
+        "PreviewEmpty": "Die Importvorschau erscheint hier."
     },
 	"Farchievements.Html.SanitySaver":{
         "Title": "Farchievements | Vernunftretter",

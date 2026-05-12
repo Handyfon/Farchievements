@@ -479,21 +479,9 @@ class Achievements {
 		button.addEventListener("click", Achievements.initializeAchievements);
 	}
 
-    static addChatControl() {
-		const existing = document.getElementById("farchievements-sidebar-button") ?? document.getElementById("achievements-button")?.closest("button,label,a");
-		if (!Achievements.getSetting('EnableSidebarButton', true)) {
-			existing?.closest("#farchievements-sidebar-item")?.remove();
-			existing?.remove?.();
-			return;
-		}
-
-		if (existing) {
-			Achievements.bindOpenButton(existing);
-			return;
-		}
-
+	static getSidebarTabs() {
 		const sidebar = Achievements.getRootElement(ui?.sidebar);
-		const tabsFlexcol = sidebar.querySelector(".tabs .flexcol")
+		return sidebar.querySelector(".tabs .flexcol")
 			?? sidebar.querySelector(".tabs.flexcol")
 			?? sidebar.querySelector("#sidebar-tabs")
 			?? sidebar.querySelector("nav#sidebar-tabs")
@@ -504,11 +492,50 @@ class Achievements {
 			?? document.querySelector("#sidebar-tabs")
 			?? document.querySelector("#ui-right .tabs .flexcol")
 			?? document.querySelector("#ui-right .tabs");
+	}
+
+	static getSidebarSettingsItem(tabs) {
+		if (!tabs) return null;
+		const settingsControl = tabs.querySelector("[data-tab='settings'], [data-tab='settings-sidebar'], [data-app='settings'], [aria-controls='settings']");
+		if (!settingsControl) return null;
+		const settingsItem = settingsControl.closest("li");
+		return settingsItem?.parentElement === tabs ? settingsItem : settingsControl;
+	}
+
+	static placeSidebarButton(control, tabs) {
+		if (!control || !tabs) return;
+		const settingsItem = Achievements.getSidebarSettingsItem(tabs);
+		if (settingsItem?.parentElement === tabs) {
+			if (control.nextElementSibling !== settingsItem) tabs.insertBefore(control, settingsItem);
+			return;
+		}
+
+		const collapseItem = tabs.querySelector(".collapse")?.closest("li") ?? tabs.querySelector(".collapse");
+		if (collapseItem?.parentElement === tabs) tabs.insertBefore(control, collapseItem);
+		else if (control.parentElement !== tabs) tabs.append(control);
+	}
+
+    static addChatControl() {
+		const existing = document.getElementById("farchievements-sidebar-button") ?? document.getElementById("achievements-button")?.closest("button,label,a");
+		if (!Achievements.getSetting('EnableSidebarButton', true)) {
+			existing?.closest("#farchievements-sidebar-item")?.remove();
+			existing?.remove?.();
+			return;
+		}
+
+		const tabsFlexcol = Achievements.getSidebarTabs();
+		if (existing) {
+			Achievements.bindOpenButton(existing);
+			Achievements.placeSidebarButton(existing.closest("#farchievements-sidebar-item") ?? existing, tabsFlexcol);
+			return;
+		}
 
 		if (!tabsFlexcol) return;
 
-		const tableWrapper = document.createElement("li");
-		tableWrapper.id = "farchievements-sidebar-item";
+		const settingsItem = Achievements.getSidebarSettingsItem(tabsFlexcol);
+		const useListItem = settingsItem?.tagName === "LI" || ["UL", "OL"].includes(tabsFlexcol.tagName) || Array.from(tabsFlexcol.children).some(child => child.tagName === "LI");
+		const tableWrapper = useListItem ? document.createElement("li") : null;
+		if (tableWrapper) tableWrapper.id = "farchievements-sidebar-item";
 		let tableNode = document.createElement("button");
 		tableNode.id = "farchievements-sidebar-button";
 		tableNode.type = "button";
@@ -518,10 +545,8 @@ class Achievements {
 		tableNode.dataset.tooltip = game.i18n.localize('Farchievements.Achievements');
 		tableNode.innerHTML = `<i id="achievements-button" class="fas fa-medal achievements-button" style="display:none;"></i>`;
 		Achievements.bindOpenButton(tableNode);
-		tableWrapper.append(tableNode);
-		const collapseItem = tabsFlexcol.querySelector(".collapse")?.closest("li");
-		if (collapseItem) tabsFlexcol.insertBefore(tableWrapper, collapseItem);
-		else tabsFlexcol.append(tableWrapper);
+		if (tableWrapper) tableWrapper.append(tableNode);
+		Achievements.placeSidebarButton(tableWrapper ?? tableNode, tabsFlexcol);
 	}
 	static addSettingsButton(html) {
 		if (!Achievements.getSetting('GameSettingsButton', true)) return;
@@ -559,14 +584,21 @@ class Achievements {
 		settingsContainer.appendChild(button);
 		Achievements.bindOpenButton(button);
 	}
-    static initializeAchievements(event) {
+	static async setDefaultAchievementView() {
+		const defaultPlayer = game.user.isGM ? "" : game.user.id;
+		if (game.settings.get('farchievements', 'loadSettingsForPlayer') !== defaultPlayer) {
+			await game.settings.set('farchievements', 'loadSettingsForPlayer', defaultPlayer);
+		}
+	}
+    static async initializeAchievements(event, options = {}) {
 		event?.preventDefault?.();
 		event?.stopPropagation?.();
+		if (!options.preserveSelectedPlayer) await Achievements.setDefaultAchievementView();
         if (Achievements.AchievementsScreen === undefined) {
             Achievements.AchievementsScreen = new AchievementsScreen();
         }
         return Achievements.AchievementsScreen.openDialog();
-    } 
+    }
 }
 class AchievementsScreen extends FarchievementsApplication {
 	activateListeners(html) {
@@ -1532,7 +1564,7 @@ function getFarchievementsUserIdFromContextTarget(target) {
 async function openFarchievementsForUser(userId) {
 	if (!game.user.isGM || !userId || userId === game.user.id || !game.users.get(userId)) return;
 	await game.settings.set('farchievements', 'loadSettingsForPlayer', userId);
-	Achievements.initializeAchievements();
+	Achievements.initializeAchievements(null, { preserveSelectedPlayer: true });
 }
 
 Hooks.on("getUserContextOptions", (...args) => {
@@ -1576,9 +1608,9 @@ Hooks.once('ready', () => {
                     contextItem.id = "contextAchievement";
                     contextItem.innerHTML = `<i class="fas fa-medal"></i> ${game.i18n.localize('Farchievements.ViewAchievements')}`;
 
-                    contextItem.onclick = () => {
-                        game.settings.set('farchievements', 'loadSettingsForPlayer', id);
-                        Achievements.initializeAchievements();
+                    contextItem.onclick = async () => {
+                        await game.settings.set('farchievements', 'loadSettingsForPlayer', id);
+                        Achievements.initializeAchievements(null, { preserveSelectedPlayer: true });
                     };
 
                     contextMenu.appendChild(contextItem);

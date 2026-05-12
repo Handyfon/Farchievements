@@ -39,8 +39,8 @@
 
 		document.getElementById('CustomAchievmentBackgroundStyling').innerHTML = '<style>.achievementsscreen-window .window-content{background: #262626;}</style>';
 		document.getElementById('toLoadNumber').value = game.settings.get('farchievements', 'loadPerPage');
-		const FARCH_CARD_STYLES = new Set(["gold", "silver", "bronze", "green", "red", "purple", "holographic"]);
-		const FARCH_CARD_STYLE_ALIASES = {
+		globalThis.FARCH_CARD_STYLES = new Set(["gold", "silver", "bronze", "green", "red", "purple", "holographic"]);
+		globalThis.FARCH_CARD_STYLE_ALIASES = {
 			ornate: "gold",
 			cursed: "red",
 			frostglass: "silver",
@@ -50,11 +50,11 @@
 			prismatic: "holographic"
 		};
 		function normalizeAchievementCardStyle(style) {
-			return FARCH_CARD_STYLE_ALIASES[style] ?? style;
+			return globalThis.FARCH_CARD_STYLE_ALIASES[style] ?? style;
 		}
 		function getAchievementCardStyleClass(achievement) {
 			const style = normalizeAchievementCardStyle(achievement?.cardStyle);
-			return FARCH_CARD_STYLES.has(style) ? `achievement-card-${style}` : "";
+			return globalThis.FARCH_CARD_STYLES.has(style) ? `achievement-card-${style}` : "";
 		}
 		function setHolographicHoverVars(card, relativeX, relativeY) {
 			if (!card.classList.contains('achievement-card-holographic')) return;
@@ -501,6 +501,16 @@
 				loadAchievements();
 			}
 		}
+		function setAchievementListLayout(mode = "grid") {
+			const list = document.getElementById('AchievementList');
+			if (!list) return;
+			list.classList.toggle("scoreboardList", mode === "scoreboard");
+			list.style.removeProperty("display");
+			list.style.removeProperty("text-align");
+			if (mode !== "grid") {
+				list.style.removeProperty("grid-template-rows");
+			}
+		}
 		async function loadAchievements() {
 			// Retrieve the stored search term and sorting type
 			let searchValue = game.settings.get('farchievements', 'lastSearchTerm') || "";
@@ -587,6 +597,7 @@
 			document.getElementById('CustomAchievmentStyling').innerHTML = "<style>.far-grid-item:hover {transform: translate3d(0,-4px,0); filter: drop-shadow(0 8px 18px rgba(0,0,0,0.5));}</style>";
 
 			//DESCRIPTION STYLE — handled entirely by AchievementsScreen.css for sleek hover reveal
+			setAchievementListLayout("grid");
 			document.getElementById('AchievementList').innerHTML = "";
 			let name = "";
 			let originname = ""
@@ -972,6 +983,7 @@
 			// DESCRIPTION handling delegated to AchievementsScreen.css
 
 			const data = game.settings.get('farchievements', 'achievementdata').split(';;;');
+			setAchievementListLayout("scoreboard");
 			document.getElementById('AchievementList').innerHTML = "";
 			let name = "";
 			let icon = game.settings.get('farchievements', 'standarticon');
@@ -1049,8 +1061,6 @@
 						${user.name} | <label class="achScoreLabel">${score}</label>
 						<div class="AchScoreboardColl">${AchievementsCollection}</div>
 					</div>`;
-					document.getElementById('AchievementList').style.display = 'block';
-					document.getElementById('AchievementList').style.textAlign = '-webkit-center';
 			});
 
 		}
@@ -1072,6 +1082,7 @@
 
 			document.getElementById('CustomAchievmentBackgroundStyling').innerHTML = "";
 			document.getElementById('playerbackground').style.backgroundImage = "";
+			setAchievementListLayout("grid");
 			document.getElementById('AchievementList').innerHTML = "";
 			document.getElementById('CustomAchievmentStyling').innerHTML = "";
 
@@ -1528,57 +1539,321 @@
 				$dialog.remove();
 				//return;
 			}
-			let data = game.settings.get('farchievements', 'achievementdataNEW');
+			const data = game.settings.get('farchievements', 'achievementdataNEW') || "[]";
+			const notificationPrefix = game.i18n.localize('Farchievements.Notification.Prefix');
+			const localize = (key, fallback) => {
+				const value = game.i18n.localize(key);
+				return value === key ? fallback : value;
+			};
+			const escapeHtml = (value) => String(value)
+				.replace(/&/g, "&amp;")
+				.replace(/</g, "&lt;")
+				.replace(/>/g, "&gt;");
+			const validateImportData = (raw) => {
+				const value = String(raw || "").trim();
+				if (!value) throw new Error(game.i18n.localize('Farchievements.Notification.OverwriteWithNothing'));
+				const parsed = JSON.parse(value);
+				if (!Array.isArray(parsed) || parsed.length < 1) throw new Error(game.i18n.localize('Farchievements.Notification.InvalidData'));
+				const invalid = parsed.find(achievement => !achievement || typeof achievement !== "object" || typeof achievement.name !== "string");
+				if (invalid) throw new Error(game.i18n.localize('Farchievements.Notification.InvalidData'));
+				return parsed;
+			};
+			const copyText = async (text) => {
+				if (navigator.clipboard?.writeText) {
+					await navigator.clipboard.writeText(text);
+					return;
+				}
+				const fallback = document.createElement("textarea");
+				fallback.value = text;
+				fallback.style.position = "fixed";
+				fallback.style.opacity = "0";
+				document.body.appendChild(fallback);
+				fallback.select();
+				document.execCommand("copy");
+				fallback.remove();
+			};
+			const downloadText = (text) => {
+				const filename = `farchievements-${game.world.id || "world"}-${new Date().toISOString().slice(0, 10)}.json`;
+				if (foundry?.utils?.saveDataToFile) {
+					foundry.utils.saveDataToFile(text, "application/json", filename);
+					return;
+				}
+				const link = document.createElement("a");
+				link.href = `data:application/json;charset=utf-8,${encodeURIComponent(text)}`;
+				link.download = filename;
+				link.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true, view: window }));
+			};
+			const getTextarea = () => document.getElementById("ImportExportInput");
+			const currentPrettyData = (() => {
+				try { return JSON.stringify(JSON.parse(data), null, 2); }
+				catch { return data; }
+			})();
 			const dialogOptions = {
 				classes: ['dialog ImportExportWindow']
 			};
-			let notificationPrefix = game.i18n.localize('Farchievements.Notification.Prefix');
 			new Dialog({
 				title: game.i18n.localize('Farchievements.Html.ImportExport.Title'),
-				content: `<p>${game.i18n.localize('Farchievements.Html.ImportExport.Body')}</p><input type="text" id="ImportExportInput" value='${data}'></input>`,
+				content: `
+					<div class="farchievements-import-export">
+						<p>${game.i18n.localize('Farchievements.Html.ImportExport.Body')}</p>
+						<label class="farchievements-import-export-label" for="ImportExportInput">${localize('Farchievements.Html.ImportExport.DataLabel', 'Achievement JSON')}</label>
+						<textarea id="ImportExportInput" spellcheck="false">${escapeHtml(currentPrettyData)}</textarea>
+						<div class="farchievements-import-export-actions">
+							<label class="button" for="ImportExportFile"><i class="fas fa-file-import"></i> ${localize('Farchievements.Html.ImportExport.LoadFile', 'Load File')}</label>
+							<input id="ImportExportFile" type="file" accept="application/json,.json,.txt">
+							<button type="button" id="ImportExportFormat"><i class="fas fa-align-left"></i> ${localize('Farchievements.Html.ImportExport.Format', 'Format')}</button>
+						</div>
+					</div>`,
 				buttons: {
-					AchOverride: {
-						label: `<a style="color:red;" >${game.i18n.localize('Farchievements.Html.ImportExport.ClipboardOverwrite')}</a>`,
-						icon: '<i class="fas fa-exclamation-triangle" style="color:red"></i>',
-						callback: () => {
-							let inputElement = document.getElementById("ImportExportInput");
-							let AchievementList = JSON.parse(inputElement.value);
-							document.body.appendChild(inputElement);
-							inputElement.select();
-							document.execCommand('paste');
-							if (AchievementList == "") {
-								ui.notifications.warn(notificationPrefix + game.i18n.localize('Farchievements.Notification.OverwriteWithNothing'));
-								return;
+					AchImport: {
+						label: localize('Farchievements.Html.ImportExport.Import', 'Import / Overwrite'),
+						icon: '<i class="fas fa-file-import"></i>',
+						callback: async () => {
+							const inputElement = getTextarea();
+							try {
+								const achievements = validateImportData(inputElement.value);
+								const normalized = JSON.stringify(achievements);
+								if (normalized == data) {
+									ui.notifications.notify(notificationPrefix + game.i18n.localize('Farchievements.Notification.NoChange'));
+									return false;
+								}
+								await game.settings.set('farchievements', 'achievementdataNEW', normalized);
+								ui.notifications.notify(notificationPrefix + game.i18n.localize('Farchievements.Notification.Overwritten'));
+								$('.achievementsscreen-window').remove();
+							} catch (error) {
+								ui.notifications.error(notificationPrefix + error.message);
+								return false;
 							}
-							if (AchievementList.length <= 1) {
-								ui.notifications.error(notificationPrefix + game.i18n.localize('Farchievements.Notification.InvalidData'));
-								return;
-							}
-							if (inputElement.value == data) {
-								ui.notifications.notify(notificationPrefix + game.i18n.localize('Farchievements.Notification.NoChange'));
-								return;
-							}
-
-							game.settings.set('farchievements', 'achievementdataNEW', inputElement.value);
-							ui.notifications.notify(notificationPrefix + game.i18n.localize('Farchievements.Notification.Overwritten'));
-							let $dialog = $('.achievementsscreen-window');
-							$dialog.remove();
 						}
 					},
 					AchCopy: {
-						label: `<a style="color:green;" >${game.i18n.localize('Farchievements.Html.ImportExport.CopyToClipboard')}</a>`,
-						icon: '<i class="fas fa-copy" style="color:green;"></i>',
-						callback: () => {
-							let inputElement = document.getElementById("ImportExportInput");
-							inputElement.value = game.settings.get('farchievements', 'achievementdataNEW');
-							document.body.appendChild(inputElement);
-							inputElement.select();
-							document.execCommand('copy');
-							ui.notifications.notify(notificationPrefix + game.i18n.localize('Farchievements.Notification.CopiedToClipboard'));
+						label: game.i18n.localize('Farchievements.Html.ImportExport.CopyToClipboard'),
+						icon: '<i class="fas fa-copy"></i>',
+						callback: async () => {
+							const inputElement = getTextarea();
+							try {
+								const achievements = validateImportData(inputElement.value);
+								const text = JSON.stringify(achievements, null, 2);
+								inputElement.value = text;
+								await copyText(text);
+								ui.notifications.notify(notificationPrefix + game.i18n.localize('Farchievements.Notification.CopiedToClipboard'));
+							} catch (error) {
+								ui.notifications.error(notificationPrefix + error.message);
+							}
+							return false;
 						}
 					},
+					AchDownload: {
+						label: localize('Farchievements.Html.ImportExport.Download', 'Download JSON'),
+						icon: '<i class="fas fa-file-arrow-down"></i>',
+						callback: () => {
+							const inputElement = getTextarea();
+							try {
+								const achievements = validateImportData(inputElement.value);
+								const text = JSON.stringify(achievements, null, 2);
+								inputElement.value = text;
+								downloadText(text);
+							} catch (error) {
+								ui.notifications.error(notificationPrefix + error.message);
+							}
+							return false;
+						}
+					}
 				},
+				render: (html) => {
+					const root = html instanceof HTMLElement ? html : html[0];
+					const textarea = root.querySelector("#ImportExportInput");
+					root.querySelector("#ImportExportFile")?.addEventListener("change", event => {
+						const file = event.currentTarget.files?.[0];
+						if (!file) return;
+						const reader = new FileReader();
+						reader.onload = () => {
+							textarea.value = String(reader.result || "");
+							try {
+								const achievements = validateImportData(textarea.value);
+								textarea.value = JSON.stringify(achievements, null, 2);
+							} catch (error) {
+								ui.notifications.error(notificationPrefix + error.message);
+							}
+						};
+						reader.readAsText(file);
+						event.currentTarget.value = "";
+					});
+					root.querySelector("#ImportExportFormat")?.addEventListener("click", () => {
+						try {
+							const achievements = validateImportData(textarea.value);
+							textarea.value = JSON.stringify(achievements, null, 2);
+						} catch (error) {
+							ui.notifications.error(notificationPrefix + error.message);
+						}
+					});
+					textarea?.focus();
+					textarea?.select();
+				}
 			}, dialogOptions).render(true);
+		}
+		async function openImportExport() {
+			$('.ImportExportWindow').remove();
+			const data = game.settings.get('farchievements', 'achievementdataNEW') || "[]";
+			const notificationPrefix = game.i18n.localize('Farchievements.Notification.Prefix');
+			const localize = (key, fallback) => {
+				const value = game.i18n.localize(key);
+				return value === key ? fallback : value;
+			};
+			const escapeHtml = (value) => String(value)
+				.replace(/&/g, "&amp;")
+				.replace(/</g, "&lt;")
+				.replace(/>/g, "&gt;");
+			const escapeAttr = (value) => escapeHtml(value).replace(/"/g, "&quot;");
+			const validateImportData = (raw) => {
+				const value = String(raw || "").trim();
+				if (!value) throw new Error(game.i18n.localize('Farchievements.Notification.OverwriteWithNothing'));
+				const parsed = JSON.parse(value);
+				if (!Array.isArray(parsed) || parsed.length < 1) throw new Error(game.i18n.localize('Farchievements.Notification.InvalidData'));
+				const invalid = parsed.find(achievement => !achievement || typeof achievement !== "object" || typeof achievement.name !== "string");
+				if (invalid) throw new Error(game.i18n.localize('Farchievements.Notification.InvalidData'));
+				return parsed;
+			};
+			const copyText = async (text) => {
+				if (navigator.clipboard?.writeText) {
+					await navigator.clipboard.writeText(text);
+					return;
+				}
+				const fallback = document.createElement("textarea");
+				fallback.value = text;
+				fallback.style.position = "fixed";
+				fallback.style.opacity = "0";
+				document.body.appendChild(fallback);
+				fallback.select();
+				document.execCommand("copy");
+				fallback.remove();
+			};
+			const downloadText = (text) => {
+				const filename = `farchievements-${game.world.id || "world"}-${new Date().toISOString().slice(0, 10)}.json`;
+				if (foundry?.utils?.saveDataToFile) {
+					foundry.utils.saveDataToFile(text, "application/json", filename);
+					return;
+				}
+				const link = document.createElement("a");
+				link.href = `data:application/json;charset=utf-8,${encodeURIComponent(text)}`;
+				link.download = filename;
+				link.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true, view: window }));
+			};
+			const currentAchievements = (() => {
+				try {
+					const parsed = JSON.parse(data);
+					return Array.isArray(parsed) ? parsed : [];
+				} catch {
+					return [];
+				}
+			})();
+			const currentPrettyData = currentAchievements.length ? JSON.stringify(currentAchievements, null, 2) : data;
+			const renderImportPreview = (raw, root, { silent = false } = {}) => {
+				const countEl = root.querySelector("#ImportExportImportCount");
+				const previewEl = root.querySelector("#ImportExportPreview");
+				if (!countEl || !previewEl) return null;
+				try {
+					const achievements = validateImportData(raw);
+					countEl.textContent = `${achievements.length} ${localize('Farchievements.Achievements', 'Achievements')}`;
+					previewEl.innerHTML = achievements.map(achievement => {
+						const image = achievement.image || game.settings.get('farchievements', 'standarticon');
+						const points = achievement.points ?? 0;
+						const cardStyleClass = getAchievementCardStyleClass(achievement);
+						return `<span class="farchievements-import-badge ${escapeAttr(cardStyleClass)}" title="${escapeAttr(achievement.name)}">
+							<img src="${escapeAttr(image)}">
+							<span>${escapeHtml(achievement.name)}</span>
+							<b>${escapeHtml(points)}</b>
+						</span>`;
+					}).join("");
+					previewEl.classList.remove("is-invalid");
+					return achievements;
+				} catch (error) {
+					countEl.textContent = localize('Farchievements.Html.ImportExport.NoImportData', 'No valid import data');
+					previewEl.innerHTML = `<span class="farchievements-import-empty">${escapeHtml(error.message)}</span>`;
+					previewEl.classList.add("is-invalid");
+					if (!silent) ui.notifications.error(notificationPrefix + error.message);
+					return null;
+				}
+			};
+
+			new Dialog({
+				title: game.i18n.localize('Farchievements.Html.ImportExport.Title'),
+				content: `
+					<div class="farchievements-import-export">
+						<section class="farchievements-ie-panel farchievements-export-panel">
+							<header>
+								<h3>${localize('Farchievements.Html.ImportExport.ExportTitle', 'Export')}</h3>
+								<span>${currentAchievements.length} ${localize('Farchievements.Achievements', 'Achievements')}</span>
+							</header>
+							<textarea id="ImportExportOutput" readonly spellcheck="false">${escapeHtml(currentPrettyData)}</textarea>
+							<div class="farchievements-import-export-actions">
+								<button type="button" id="ImportExportCopy"><i class="fas fa-copy"></i> ${game.i18n.localize('Farchievements.Html.ImportExport.CopyToClipboard')}</button>
+								<button type="button" id="ImportExportDownload"><i class="fas fa-file-arrow-down"></i> ${localize('Farchievements.Html.ImportExport.Download', 'Download JSON')}</button>
+							</div>
+						</section>
+						<section class="farchievements-ie-panel farchievements-import-panel">
+							<header>
+								<h3>${localize('Farchievements.Html.ImportExport.ImportTitle', 'Import')}</h3>
+								<span id="ImportExportImportCount">${localize('Farchievements.Html.ImportExport.NoImportData', 'No import data')}</span>
+							</header>
+							<p>${game.i18n.localize('Farchievements.Html.ImportExport.Body')}</p>
+							<label class="farchievements-import-export-label" for="ImportExportInput">${localize('Farchievements.Html.ImportExport.DataLabel', 'Achievement JSON')}</label>
+							<textarea id="ImportExportInput" spellcheck="false" placeholder="${escapeAttr(localize('Farchievements.Html.ImportExport.ImportPlaceholder', 'Paste achievement JSON here'))}"></textarea>
+							<div class="farchievements-import-export-actions">
+								<button type="button" id="ImportExportLoadFile"><i class="fas fa-file-import"></i> ${localize('Farchievements.Html.ImportExport.LoadFile', 'Load File')}</button>
+								<input id="ImportExportFile" type="file" accept="application/json,.json,.txt">
+								<button type="button" id="ImportExportApply"><i class="fas fa-triangle-exclamation"></i> ${localize('Farchievements.Html.ImportExport.Import', 'Import / Overwrite')}</button>
+							</div>
+							<div id="ImportExportPreview" class="farchievements-import-preview">
+								<span class="farchievements-import-empty">${localize('Farchievements.Html.ImportExport.PreviewEmpty', 'Import preview will appear here.')}</span>
+							</div>
+						</section>
+					</div>`,
+				buttons: {},
+				render: (html) => {
+					const root = html instanceof HTMLElement ? html : html[0];
+					const exportTextarea = root.querySelector("#ImportExportOutput");
+					const importTextarea = root.querySelector("#ImportExportInput");
+					const updatePreview = (silent = true) => renderImportPreview(importTextarea.value, root, { silent });
+					root.querySelector("#ImportExportCopy")?.addEventListener("click", async () => {
+						try {
+							await copyText(exportTextarea.value);
+							ui.notifications.notify(notificationPrefix + game.i18n.localize('Farchievements.Notification.CopiedToClipboard'));
+						} catch (error) {
+							ui.notifications.error(notificationPrefix + error.message);
+						}
+					});
+					root.querySelector("#ImportExportDownload")?.addEventListener("click", () => downloadText(exportTextarea.value));
+					root.querySelector("#ImportExportLoadFile")?.addEventListener("click", () => root.querySelector("#ImportExportFile")?.click());
+					root.querySelector("#ImportExportApply")?.addEventListener("click", async () => {
+						const achievements = updatePreview(false);
+						if (!achievements) return;
+						const normalized = JSON.stringify(achievements);
+						if (normalized == data) {
+							ui.notifications.notify(notificationPrefix + game.i18n.localize('Farchievements.Notification.NoChange'));
+							return;
+						}
+						await game.settings.set('farchievements', 'achievementdataNEW', normalized);
+						ui.notifications.notify(notificationPrefix + game.i18n.localize('Farchievements.Notification.Overwritten'));
+						$('.achievementsscreen-window').remove();
+						$('.ImportExportWindow').remove();
+					});
+					importTextarea?.addEventListener("input", () => updatePreview(true));
+					root.querySelector("#ImportExportFile")?.addEventListener("change", event => {
+						const file = event.currentTarget.files?.[0];
+						if (!file) return;
+						const reader = new FileReader();
+						reader.onload = () => {
+							importTextarea.value = String(reader.result || "");
+							const achievements = updatePreview(false);
+							if (achievements) importTextarea.value = JSON.stringify(achievements, null, 2);
+						};
+						reader.readAsText(file);
+						event.currentTarget.value = "";
+					});
+					importTextarea?.focus();
+				}
+			}, { classes: ['dialog ImportExportWindow'] }).render(true);
 		}
 		async function updateAchievement(updateType, achievementname) {
 			let AchievementData = JSON.parse(await game.settings.get('farchievements', 'achievementdataNEW'));

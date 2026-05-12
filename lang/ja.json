@@ -152,8 +152,18 @@
         "Title": "Farchievementsのインポート/エクスポート",
         "Body": "これは、アチーブメントのインポートとエクスポートを行うための小さなツールです。 <b>競合の問題を考える前に、必ず全てをバックアップしてください!!</b>",
         "ClipboardOverwrite": "クリップボードからの上書き保存",
-        "CopyToClipboard": "クリップボードへコピーする"
-    }
+        "CopyToClipboard": "クリップボードへコピーする",
+        "DataLabel": "アチーブメントJSON",
+        "Download": "JSONをダウンロード",
+        "ExportTitle": "エクスポート",
+        "Format": "整形",
+        "Import": "インポート / 上書き",
+        "ImportPlaceholder": "アチーブメントJSONをここに貼り付け",
+        "ImportTitle": "インポート",
+        "LoadFile": "ファイルを読み込む",
+        "NoImportData": "インポートデータなし",
+        "PreviewEmpty": "インポートプレビューがここに表示されます。"
+    },
     "Farchievements.Settings.ListView" : {
         "Text": "リストモード",
         "Hint": "リストモードを切り替える"
@@ -225,6 +235,4 @@
         "ButtonSeeAll": "すべてのアニメーションを見る",
         "ButtonSkip": "スキップ"
     }
-}
-
 }

@@ -201,7 +201,17 @@
         "Title": "Farchievements Import/Export",
         "Body": "This is a small tool to import and export your Achievements. <b>Make sure to backup everything before you even think about overriding!!</b>",
         "ClipboardOverwrite": "Overwrite from Clipboard",
-        "CopyToClipboard": "Copy to Clipboard"
+        "CopyToClipboard": "Copy to Clipboard",
+        "DataLabel": "Achievement JSON",
+        "Download": "Download JSON",
+        "ExportTitle": "Export",
+        "Format": "Format",
+        "Import": "Import / Overwrite",
+        "ImportPlaceholder": "Paste achievement JSON here",
+        "ImportTitle": "Import",
+        "LoadFile": "Load File",
+        "NoImportData": "No import data",
+        "PreviewEmpty": "Import preview will appear here."
     },
 	"Farchievements.Html.SanitySaver":{
         "Title": "Farchievements | sanity saver",
