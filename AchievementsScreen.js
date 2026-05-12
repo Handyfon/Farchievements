@@ -485,18 +485,15 @@ class Achievements {
 			return;
 		}
 
-		const buttonId = document.getElementById("SettingsAchievementsButton") ? "" : ' id="SettingsAchievementsButton"';
-		const wrapperId = document.getElementById("FarchievementsSettings") ? "" : ' id="FarchievementsSettings"';
-		const settingsDiv = document.createElement("div");
-		settingsDiv.className = "farchievements-settings-button";
-		settingsDiv.style.margin = "0";
-		settingsDiv.innerHTML = `<div${wrapperId}><h4>Farchievements</h4>
-			<button${buttonId} class="farchievements-open-button" type="button" data-action="farchievements">
-				<i class="fas fa-medal achievements-button"></i> ${game.i18n.localize('Farchievements.Achievements')}
-			</button></div>`;
+		const button = document.createElement("button");
+		if (!document.getElementById("SettingsAchievementsButton")) button.id = "SettingsAchievementsButton";
+		button.className = "farchievements-open-button";
+		button.type = "button";
+		button.dataset.action = "farchievements";
+		button.innerHTML = `<i class="fa-solid fa-medal" inert></i> ${game.i18n.localize('Farchievements.Achievements')}`;
 
-		settingsContainer.appendChild(settingsDiv);
-		Achievements.bindOpenButton(settingsDiv.querySelector(".farchievements-open-button"));
+		settingsContainer.appendChild(button);
+		Achievements.bindOpenButton(button);
 	}
     static initializeAchievements(event) {
 		event?.preventDefault?.();
