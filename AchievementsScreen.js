@@ -429,10 +429,52 @@ Hooks.once('init', function() {
 		game.settings.settings.set(id, setting);
 	}
 
-	console.log("Initialised Farchievements");
 });
-const FarchievementsApplication = globalThis.Application ?? globalThis.foundry?.appv1?.api?.Application;
-const FarchievementsFormApplication = globalThis.FormApplication ?? globalThis.foundry?.appv1?.api?.FormApplication;
+window.FarchievementsApplication ??= globalThis.foundry?.applications?.api?.ApplicationV2 ?? globalThis.foundry?.applications?.api?.Application;
+window.FarchievementsFormApplication ??= globalThis.foundry?.applications?.api?.ApplicationV2 ?? globalThis.foundry?.applications?.api?.Application;
+
+class FarchievementsDialogV2 extends (globalThis.foundry?.applications?.api?.DialogV2 ?? class {}) {
+	constructor(data = {}, options = {}) {
+		const translatedButtons = Object.entries(data.buttons ?? {}).map(([action, button]) => ({
+			action,
+			label: button.label ?? action,
+			icon: typeof button.icon === "string" ? button.icon.replace(/<[^>]*>/g, "").trim() : undefined,
+			default: data.default === action,
+			callback: button.callback
+		}));
+		const dialogOptions = {
+			...options,
+			classes: [...(options.classes ?? [])],
+			window: {
+				...(options.window ?? {}),
+				title: data.title ?? options.window?.title,
+				resizable: options.resizable ?? options.window?.resizable ?? false,
+				contentClasses: [...(options.window?.contentClasses ?? [])]
+			}
+		};
+		dialogOptions.content = data.content ?? "";
+		dialogOptions.buttons = translatedButtons;
+		if (data.render) dialogOptions.render = data.render;
+		super(dialogOptions);
+		this._farchievementsRenderCallback = data.render;
+		this._farchievementsCloseCallback = data.close;
+	}
+
+	async _onRender(context, options) {
+		await super._onRender(context, options);
+		if (typeof this._farchievementsRenderCallback === "function") {
+			this._farchievementsRenderCallback(this.window?.content ?? this.element, this);
+		}
+	}
+
+	async _onClose(options) {
+		if (typeof this._farchievementsCloseCallback === "function") {
+			try { this._farchievementsCloseCallback(this.window?.content ?? this.element, this); } catch (error) { console.error("Farchievements | Dialog close callback failed", error); }
+		}
+		return super._onClose(options);
+	}
+}
+window.FarchievementsDialogV2 ??= FarchievementsDialogV2;
 class Achievements {
 	static getSetting(key, fallback) {
 		try {
@@ -461,7 +503,7 @@ class Achievements {
 	}
 
 	static getDialogClass() {
-		return globalThis.Dialog ?? globalThis.foundry?.appv1?.api?.Dialog;
+		return window.FarchievementsDialogV2;
 	}
 
 	static getRootElement(html) {
@@ -600,71 +642,88 @@ class Achievements {
         return Achievements.AchievementsScreen.openDialog();
     }
 }
-class AchievementsScreen extends FarchievementsApplication {
-	activateListeners(html) {
-        super.activateListeners(html);
-		html.find('.SyncAch').click(event => {
-		   //update the actor
-		   ui.notifications.notify("SYNC");
-		});
+class AchievementsScreen extends window.FarchievementsApplication {
+	static DEFAULT_OPTIONS = {
+		id: "farchievements-achievements-screen",
+		classes: ["achievementsscreen-window", "resizable"],
+		position: { width: 1050, height: 630, top: 200, left: Math.max(20, (window.innerWidth / 2) - 510) },
+		window: {
+			title: "Farchievements",
+			resizable: true,
+			contentClasses: ["resizable"]
+		}
+	};
+
+	async _renderHTML(context, options) {
+		const templatePath = "modules/farchievements/AchievementsScreen.html";
+		const templateData = {
+			data: [],
+			title: "Farchievements"
+		};
+		return foundry.applications.handlebars.renderTemplate(templatePath, templateData);
 	}
-    openDialog() {
-        //LOAD TEMPLATE DATA
-		try {
-			let $dialog = $('.achievementsscreen-window');
-			if ($dialog.length > 0) {
-				$dialog.remove();
-				//return;
+
+	_replaceHTML(result, content, options) {
+		$(content).html(result);
+	}
+
+	async _onRender(context, options) {
+		await super._onRender(context, options);
+		const root = this.window?.content ?? this.element;
+		if (!root) return;
+		const script = root.querySelector("#AchievementScript");
+		if (script?.textContent) {
+			try {
+				window.eval(script.textContent);
+			} catch (error) {
+				console.error("Farchievements | Failed to initialise achievements window script", error);
 			}
-			const templateData = {
-				data: []
-			};
-			templateData.data = super.getData();
-			templateData.title = "Farchievements";
-			
-			const templatePath = "modules/farchievements/AchievementsScreen.html";
-			if(document.getElementsByClassName("achievementsscreen-window").length > 0){}
-			return AchievementsScreen.renderMenu(templatePath, templateData);
+		}
+		root.querySelectorAll("script").forEach(element => element.remove());
+	}
+
+	activateListeners(html) {
+		const root = Achievements.getRootElement(html);
+		root.querySelector('.SyncAch')?.addEventListener('click', () => ui.notifications.notify("SYNC"));
+	}
+
+	async _onClose(options) {
+		const floatingBar = document.querySelector('body > .editmodebar.editmodebar-open');
+		if (floatingBar) floatingBar.remove();
+		return super._onClose(options);
+	}
+
+	openDialog() {
+		try {
+			if (this.rendered) this.close();
+			return this.render({ force: true });
 		} catch (error) {
 			console.error("Farchievements | Failed to open achievements window", error);
 			ui.notifications.error("Farchievements | Failed to open achievements window. Check the console for details.");
 		}
-
-    }
-    static renderMenu(path, data) {
-        const dialogOptions = {
-            width: 1050,
-			heith: 630,
-            top: 200,
-            left: window.innerWidth/2 - 510,
-            classes: ['achievementsscreen-window resizable']
-        };
-		dialogOptions.resizable = true;
-        return renderTemplate(path, data).then(dlg => {
-			const DialogClass = Achievements.getDialogClass();
-			if (!DialogClass) {
-				ui.notifications.error("Farchievements | Could not open the achievements window because the Foundry Dialog API was not found.");
-				return;
-			}
-            new DialogClass({
-                title: Achievements.getSetting('AchievementWindowTitle', 'Your Achievements'),
-                content: dlg,
-                buttons: {}
-            }, dialogOptions).render(true);
-        }).catch(error => {
-			console.error("Farchievements | Failed to render achievements template", error);
-			ui.notifications.error("Farchievements | Failed to render achievements template. Check the console for details.");
-        });
-    }
+	}
 }
-class FarchievementsSettingsMenu extends FarchievementsFormApplication {
+window.FarchievementsSettingsMenu ??= class extends window.FarchievementsFormApplication {
+	static DEFAULT_OPTIONS = {
+		id: "farchievements-settings-menu",
+		window: { frame: false, positioned: false }
+	};
+
 	render(force, options) {
 		Achievements.initializeAchievements();
 		game.settings.sheet?.close?.();
 		return this;
 	}
+
+	async _renderHTML() {
+		return document.createElement("div");
+	}
+
+	_replaceHTML(result, content) {
+		content.replaceChildren(result);
+	}
 }
-globalThis.FarchievementsSettingsMenu = FarchievementsSettingsMenu;
+globalThis.FarchievementsSettingsMenu = window.FarchievementsSettingsMenu;
 class AchievementSync{
 	static animationRunId = 0;
 	static activeSound = null;
@@ -826,7 +885,6 @@ class AchievementSync{
 		}
 	}
 	static SyncAchievements(skip = null, start = false){
-		//console.log("SYNC Achievements");//DEBUG
 		if(game.user.isGM){
 			if(!game.ready) return; //IF GAME IS READY, ELSE CHANGES WOULDN'T BE SAVED
 			//CHECK FOR NEW USERS
@@ -847,7 +905,6 @@ class AchievementSync{
 					AchievementsToPlay += achievement.name + "||||%%%||||";
 				}
 			});
-			//console.log(AchievementsToPlay);
 			if(AchievementsToPlay != ""){
 				let amount = AchievementsToPlay.split("||||%%%||||").length -1;
 				if(skip == true){
@@ -885,7 +942,6 @@ class AchievementSync{
 				}
 			}
 			//PLAY LIST AS ANIMATION 
-			//console.log(AchievementList);//DEBUG
 				if(document.getElementById("AchievementScript")!= null)//IF USER IS ON THE ACHIEVEMENTSSCREEN, RELOAD IT
 					document.getElementById("AchievementScript").onclick();
 		}
@@ -893,7 +949,6 @@ class AchievementSync{
 }
 Hooks.on('renderSceneNavigation', async function() {
         Achievements.addChatControl();
-        //console.log("AchievementsScreen GM true");
 		let style = await game.settings.get("farchievements", "bannerBackground");
 		let banner = "";
 		
@@ -908,149 +963,114 @@ Hooks.on('renderSidebar', function() {
 	Achievements.addChatControl();
 });
 
-Hooks.on('createChatMessage', (chatMessage) => {
+Hooks.on('createChatMessage', async (chatMessage) => {
     if (!game.user.isGM) return;
 
-    // Check if the chat message contains roll data
     if (chatMessage.rolls && chatMessage.rolls.length > 0) {
-        console.log("Farchievements | Checking rolls in chat message...");
 
-        let rollData = chatMessage.rolls[0];
-        let rolledValue = rollData.total;
-        let userId = chatMessage.user.id;
+        const rollData = chatMessage.rolls[0];
+        const rolledValue = rollData.total;
 
-        console.log(`Farchievements | Roll detected in chat message for user: ${userId}, roll total: ${rolledValue}`);
+        // Foundry V14: ChatMessage.author identifies the user who made the roll.
+        const userId = typeof chatMessage.author === "string"
+            ? chatMessage.author
+            : chatMessage.author?.id
+              ?? (typeof chatMessage.user === "string" ? chatMessage.user : chatMessage.user?.id);
 
-        let achievementList = JSON.parse(game.settings.get('farchievements', 'achievementdataNEW'));
-        console.log(`Farchievements | Loaded achievement list:`, achievementList);
+        if (!userId) {
+            console.warn("Farchievements | Could not determine the user who made the roll.", chatMessage);
+            return;
+        }
 
-        // Filter for achievements that have a progressType of 'dice' or 'diceChain'
-        let diceAchievements = achievementList.filter(ach => ach.progressType === 'dice' || ach.progressType === 'diceChain');
-        console.log(`Farchievements | Filtered dice achievements:`, diceAchievements);
+
+        let achievementList;
+        try {
+            achievementList = JSON.parse(game.settings.get('farchievements', 'achievementdataNEW'));
+        } catch (err) {
+            console.error("Farchievements | Could not parse achievement data.", err);
+            return;
+        }
+
+        if (!Array.isArray(achievementList)) return;
 
         let hasAchievementUpdated = false;
 
-        diceAchievements.forEach(achievementData => {
-            console.log(`Farchievements | Processing achievement: ${achievementData.name}`);
-            
-            let achievement = new Achievement(
+        achievementList.forEach((achievementData, achievementIndex) => {
+            if (achievementData.progressType !== 'dice' && achievementData.progressType !== 'diceChain') return;
+
+
+            const achievement = new Achievement(
                 achievementData.name,
                 achievementData.description,
                 achievementData.image,
-                achievementData.players,
-                achievementData.seenBy,
-                achievementData.playerDates,
-                achievementData.progressRequired,
-                achievementData.progressType,
-                achievementData.playerProgress,
-                achievementData.chainLength,
-                achievementData.diceType
+                achievementData.points ?? 1,
+                achievementData.glowing ?? false,
+                achievementData.color ?? "#f7ff9e",
+                Array.isArray(achievementData.players) ? achievementData.players : [],
+                Array.isArray(achievementData.seenBy) ? achievementData.seenBy : [],
+                achievementData.playerDates ?? {},
+                achievementData.progressRequired ?? 0,
+                achievementData.progressType ?? "standard",
+                achievementData.playerProgress ?? {},
+                achievementData.chainLength ?? 2,
+                achievementData.diceType ?? "d20",
+                achievementData.secret ?? false,
+                achievementData.bannerAnimation,
+                achievementData.cardStyle
             );
 
-            // Check if the dice type matches the achievement's diceType requirement
-            if (rollData.formula.includes(achievement.diceType)) {
-                // Check if the achievement already applies to the player who rolled
+            // Normalize malformed legacy data in memory.
+            achievement.players ??= [];
+            achievement.seenBy ??= [];
+            achievement.playerDates ??= {};
+            achievement.playerProgress ??= {};
+
+            if (!rollData.formula.includes(String(achievement.diceType))) return;
+
+            if (achievement.players.includes(userId)) {
+                return;
+            }
+
+
+            const condition = achievement.progressRequired;
+            const targetValue = parseInt(String(condition).replace(/^[<>]/, '').trim());
+
+            const matchesCondition = String(condition).startsWith('<')
+                ? rolledValue < targetValue
+                : String(condition).startsWith('>')
+                    ? rolledValue > targetValue
+                    : rolledValue === targetValue;
+
+            if (achievement.progressType === 'dice') {
+
+                if (matchesCondition) {
+                    achievement.addPlayer(userId);
+                    achievementList[achievementIndex] = achievement;
+                    hasAchievementUpdated = true;
+                }
+            } else if (achievement.progressType === 'diceChain') {
+
+                achievement.addProgress(userId, matchesCondition, true);
+
+                // addProgress awards the achievement when the required chain is complete.
                 if (achievement.players.includes(userId)) {
-                    console.log(`Farchievements | Player ${userId} already has achievement: ${achievement.name}`);
-                    return; // Skip if the player already has the achievement
+                    achievementList[achievementIndex] = achievement;
+                    hasAchievementUpdated = true;
+                } else if (matchesCondition) {
+                    // Persist chain progress even before completion.
+                    achievementList[achievementIndex] = achievement;
+                    hasAchievementUpdated = true;
                 }
-
-                console.log(`Farchievements | Rolled value: ${rolledValue}`);
-
-                if (achievement.progressType === 'dice') {
-                    console.log(`Farchievements | Handling [dice] achievement for: ${achievement.name}`);
-                    
-                    let condition = achievement.progressRequired;
-                    if (typeof condition === 'string') {
-                        let targetValue;
-                        console.log(`Farchievements | Condition is a string: ${condition}`);
-
-                        if (condition.startsWith('<')) {
-                            targetValue = parseInt(condition.substring(1).trim());
-                            console.log(`Farchievements | Target value is less than ${targetValue}`);
-                            if (rolledValue < targetValue) {
-                                achievement.addPlayer(userId);
-                                hasAchievementUpdated = true;
-                                console.log(`Farchievements | Achievement unlocked for player: ${userId} (rolled < ${targetValue})`);
-                            }
-                        } else if (condition.startsWith('>')) {
-                            targetValue = parseInt(condition.substring(1).trim());
-                            console.log(`Farchievements | Target value is greater than ${targetValue}`);
-                            if (rolledValue > targetValue) {
-                                achievement.addPlayer(userId);
-                                hasAchievementUpdated = true;
-                                console.log(`Farchievements | Achievement unlocked for player: ${userId} (rolled > ${targetValue})`);
-                            }
-                        } else {
-                            targetValue = parseInt(condition);
-                            console.log(`Farchievements | Target value is equal to ${targetValue}`);
-                            if (rolledValue === targetValue) {
-                                achievement.addPlayer(userId);
-                                hasAchievementUpdated = true;
-                                console.log(`Farchievements | Achievement unlocked for player: ${userId} (rolled == ${targetValue})`);
-                            }
-                        }
-                    }
-                } else if (achievement.progressType === 'diceChain') {
-                    console.log(`Farchievements | Handling [diceChain] achievement for: ${achievement.name}`);
-                    
-                    let condition = achievement.progressRequired;
-                    if (typeof condition === 'string') {
-                        let targetValue;
-                        console.log(`Farchievements | Condition is a string: ${condition}`);
-
-                        if (condition.startsWith('<')) {
-                            targetValue = parseInt(condition.substring(1).trim());
-                            console.log(`Farchievements | Target value is less than ${targetValue}`);
-                            if (rolledValue < targetValue) {
-                                achievement.addProgress(userId, true, true); // Increment chain
-                                console.log(`Farchievements | Successful roll for chain (rolled < ${targetValue})`);
-                            } else {
-                                // Reset the chain on failure
-                                achievement.addProgress(userId, false, true);
-                                console.log(`Farchievements | Chain reset for player ${userId}`);
-                            }
-                        } else if (condition.startsWith('>')) {
-                            targetValue = parseInt(condition.substring(1).trim());
-                            console.log(`Farchievements | Target value is greater than ${targetValue}`);
-                            if (rolledValue > targetValue) {
-                                achievement.addProgress(userId, true, true); // Increment chain
-                                console.log(`Farchievements | Successful roll for chain (rolled > ${targetValue})`);
-                            } else {
-                                // Reset the chain on failure
-                                achievement.addProgress(userId, false, true);
-                                console.log(`Farchievements | Chain reset for player ${userId}`);
-                            }
-                        } else {
-                            targetValue = parseInt(condition);
-                            console.log(`Farchievements | Target value is equal to ${targetValue}`);
-                            if (rolledValue === targetValue) {
-                                achievement.addProgress(userId, true, true); // Increment chain
-                                console.log(`Farchievements | Successful roll for chain (rolled == ${targetValue})`);
-                            } else {
-                                // Reset the chain on failure
-                                achievement.addProgress(userId, false, true);
-                                console.log(`Farchievements | Chain reset for player ${userId}`);
-                            }
-                        }
-                    }
-
-                    if (achievement.getProgress(userId) >= achievement.chainLength) {
-                        // Chain complete, award achievement
-                        console.log(`Farchievements | Chain complete, awarding achievement to player ${userId}`);
-                        achievement.addPlayer(userId);
-                        hasAchievementUpdated = true;
-                    }
-                }
-
-                // Update the achievement list in game settings
-                let updatedAchievementList = achievementList.map(a => (a.name === achievement.name ? achievement : a));
-                game.settings.set('farchievements', 'achievementdataNEW', JSON.stringify(updatedAchievementList));
             }
         });
 
-        // Only send the update message if any achievement was updated
         if (hasAchievementUpdated) {
+            await game.settings.set(
+                'farchievements',
+                'achievementdataNEW',
+                JSON.stringify(achievementList)
+            );
+
             SendSyncMessage();
         }
     }
@@ -1110,17 +1130,14 @@ if(message.content.includes("Farchievements-SyncRequest")){
 				dataArrayPlayer = game.users._source[PID].id + ":" + achievementID + ",";
 				dataArray[PID] = dataArrayPlayer;
 				toSYNC = dataArray.join("||");
-				console.log(toSYNC);
 				//await game.settings.set('farchievements', 'clientdataSYNC', toSYNC);
 
-				console.log("Setting Achievement: " + achievementname + "(ID:"+ achievementID + ")" + " for user: " + playerName);
 				return;
 	}
 	else{
 		dataArrayPlayer = dataArray[PID].split(":")[0] + ":" + dataArray[PID].split(":")[1] + achievementID + ",";
 		dataArray[PID] = dataArrayPlayer;
 		toSYNC = dataArray.join("||");
-		console.log(toSYNC);
 	}
 	await game.settings.set('farchievements', 'clientdataSYNC', toSYNC);
 
@@ -1156,7 +1173,6 @@ window.Farchievements = class Farchievement{
 	}
 	static async AddAchievement(AchievementName, PlayerName){
 		if(!game.user.isGM) return;
-		console.log(AchievementName);
 		let data = game.settings.get('farchievements', 'achievementdata').split(';;;');
 		let AchievementID, PlayerID;
 		for(let i = 0; i < game.settings.get('farchievements', 'achievementdata').split(';;;').length; i++){
@@ -1203,7 +1219,6 @@ window.Farchievements = class Farchievement{
 	}	
 	static async MigrateAchievements(){
 		await ui.notifications.notify("Farchievements | Beginning migration of old data...");
-		//console.log(game.settings.get('farchievements', 'achievementdataNEW'));
 		await game.settings.set('farchievements', 'currentPage', 1);
 		let oldData = game.settings.get('farchievements', 'achievementdata');
 		let oldDataArr = oldData.split(";;;");
@@ -1211,9 +1226,7 @@ window.Farchievements = class Farchievement{
 		let oldClientDataArr = oldClientData.split("||");
 		let newData = "";
 		let AchievementList = [];
-		//console.log(oldDataArr.length);
 		for(let i = 0; i < oldDataArr.length -1; i++){//FOR EVERY OLD ACHIEVEMENT
-			//console.log(oldDataArr[i]);
 			//constructor: name, description, image, players
 			let playerslist = [];
 			if(oldClientData != ""){
@@ -1235,12 +1248,9 @@ window.Farchievements = class Farchievement{
 				var number = AchievementList.filter(ach => ach.name.includes(newAch.name)).length
 				newAch.name += "("+number+")"
 			}
-			//console.log(newAch);
 			AchievementList.push(newAch);
 		}
-		//console.log(game.settings.get('farchievements', 'achievementdataNEW'));
 		let data = JSON.stringify(AchievementList);
-		//console.log(data);
 		//let TestData = JSON.parse(data);
 		game.settings.set('farchievements', 'achievementdataNEW', data);
 		await ui.notifications.notify("Farchievements | Migration Finished");
@@ -1467,7 +1477,6 @@ async function removeAchievementFromCommand(achievementID, PID) {
 				dataArrayPlayer = dataArray[dataPlayerID].split(":")[0] + ":" + dataArray[dataPlayerID].split(":")[1].replace(toReplace, "");
 				dataArray[dataPlayerID] = dataArrayPlayer;
 				toSYNC = dataArray.join("||");
-				//console.log(toSYNC);
 			}
 			else if (dataArray[dataPlayerID].split(":")[1].split(",")[0] == "" + achievementID) { //FIRST ACHIEVEMENT IN DATA?
 				let toReplace = achievementID + ",";//REPLACE FIRST ENTRY IN DATA
@@ -1475,7 +1484,6 @@ async function removeAchievementFromCommand(achievementID, PID) {
 				firstDataArray.shift();
 				dataArray[dataPlayerID] = dataArray[dataPlayerID].split(":")[0] + ":" + firstDataArray;
 				toSYNC = dataArray.join("||");
-				//console.log(toSYNC);
 			}
 			else if (dataArray[dataPlayerID].split(":")[1].split(",")[dataArray[dataPlayerID].split(":")[1].split(",")[0].length + 1] == "" + achievementID) { //LAST ACHIEVEMENT IN DATA?
 				let toReplace = achievementID + ",";//REPLACE FIRST ENTRY IN DATA
@@ -1483,7 +1491,6 @@ async function removeAchievementFromCommand(achievementID, PID) {
 				firstDataArray.pop();
 				dataArray[dataPlayerID] = dataArray[dataPlayerID].split(":")[0] + ":" + firstDataArray;
 				toSYNC = dataArray.join("||");
-				//console.log(toSYNC);
 			}
 			if (document.getElementById('SyncAchUnsaved') != null) {
 				if (document.getElementById('SyncAchUnsaved').value == toSYNC) {
@@ -1515,7 +1522,6 @@ async function displayMyNewAchievementInChat(newAchievements){
 	if (!Array.isArray(newAchievements)) {
 		if(newAchievements != ""){
 			if (newAchievements === "" || newAchievements === " ") return; // Skip empty or space strings
-			console.log("Achievement to display:", newAchievements);
 			let achievementData = AchievementList.find(x=>x.name == newAchievements);
 			let displayContent = '<p class="achGainedChatText">Achievement Gained:</p>'+ '<div class="AchievementChatDisplay"><img class="chatAchImg" src="'+achievementData.image+'"></img><b class="achNameChatP">'+newAchievements+'<b/> </div>';
 
@@ -1529,7 +1535,6 @@ async function displayMyNewAchievementInChat(newAchievements){
 
     newAchievements.forEach(achievement => {
         if (achievement === "" || achievement === " ") return; // Skip empty or space strings
-        console.log("Achievement to display:", achievement);
 		let achievementData = AchievementList.find(x=>x.name == achievement);
 		let displayContent = '<p class="achGainedChatText">Achievement Gained:</p>'+ '<div class="AchievementChatDisplay"><img class="chatAchImg" src="'+achievementData.image+'"></img><b class="achNameChatP">'+achievement+'<b/> </div>';
 
@@ -1642,7 +1647,10 @@ async function SendSyncMessage() {
 	if(document.getElementById('achsyncnormalmode') != null)
 		if (document.getElementById('achsyncnormalmode').innerHTML != "") 
 			document.getElementById('achsyncnormalmode').innerHTML = "";
-}
+ }
+
+// Expose the sync handler to inline onclick handlers in the dynamically evaluated template.
+globalThis.SendSyncMessage ??= SendSyncMessage;
 
 class Achievement {
     constructor(
@@ -1679,7 +1687,6 @@ class Achievement {
             // Handle chain progress
             if (progress) {
                 this.playerProgress[playerId] += 1; // Increment chain on success
-                console.log(`Farchievements | Chain progress for player ${playerId}: ${this.playerProgress[playerId]}`);
                 
                 if (this.playerProgress[playerId] >= this.progressRequired) {
                     this.addPlayer(playerId); // Award achievement if chain is complete
@@ -1687,7 +1694,6 @@ class Achievement {
                 }
             } else {
                 this.playerProgress[playerId] = 0; // Reset chain on failure
-                console.log(`Farchievements | Chain reset for player ${playerId}`);
             }
         } else {
             // Standard progress
@@ -1696,13 +1702,11 @@ class Achievement {
             // Check if the progress is equal to or greater than the required progress
             if (this.playerProgress[playerId] >= this.progressRequired) {
                 this.addPlayer(playerId);
-				SendSyncMessage();
             } else if (this.playerProgress[playerId] < this.progressRequired) {
                 // If the progress is below the required progress, remove the player from the achievement
                 this.removePlayer(playerId);
             }
 
-            console.log(`Farchievements | Updated progress for player: ${playerId}, new progress: ${this.playerProgress[playerId]}`);
         }
     }
 
@@ -1722,7 +1726,6 @@ class Achievement {
 		if (!this.players.includes(playerId)) {
 			this.players.push(playerId);
 			this.playerDates[playerId] = dateAchieved; // Store the date the player obtained the achievement
-			console.log("Farchievements | Added Achievement to: " + playerId);
 			if (this.progressType === "diceChain") {
 				this.playerProgress[playerId] = this.progressRequired;
 			}
@@ -1734,13 +1737,11 @@ class Achievement {
         if (playerIndex > -1) {
             this.players.splice(playerIndex, 1); // Remove the player from the players array
             delete this.playerDates[playerId]; // Remove the associated date from playerDates
-            console.log("Farchievements | Removed Achievement from: " + playerId);
         }
 
         const seenByIndex = this.seenBy.indexOf(playerId);
         if (seenByIndex > -1) {
             this.seenBy.splice(seenByIndex, 1); // Remove the player from the seenBy array if present
-            console.log("Farchievements | Removed Achievement from: " + playerId);
         }
 		if(this.progressType == "diceChain")
 			this.playerProgress[playerId] = 0;
@@ -1749,7 +1750,6 @@ class Achievement {
 	markSeen(playerId) {
 		if (!this.seenBy.includes(playerId)) {
 			this.seenBy.push(playerId); // Add player to seenBy array if they haven't seen it yet
-			console.log("Farchievements | Achievement was seen by: " + playerId);
 		}
 	}
 }
@@ -1757,3 +1757,6 @@ class Achievement {
 
 
 
+
+// Expose the achievement model to the dynamically evaluated editor template.
+globalThis.Achievement ??= Achievement;

@@ -1,36 +1,36 @@
 <!DOCTYPE html>
 <html id="AchievementsScreen">
-<div class="OmniView" id="hiddenforuser3">
-	<label class="AchSwitch">
-		{{localize 'Farchievements.Html.SeeEverything'}}<input id="AchSwitchInput" type="checkbox" onchange="toggleOmniView()">
-	</label>
+<div class="farchievements-top-controls" id="farchievementsTopControls">
+	<div class="OmniView" id="hiddenforuser3">
+		<label class="AchSwitch">
+			{{localize 'Farchievements.Html.SeeEverything'}}<input id="AchSwitchInput" type="checkbox" onchange="toggleOmniView()">
+		</label>
+	</div>
+	<div class="SimulateBanner" id="hiddenforuser5" style="display: none;">
+		<label class="AchSwitch SimulateBannerSwitch" title="Right-click an achievement to play its unlock banner on your screen (GM only).">
+			Simulate Banner<input id="SimulateBannerInput" type="checkbox" onchange="toggleSimulateBanner()">
+		</label>
+	</div>
+	<div class="BannerStylePicker" id="hiddenforuser6" style="display: none;">
+		<label class="AchSwitch BannerStyleSwitch" title="Default banner animation. Per-achievement overrides set in edit mode take priority.">
+			<span class="bannerStyleLabel">Style</span>
+			<select id="BannerStylePickerSelect" onchange="setDefaultBannerAnimation()">
+				<option value="slidein">Drop &amp; Hold</option>
+				<option value="fadeOut">Soft Fade</option>
+				<option value="xboxPop">Corner Snap</option>
+				<option value="psTrophy">Glass Slide</option>
+				<option value="darkSouls">Ominous Reveal</option>
+				<option value="cyberpunkGlitch">Neon Glitch</option>
+				<option value="skyrimReveal">Carved Bloom</option>
+			</select>
+		</label>
+	</div>
+	<div class="Achievementssettings" id="hiddenforuser"><i class="fas fa-cogs achievementsettings" onclick="enterEditMode()"></i></div>
+	<div class="Achievementssettings" id="hiddenforuser2"><i class="fas fa-file-export achievementImportExport" onclick="openImportExport()"></i></div>
+	<div class="Achievementssettings" id="hiddenforuser4"><i class="fas fa-list listViewSettings" onclick="toggleListMode()"></i></div>
 </div>
-<div class="SimulateBanner" id="hiddenforuser5" style="display: none;">
-	<label class="AchSwitch SimulateBannerSwitch" title="Right-click an achievement to play its unlock banner on your screen (GM only).">
-		Simulate Banner<input id="SimulateBannerInput" type="checkbox" onchange="toggleSimulateBanner()">
-	</label>
-</div>
-<div class="BannerStylePicker" id="hiddenforuser6" style="display: none;">
-	<label class="AchSwitch BannerStyleSwitch" title="Default banner animation. Per-achievement overrides set in edit mode take priority.">
-		<span class="bannerStyleLabel">Style</span>
-		<select id="BannerStylePickerSelect" onchange="setDefaultBannerAnimation()">
-			<option value="slidein">Drop &amp; Hold</option>
-			<option value="fadeOut">Soft Fade</option>
-			<option value="xboxPop">Corner Snap</option>
-			<option value="psTrophy">Glass Slide</option>
-			<option value="darkSouls">Ominous Reveal</option>
-			<option value="cyberpunkGlitch">Neon Glitch</option>
-			<option value="skyrimReveal">Carved Bloom</option>
-		</select>
-	</label>
-</div>
-<div class="Achievementssettings" id="hiddenforuser" style="text-align: -webkit-right; z-index:2;"><i class="fas fa-cogs achievementsettings" onclick="enterEditMode()"></i></div>
-<div class="Achievementssettings" id="hiddenforuser2" style="text-align: -webkit-right; z-index:1;"><i class="fas fa-file-export achievementImportExport" onclick="openImportExport()"></i></div>
-<div class="Achievementssettings" id="hiddenforuser4" style="text-align: -webkit-right;"><i class="fas fa-list listViewSettings" onclick="toggleListMode()"></i></div>
 <head onload="onLoad()">
-	<head>
-		<script src="modules/farchievements/AchievementsScreen.js"></script>
-	</head>
+
 	<script id="AchievementScript" onclick="loadAchievements()">
 	
 	//ONLOAD SCRIPT
@@ -495,8 +495,39 @@
 			reloadAchievements();
 		}
 
+		function updateEditmodeDragState() {
+			const list = document.getElementById('AchievementList');
+			const sortDropdown = document.getElementById('sortAchievementsDropdown');
+			if (!list) return;
+			const canReorder = sortDropdown?.value === 'default';
+			list.classList.toggle('reorder-disabled', !canReorder);
+			list.querySelectorAll('.far-grid-item').forEach(item => {
+				item.draggable = canReorder;
+				item.setAttribute('aria-grabbed', canReorder ? 'false' : 'false');
+				const handle = item.querySelector('.DragAndDropHandler');
+				if (handle) {
+					handle.draggable = false;
+					handle.hidden = !canReorder;
+				}
+			});
+		}
+
+		function positionEditmodeBar() {
+			const bar = document.querySelector('.achievementsscreen-window > .editmodebar');
+			if (!bar || !bar.classList.contains('editmodebar-open')) return;
+			bar.style.position = 'absolute';
+			bar.style.left = '50%';
+			bar.style.right = 'auto';
+			bar.style.top = 'auto';
+			bar.style.bottom = '52px';
+			bar.style.transform = 'translateX(-50%)';
+			bar.style.width = 'fit-content';
+			bar.style.maxWidth = 'calc(100% - 32px)';
+		}
+
 		async function updateSortType() {
 			let sortValue = document.getElementById('sortAchievementsDropdown').value;
+			updateEditmodeDragState();
 			await game.settings.set('farchievements', 'lastSortType', sortValue);
 			reloadAchievements();
 		}
@@ -776,8 +807,8 @@
 					// Add + and - buttons for GM to manually adjust progress for "count" type
 					if (game.user.isGM && AchievementList[i].progressType === "count") {
 						let gmControlHTML = `<div class="gmAchProgressControl">
-												<button class="achProgressControlButton" style="background:green;" onclick="updatePlayerProgress('${AchievementList[i].name}', '${playerID}', -1)">-</button>
-												<button class="achProgressControlButton" style="background:red;" onclick="updatePlayerProgress('${AchievementList[i].name}', '${playerID}', 1)">+</button>
+												<button class="achProgressControlButton" style="background:green;" type="button" onclick="event.preventDefault(); event.stopPropagation(); updatePlayerProgress('${AchievementList[i].name}', '${playerID}', -1); return false;">-</button>
+												<button class="achProgressControlButton" style="background:red;" type="button" onclick="event.preventDefault(); event.stopPropagation(); updatePlayerProgress('${AchievementList[i].name}', '${playerID}', 1); return false;">+</button>
 											</div>`;
 						progressBarHTML += gmControlHTML;
 					}
@@ -790,6 +821,10 @@
 					onClickFunction = 'oncontextmenu="setAchievement(`' + originname + '`,' + '\'' + playerIDToLoadFrom + '\')"';
 				}
 				let cardStyleClass = (known !== "unknownAch" || game.user.isGM) ? getAchievementCardStyleClass(AchievementList[i]) : "";
+				// Locked achievements must remain non-interactive for players, even when
+				// AlwaysShowName makes their name visible.
+				if (!game.user.isGM && known === "unknownAch") cardStyleClass += " lockedAch";
+				if (!game.settings.get('farchievements', 'DescriptionOnHover')) cardStyleClass += " descriptionAlways";
 				document.getElementById('AchievementList').innerHTML += `
 				<div ${onClickFunction} id="Achievement-${i}" class="far-grid-item ${listView} ${known} ${cardStyleClass}" style="${greyscale} ${displayOptions} ${colorOptions} background:${color}; ${glowstyle}">
 					${AchName}
@@ -950,17 +985,28 @@
 
 		}
 		async function updatePlayerProgress(achievementName, playerId, changeAmount) {
-			let AchievementData = JSON.parse(await game.settings.get('farchievements', 'achievementdataNEW'));
-			let achievement = AchievementData.find(ach => ach.name === achievementName);
-			if (!achievement) return;
-			achievement = Object.assign(new Achievement(), achievement);
-			achievement.addProgress(playerId, changeAmount);
-			let updatedAchievementIndex = AchievementData.findIndex(ach => ach.name === achievementName);
-			AchievementData[updatedAchievementIndex] = achievement;
+			try {
+				const AchievementData = JSON.parse(game.settings.get('farchievements', 'achievementdataNEW'));
+				const updatedAchievementIndex = AchievementData.findIndex(ach => ach.name === achievementName);
+				if (updatedAchievementIndex < 0) return false;
 
-			await game.settings.set('farchievements', 'achievementdataNEW', JSON.stringify(AchievementData));
+				const achievement = Object.assign(new Achievement(), AchievementData[updatedAchievementIndex]);
+				const hadAchievement = Array.isArray(achievement.players) && achievement.players.includes(playerId);
+				achievement.addProgress(playerId, Number(changeAmount) || 0);
+				AchievementData[updatedAchievementIndex] = achievement;
 
-			loadAchievements();
+				await game.settings.set('farchievements', 'achievementdataNEW', JSON.stringify(AchievementData));
+
+				// Sync only when the counter actually awards the achievement.
+				if (!hadAchievement && achievement.players?.includes(playerId)) await SendSyncMessage();
+
+				// Refresh only the Farchievements content; never reload the Foundry page.
+				await loadAchievements();
+				return false;
+			} catch (error) {
+				console.error('Farchievements | Failed to update counter progress:', error);
+				return false;
+			}
 		}
 		function hidePageNav(){
 			document.getElementsByClassName("pageNav")[0].style.display = "none";
@@ -1286,11 +1332,8 @@
 				progressHTML += `</div>`; // End progressHTML
 
 				document.getElementById('AchievementList').innerHTML += `
-					<div id="Achievement-${i}" class="far-grid-item ${getAchievementCardStyleClass(AchievementList[i])}">
-						<div class="DragAndDropHandler" draggable="true"><i class="fa-solid fa-up-down-left-right"></i></div>
-						<div class="achievementtools">
-							<button class="deleteAchievement" type="button" onclick="deleteAchievement(\`${toInlineTemplateString(name)}\`)"><i class="fas fa-trash-alt"></i></button>
-						</div>
+					<div id="Achievement-${i}" data-achievement-index="${i}" class="far-grid-item ${getAchievementCardStyleClass(AchievementList[i])}">
+						<div class="DragAndDropHandler" draggable="false"><i class="fa-solid fa-up-down-left-right"></i></div>
 						<div class="achEditName">
 							<input class="AchInputName" maxlength="40" type="text" id="achievementname${name}" onchange="updateAchievement(1, '${name}')" value="${name}">
 						</div>
@@ -1316,13 +1359,44 @@
 						${cardStyleHTML}
 						${bannerHTML}
 						${progressHTML}
+						<div class="achievementDeleteBar">
+							<button class="deleteAchievement" type="button" onclick="deleteAchievement(\`${toInlineTemplateString(name)}\`)">
+								<i class="fas fa-trash-alt"></i>
+								<span>Delete</span>
+							</button>
+						</div>
 
 					</div>`;
 			}
 
-			// Drag and drop handling for sorting achievements
-			let items = document.querySelectorAll('.far-grid-item');
+			// Drag and drop is only meaningful while the editor uses the stored/default order.
+			// Other sort modes are derived views and must not allow reordering.
+			const sortDropdown = document.getElementById('sortAchievementsDropdown');
+			const canReorder = sortDropdown?.value === 'default';
+			const items = document.querySelectorAll('.far-grid-item');
 			items.forEach(function(item) {
+				const handle = item.querySelector('.DragAndDropHandler');
+
+				// Always remove handlers first. This matters when changing sort mode
+				// without rebuilding the ApplicationV2 content node.
+				item.removeEventListener('dragstart', handleDragStart);
+				item.removeEventListener('dragover', handleDragOver);
+				item.removeEventListener('dragenter', handleDragEnter);
+				item.removeEventListener('dragleave', handleDragLeave);
+				item.removeEventListener('dragend', handleDragEnd);
+				item.removeEventListener('drop', handleDrop);
+
+				item.draggable = canReorder;
+				item.ondragstart = canReorder ? null : (event => event.preventDefault());
+				if (handle) {
+					handle.draggable = canReorder;
+					handle.style.display = canReorder ? '' : 'none';
+					handle.style.opacity = canReorder ? '' : '0';
+					handle.style.cursor = canReorder ? 'grab' : 'default';
+					handle.ondragstart = canReorder ? null : (event => event.preventDefault());
+				}
+
+				if (!canReorder) return;
 				item.addEventListener('dragstart', handleDragStart);
 				item.addEventListener('dragover', handleDragOver);
 				item.addEventListener('dragenter', handleDragEnter);
@@ -1333,64 +1407,80 @@
 
 			document.getElementById("AchievementList").style.gridTemplateRows = "repeat(" + Math.round(loadAm / 6) + ", 1fr)";
 			applyEditmodeColumns();
+			updateEditmodeDragState();
+			positionEditmodeBar();
 		}
 
 
+
+		window.farchievementsDragState ??= { draggedAchievementName: null };
 
 		function handleDragStart(e) {
-		  e.stopPropagation(); // stops the browser from redirecting.
-		  this.style.opacity = '0.4';
-		  let Elements = document.querySelectorAll("div.DragAndDropHandler, div.achievementtools, div.achEditName, div.achEditIcon, div.achEditInpImg, div.achEditInpDesc, div.achEditPoints");
-			  Elements.forEach(function(item) {
-				if(item != e.target)
-					item.style.setProperty("pointer-events", "none");
-		  });
-		  //DATA
-		  let el = e.srcElement.parentElement.children[2].firstElementChild.value;
-		  //console.log("Drag from: " + el);
-		  e.dataTransfer.setData("Name", e.srcElement.parentElement.children[2].firstElementChild.value);
-		  return false;
+			e.stopPropagation();
+			const card = e.currentTarget.closest('.far-grid-item');
+			if (!card) return;
+			const input = card.querySelector('.AchInputName');
+			if (!input) return;
+			window.farchievementsDragState.draggedAchievementName = input.value;
+			card.style.opacity = '0.4';
+			e.dataTransfer.effectAllowed = 'move';
+			e.dataTransfer.setData('text/plain', window.farchievementsDragState.draggedAchievementName);
+			e.dataTransfer.setData('Name', window.farchievementsDragState.draggedAchievementName);
+			card.classList.add('farch-dragging');
 		}
+
 		function handleDragEnd(e) {
-		this.style.opacity = '1';
-		  let Elements = document.querySelectorAll(".DragAndDropHandler, div.achievementtools, div.achEditName, div.achEditIcon, div.achEditInpImg, div.achEditInpDesc, div.achEditPoints");
-			  Elements.forEach(function(item) {
-				if(item != e)
-					item.style.setProperty("pointer-events", "all");
-		  });
+			const card = e.currentTarget.closest('.far-grid-item');
+			if (card) card.style.opacity = '1';
+			document.querySelectorAll('.farch-dragging, .over').forEach(el => {
+				el.classList.remove('farch-dragging', 'over');
+			});
+			window.farchievementsDragState.draggedAchievementName = null;
 		}
 
 		async function handleDrop(e) {
-		  e.stopPropagation(); // stops the browser from redirecting.
-		  console.log("HandleDropEvent | " + e.dataTransfer.getData("Name") + " -> " + e.target.children[2].firstElementChild.value);
-		  
-		  let AchievementData = JSON.parse(game.settings.get('farchievements', 'achievementdataNEW'));
+			e.preventDefault();
+			e.stopPropagation();
+			const targetCard = e.currentTarget.closest('.far-grid-item');
+			const sourceName = e.dataTransfer.getData('Name') || window.farchievementsDragState.draggedAchievementName;
+			if (!targetCard || !sourceName) return false;
+			const targetInput = targetCard.querySelector('.AchInputName');
+			if (!targetInput) return false;
+			const targetName = targetInput.value;
+			if (sourceName === targetName) return false;
 
-		  let x_fromName = e.dataTransfer.getData("Name");
-		  var x_FromData = AchievementData.find(ach => ach.name == x_fromName);
-		  let y_toName = e.target.children[2].firstElementChild.value;
-		  var y_toData = AchievementData.find(ach => ach.name == y_toName);
-		  let y_index = AchievementData.findIndex(ach => ach.name == y_toName);
-		  let x_index = AchievementData.findIndex(ach => ach.name == x_fromName);
-		  
-		  AchievementData[y_index] = x_FromData;
-		  AchievementData[x_index] = y_toData;
-		  
-		  //SWITCH ACHIEVEMENT POSITIONS
-		  await game.settings.set('farchievements', 'achievementdataNEW', JSON.stringify(AchievementData));
-		  loadAchievementsEditMode();
-		  return false;
+			let AchievementData;
+			try {
+				AchievementData = JSON.parse(await game.settings.get('farchievements', 'achievementdataNEW'));
+			} catch (err) {
+				console.error('Farchievements | Could not parse achievement data while reordering.', err);
+				return false;
+			}
+
+			const sourceIndex = AchievementData.findIndex(ach => ach.name === sourceName);
+			const targetIndex = AchievementData.findIndex(ach => ach.name === targetName);
+			if (sourceIndex < 0 || targetIndex < 0) return false;
+
+			[AchievementData[sourceIndex], AchievementData[targetIndex]] =
+				[AchievementData[targetIndex], AchievementData[sourceIndex]];
+
+			await game.settings.set('farchievements', 'achievementdataNEW', JSON.stringify(AchievementData));
+			await loadAchievementsEditMode();
+			return false;
 		}
+
 		function handleDragOver(e) {
 			e.preventDefault();
+			e.dataTransfer.dropEffect = 'move';
 			return false;
 		}
 		function handleDragEnter(e) {
-			this.classList.add('over');
+			const card = e.currentTarget.closest('.far-grid-item');
+			if (card) card.classList.add('over');
 		}
-
 		function handleDragLeave(e) {
-			this.classList.remove('over');
+			const card = e.currentTarget.closest('.far-grid-item');
+			if (card) card.classList.remove('over');
 		}
 		function enterEditMode() {
 			const bar = document.getElementsByClassName('editmodebar')[0];
@@ -1399,15 +1489,23 @@
 			if (isEditing) {
 				loadAchievements();
 				bar.classList.remove('editmodebar-open');
+				const appContent = document.querySelector('.achievementsscreen-window .window-content');
+				if (appContent && bar.parentElement !== appContent) appContent.appendChild(bar);
 				document.getElementById('AchPlayerNav').className = "AchPlayerNav";
 				document.getElementById('AchievementList').classList.remove("editmodeList");
 			}
 			else {
 				loadAchievementsEditMode();
 				document.getElementById('AchPlayerNav').className += " hidden";
+				// Keep the toolbar as a direct child of the ApplicationV2 root so it
+				// stays fixed inside the modal while the content scrolls.
+				const appWindow = document.querySelector('.achievementsscreen-window');
+				if (appWindow && bar.parentElement !== appWindow) appWindow.appendChild(bar);
 				bar.classList.add('editmodebar-open');
 				document.getElementById('AchievementList').classList.add("editmodeList");
 				applyEditmodeColumns();
+				updateEditmodeDragState();
+				positionEditmodeBar();
 			}
 		}
 
@@ -1600,7 +1698,7 @@
 			const dialogOptions = {
 				classes: ['dialog ImportExportWindow']
 			};
-			new Dialog({
+			new FarchievementsDialogV2({
 				title: game.i18n.localize('Farchievements.Html.ImportExport.Title'),
 				content: `
 					<div class="farchievements-import-export">
@@ -1785,7 +1883,7 @@
 				}
 			};
 
-			new Dialog({
+			new FarchievementsDialogV2({
 				title: game.i18n.localize('Farchievements.Html.ImportExport.Title'),
 				content: `
 					<div class="farchievements-import-export">
@@ -1818,7 +1916,12 @@
 							</div>
 						</section>
 					</div>`,
-				buttons: {},
+				buttons: {
+                    close: {
+                        label: game.i18n.localize('Close'),
+                        callback: () => {}
+                    }
+                },
 				render: (html) => {
 					const root = html instanceof HTMLElement ? html : html[0];
 					const exportTextarea = root.querySelector("#ImportExportOutput");
@@ -1999,5 +2102,4 @@
 	<!-- <i class="fas fa-minus-square achievementsettings" onclick="removeAchievement()"></i> -->
 	<div id="achsyncnormalmode"></div>
 </form>
-<div class="window-resizable-handle"><i class="fas fa-arrows-alt-h"></i></div>
 </html>

@@ -46,6 +46,7 @@
 	color: var(--fa-text);
 	font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
 	padding: 0 !important;
+	position: relative;
 	overflow-y: auto;
 	overflow-x: hidden;
 }
@@ -58,7 +59,7 @@
 	font-weight: 600;
 	letter-spacing: 0.3px;
 }
-.window-resizable-handle {
+.achievementsscreen-window .window-resizable-handle {
 	z-index: 2;
 	color: var(--fa-text-mute);
 }
@@ -78,17 +79,36 @@
 	inset: 0;
 }
 
-/* ----- TOP-RIGHT ICON ACTIONS (cogs / export / list) --------------------- */
+/* ----- TOP CONTROL BAR --------------------------------------------------- */
+/* ApplicationV2 no longer places these controls inside the V1 window header.
+   Keep them in normal document flow as the first content block so they never
+   overlap the player navigation or achievement toolbar. */
+.farchievements-top-controls {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	flex-wrap: wrap;
+	gap: 8px;
+	width: 100%;
+	box-sizing: border-box;
+	padding: 6px 10px;
+	min-height: 38px;
+	z-index: 20;
+	background: linear-gradient(90deg, rgba(10, 14, 20, 0.96) 0%, rgba(20, 24, 31, 0.96) 100%);
+	border-bottom: 1px solid var(--fa-border);
+}
 .Achievementssettings {
-	position: absolute;
-	top: 4px;
+	position: static;
 	display: inline-flex;
 	align-items: center;
 }
-/* explicit positions per existing JS hooks */
-#hiddenforuser  { right: 70px; z-index: 2; }
-#hiddenforuser2 { right: 104px; z-index: 1; }
-#hiddenforuser4 { right: 138px; }
+#hiddenforuser, #hiddenforuser2, #hiddenforuser4, #hiddenforuser3, #hiddenforuser5, #hiddenforuser6 {
+	position: static !important;
+	right: auto !important;
+	top: auto !important;
+	z-index: auto !important;
+}
 
 .achievementsettings,
 i.fas.fa-list.listViewSettings,
@@ -125,24 +145,15 @@ i.fas.fa-file-export.achievementImportExport:active {
 
 /* "See Everything" toggle */
 #hiddenforuser3.OmniView {
-	position: absolute;
-	top: 4px;
-	right: 172px;
-	z-index: 3;
+	position: static;
 }
 /* "Simulate Banner" toggle (GM only) — sits to the left of See Everything */
 #hiddenforuser5.SimulateBanner {
-	position: absolute;
-	top: 4px;
-	right: 304px;
-	z-index: 3;
+	position: static;
 }
 /* Banner style picker (GM only) — sits to the left of Simulate Banner */
 #hiddenforuser6.BannerStylePicker {
-	position: absolute;
-	top: 4px;
-	right: 440px;
-	z-index: 3;
+	position: static;
 }
 label.AchSwitch.BannerStyleSwitch {
 	background: rgba(99, 179, 237, 0.16);
@@ -457,6 +468,19 @@ p.AchDescription {
 	filter: none;
 	pointer-events: none;
 }
+
+/* Locked achievements remain visible when allowed by settings, but cannot be interacted with by players. */
+.far-grid-item.lockedAch { pointer-events: none !important; cursor: default !important; }
+
+/* DescriptionOnHover=false means the description is always visible. */
+.far-grid-item.descriptionAlways p.AchDescription {
+	opacity: 1 !important;
+	transform: translateY(0) !important;
+	display: block !important;
+	margin-top: 0 !important;
+	pointer-events: none;
+}
+
 .far-grid-item:hover p.AchDescription,
 .far-grid-item.hover p.AchDescription {
 	opacity: 1 !important;
@@ -546,10 +570,10 @@ p.AchDescription {
 	align-items: center;
 	justify-content: center;
 	gap: 18px;
-	position: absolute;
-	bottom: 0;
-	left: 0;
-	right: 0;
+	position: static;
+	bottom: auto;
+	left: auto;
+	right: auto;
 	width: 100%;
 	height: 44px;
 	margin: 0;
@@ -928,6 +952,14 @@ input#toLoadNumber:focus {
 	z-index: 1;
 }
 
+.editmodeList.reorder-disabled .DragAndDropHandler,
+.editmodeList.reorder-disabled .DragAndDropHandler * {
+	display: none !important;
+	pointer-events: none !important;
+}
+.editmodeList.reorder-disabled .far-grid-item {
+	cursor: default !important;
+}
 .editmodeList .DragAndDropHandler {
 	border: 1px dashed var(--fa-border);
 	background: rgba(255, 255, 255, 0.03);
@@ -1107,16 +1139,40 @@ img.EditModeIcon:active { filter: brightness(0.6); }
 }
 .glowAchInputLabel { margin-left: 4px; }
 
-input[type="checkbox"] { accent-color: var(--fa-accent); }
+/* Foundry v14 resets checkbox margins/positioning. Use a self-contained control so
+   checkboxes stay centered inside our labels and never inherit window offsets. */
 .achievementsscreen-window input[type="checkbox"],
 .AchSwitch input[type="checkbox"] {
-	width: 13px;
-	height: 13px;
-	margin: 0;
-	cursor: pointer;
-	flex: 0 0 auto;
+	appearance: none !important;
+	-webkit-appearance: none !important;
+	box-sizing: border-box !important;
+	position: static !important;
+	inset: auto !important;
+	transform: none !important;
+	display: inline-grid !important;
+	place-content: center !important;
+	width: 15px !important;
+	height: 15px !important;
+	min-width: 15px !important;
+	min-height: 15px !important;
+	max-width: 15px !important;
+	max-height: 15px !important;
+	margin: 0 !important;
+	padding: 0 !important;
+	flex: 0 0 15px !important;
+	align-self: center !important;
+	vertical-align: middle !important;
+	border: 1px solid var(--fa-border-accent) !important;
+	border-radius: 3px !important;
+	background: rgba(15,18,24,.85) !important;
+	cursor: pointer !important;
 }
-input[type="color"] {
+.achievementsscreen-window input[type="checkbox"]:focus-visible,
+.AchSwitch input[type="checkbox"]:focus-visible {
+	outline: 1px solid var(--fa-accent) !important;
+	outline-offset: 2px;
+}
+.achievementsscreen-window input[type="color"] {
 	width: 28px;
 	height: 24px;
 	padding: 0;
@@ -1223,25 +1279,6 @@ input#achievementChainLength {
 }
 
 /* Delete button */
-.deleteAchievement {
-	position: absolute !important;
-	right: 8px !important;
-	top: 8px !important;
-	width: 26px;
-	height: 26px;
-	border-radius: var(--fa-radius-sm);
-	background: var(--fa-danger-soft) !important;
-	border: 1px solid rgba(239, 68, 68, 0.3) !important;
-	color: var(--fa-danger) !important;
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	font-size: 12px;
-	cursor: pointer;
-	transition: all 0.15s var(--fa-ease);
-	z-index: 5;
-	padding: 0;
-}
 .deleteAchievement i.fas.fa-trash-alt {
 	margin: 0;
 	font-size: 12px;
@@ -1549,7 +1586,38 @@ i#SyncAchUnsaved:hover {
 	}
 }
 
-.achievementtools { height: 0; }
+.achievementtools { display: none !important; }
+
+/* Delete action is a full-width footer of the edit card, never an overlay. */
+.achievementDeleteBar {
+	width: 100%;
+	box-sizing: border-box;
+	margin-top: 10px;
+	padding-top: 8px;
+	border-top: 1px solid var(--fa-border);
+	background: rgba(0, 0, 0, 0.08);
+}
+.deleteAchievement {
+	position: static !important;
+	right: auto !important;
+	top: auto !important;
+	width: 100% !important;
+	height: 30px;
+	border-radius: var(--fa-radius-sm);
+	background: var(--fa-danger-soft) !important;
+	border: 1px solid rgba(239, 68, 68, 0.3) !important;
+	color: var(--fa-danger) !important;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 7px;
+	font-size: 11px;
+	cursor: pointer;
+	transition: all 0.15s var(--fa-ease);
+	z-index: auto;
+	padding: 0 10px;
+	box-sizing: border-box;
+}
 
 /* ----- SCOREBOARD ------------------------------------------------------- */
 .ScoreboardTitle {
@@ -1767,9 +1835,10 @@ p.farchievements-popup-description {
 }
 
 /* ----- CHAT FIXES ------------------------------------------------------- */
-#chat-controls .chat-control-icon {
-	flex: 0;
-	flex-basis: auto;
+/* Only the Farchievements chat button is styled here. Do NOT alter the
+   generic Foundry chat-control icons, as that affects the whole sidebar. */
+#chat-controls i#achievements-button {
+	flex: 0 0 auto;
 }
 i#achievements-button:hover { color: var(--fa-accent); }
 i#achievements-button:active { color: #fcd34d; }
@@ -1778,20 +1847,34 @@ i#achievements-button:active { color: #fcd34d; }
 .editmodebar {
 	display: none;
 }
-.editmodebar.editmodebar-open {
-	position: absolute;
-	right: 24px;
-	bottom: 56px;
-	z-index: 99;
-	display: flex;
+/* The toolbar belongs to the Farchievements ApplicationV2 root, not <body>.
+   This keeps it fixed inside the modal while the achievement list scrolls. */
+.achievementsscreen-window {
+	--farchievements-editbar-bottom: 52px;
+}
+.achievementsscreen-window > .editmodebar.editmodebar-open {
+	position: absolute !important;
+	left: 50% !important;
+	right: auto !important;
+	bottom: var(--farchievements-editbar-bottom) !important;
+	top: auto !important;
+	transform: translateX(-50%);
+	z-index: 1000;
+	display: flex !important;
 	align-items: center;
+	justify-content: center;
 	gap: 10px;
-	padding: 6px 12px;
-	background: var(--fa-bg-glass);
+	padding: 6px 10px;
+	background: rgba(20, 24, 31, 0.96);
 	border: 1px solid var(--fa-border);
 	border-radius: 999px;
-	backdrop-filter: blur(8px);
-	box-shadow: var(--fa-shadow);
+	backdrop-filter: blur(12px);
+	box-shadow: 0 10px 28px rgba(0, 0, 0, 0.55);
+	width: fit-content !important;
+	max-width: calc(100% - 32px) !important;
+	box-sizing: border-box;
+	margin: 0;
+	white-space: nowrap;
 }
 .editmodebar i.fas.fa-plus-square.achievementsettings,
 .editmodebar i.fas.fa-sync.achievementsettings {
